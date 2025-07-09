@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadBannerAd() {
     _bannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111', // Test ad unit ID
+      adUnitId: 'ca-app-pub-5738707488543355/1758724592', // Real ad unit ID
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -211,12 +211,19 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-          // Test Banner Ad
+          // Test Banner Ad or Placeholder
           if (_isAdLoaded && _bannerAd != null)
             Container(
               width: _bannerAd!.size.width.toDouble(),
               height: _bannerAd!.size.height.toDouble(),
               child: AdWidget(ad: _bannerAd!),
+            )
+          else
+            Container(
+              width: 320,
+              height: 50,
+              color: Colors.grey[300],
+              child: Center(child: Text('Your ad could be here!', style: TextStyle(color: Colors.black54))),
             ),
           // Footer
           Padding(
