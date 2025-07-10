@@ -52,12 +52,6 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       setState(() {
         _errorMessage = e.message;
       });
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'An unexpected error occurred: '
-            '
-' + e.toString();
-      });
     } finally {
       setState(() {
         _loading = false;
