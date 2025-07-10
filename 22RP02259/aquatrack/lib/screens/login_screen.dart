@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import '../models/user.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
+import '../models/user.dart'; // Your custom user model
 
 class LoginScreen extends StatefulWidget {
   final void Function(User) onLogin;
   final VoidCallback onCreateAccount;
-  const LoginScreen({Key? key, required this.onLogin, required this.onCreateAccount}) : super(key: key);
+
+  const LoginScreen({
+    Key? key,
+    required this.onLogin,
+    required this.onCreateAccount,
+  }) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -14,17 +20,39 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   String _password = '';
+  bool _loading = false;
+  String? _errorMessage;
 
-  void _login() {
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState?.save();
-      // Dummy user for now
-      widget.onLogin(User(
-        householdSize: 1,
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    _formKey.currentState!.save();
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final credential = await fb_auth.FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password);
+
+      // After successful login, you can fetch user-specific data from Firestore if needed
+      final user = User(
+        householdSize: 1, // Replace with actual value from Firestore
         averageWaterBill: null,
         waterUsageGoalPercent: 20,
         usesSmartMeter: false,
-      ));
+      );
+
+      widget.onLogin(user);
+    } on fb_auth.FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = e.message;
+      });
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -50,53 +78,47 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo or App Name
-                Container(
-                  margin: const EdgeInsets.only(bottom: 24),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Image.asset(
-                            'assets/logo.png',
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) => Icon(Icons.water_drop, size: 40, color: Colors.blue.shade700),
-                          ),
+                // App Logo and Name
+                Column(
+                  children: [
+                    Container(
+                      width: 70,
+                      height: 70,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Image.asset(
+                          'assets/logo.png',
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) =>
+                              Icon(Icons.water_drop, size: 40, color: Colors.blue.shade700),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'AquTrack',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black26,
-                              blurRadius: 6,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
-                        ),
+                    ),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'AquTrack',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                        shadows: [
+                          Shadow(color: Colors.black26, blurRadius: 6, offset: Offset(0, 2)),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                // Card with form
+                const SizedBox(height: 24),
+
+                // Login Card
                 Card(
                   elevation: 10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                   margin: const EdgeInsets.symmetric(horizontal: 24),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -105,6 +127,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (_errorMessage != null)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: Text(
+                                _errorMessage!,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ),
                           TextFormField(
                             decoration: InputDecoration(
                               labelText: 'Email',
@@ -117,7 +147,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             keyboardType: TextInputType.emailAddress,
-                            validator: (value) => (value == null || !value.contains('@')) ? 'Enter a valid email' : null,
+                            validator: (value) =>
+                                value != null && value.contains('@') ? null : 'Enter a valid email',
                             onSaved: (value) => _email = value ?? '',
                           ),
                           const SizedBox(height: 20),
@@ -133,7 +164,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             obscureText: true,
-                            validator: (value) => (value == null || value.length < 6) ? 'Password too short' : null,
+                            validator: (value) =>
+                                value != null && value.length >= 6 ? null : 'Password too short',
                             onSaved: (value) => _password = value ?? '',
                           ),
                           const SizedBox(height: 32),
@@ -149,11 +181,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                               ),
-                              onPressed: _login,
-                              child: const Text(
-                                'Login',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
-                              ),
+                              onPressed: _loading ? null : _login,
+                              child: _loading
+                                  ? const CircularProgressIndicator(color: Colors.white)
+                                  : const Text(
+                                      'Login',
+                                      style: TextStyle(
+                                          fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
+                                    ),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -182,4 +217,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-} 
+}

@@ -1,129 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-
-import 'screens/onboarding_screen.dart';
-import 'screens/splash_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/create_account_screen.dart';
-import 'screens/log_water_screen.dart';
-import 'models/user.dart';
-import 'services/water_log_service.dart';
-import 'widgets/usage_chart.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const WaterSaverApp());
-}
-
-class WaterSaverApp extends StatefulWidget {
-  const WaterSaverApp({Key? key}) : super(key: key);
-
-  @override
-  State<WaterSaverApp> createState() => _WaterSaverAppState();
-}
-
-class _WaterSaverAppState extends State<WaterSaverApp> {
-  User? _user;
-  bool _splashDone = false;
-  bool _loggedIn = false;
-  bool _showOnboarding = false;
-  bool _showCreateAccount = false;
-  bool _isNewlyRegistered = false;
-  final WaterLogService _waterLogService = WaterLogService();
-
-  void _finishSplash() {
-    setState(() {
-      _splashDone = true;
-    });
-  }
-
-  void _onLogin(User user) {
-    setState(() {
-      _user = user;
-      _loggedIn = true;
-      _showOnboarding = false;
-      _isNewlyRegistered = false;
-    });
-  }
-
-  void _onOnboardingComplete(User user) {
-    setState(() {
-      _user = user;
-      _showOnboarding = false;
-      _isNewlyRegistered = false;
-    });
-    print('User setup:');
-    print('Household size: ${user.householdSize}');
-    print('Avg bill: ${user.averageWaterBill}');
-    print('Goal: ${user.waterUsageGoalPercent}%');
-    print('Smart meter: ${user.usesSmartMeter}');
-  }
-
-  void _onCreateAccount() {
-    setState(() {
-      _showCreateAccount = true;
-    });
-  }
-
-  void _onAccountCreated() {
-    setState(() {
-      _showCreateAccount = false;
-      _showOnboarding = true;
-      _isNewlyRegistered = true;
-      _loggedIn = true;
-    });
-  }
-
-  void _onBackToLogin() {
-    setState(() {
-      _showCreateAccount = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'AquTrack',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      debugShowCheckedModeBanner: false,
-      home: !_splashDone
-          ? SplashScreen(onFinish: _finishSplash)
-          : _showCreateAccount
-              ? CreateAccountScreen(
-                  onAccountCreated: _onAccountCreated,
-                  onBackToLogin: _onBackToLogin,
-                )
-              : _showOnboarding
-                  ? OnboardingScreen(onComplete: _onOnboardingComplete)
-                  : !_loggedIn
-                      ? LoginScreen(
-                          onLogin: _onLogin,
-                          onCreateAccount: _onCreateAccount,
-                        )
-                      : DashboardScreen(
-                          user: _user!,
-                          waterLogService: _waterLogService,
-                        ),
-    );
-  }
-}
+import '../models/user.dart';
+import '../services/water_log_service.dart';
+import '../widgets/usage_chart.dart';
+import 'log_water_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   final User user;
   final WaterLogService waterLogService;
-
   const DashboardScreen({Key? key, required this.user, required this.waterLogService}) : super(key: key);
+
+  void _showPlaceholder(BuildContext context, String title) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: const Text('This feature is coming soon!'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final todaysLogs = waterLogService.todaysLogs;
     final totalAmount = todaysLogs.fold<double>(0, (sum, log) => sum + log.amount);
     final activityCount = todaysLogs.length;
-
+    // This week's logs
     final now = DateTime.now();
     final weekStart = now.subtract(Duration(days: now.weekday - 1));
     final weekLogs = waterLogService.allLogs.where((log) {
@@ -131,12 +38,110 @@ class DashboardScreen extends StatelessWidget {
       return d.isAfter(weekStart.subtract(const Duration(days: 1))) && d.isBefore(now.add(const Duration(days: 1)));
     }).toList();
     final weekTotal = weekLogs.fold<double>(0, (sum, log) => sum + log.amount);
-
+    // Goal progress (dummy for now)
     final goalPercent = user.waterUsageGoalPercent;
     final goalTarget = weekTotal > 0 ? weekTotal * (1 - goalPercent / 100) : 0;
-
     return Scaffold(
-      appBar: AppBar(title: const Text('AquTrack Dashboard')),
+      appBar: AppBar(title: const Text('AquTrack Dashboard!!')),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade700, Colors.blue.shade400],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset(
+                        'assets/logo.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => Icon(Icons.water_drop, size: 32, color: Colors.blue.shade700),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    user is dynamic && (user as dynamic).email != null ? (user as dynamic).email : 'Welcome!',
+                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'AquTrack User',
+                    style: TextStyle(color: Colors.white70, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person, color: Color(0xFF1976D2)),
+              title: const Text('Profile'),
+              onTap: () {
+                Navigator.pop(context);
+                _showPlaceholder(context, 'Profile');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings, color: Color(0xFF1976D2)),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+                _showPlaceholder(context, 'Settings');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.subscriptions, color: Color(0xFF1976D2)),
+              title: const Text('Subscription'),
+              onTap: () {
+                Navigator.pop(context);
+                _showPlaceholder(context, 'Subscription');
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text('Logout'),
+              onTap: () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Logout'),
+                    content: const Text('Are you sure you want to logout?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.of(context).popUntil((route) => route.isFirst);
+                        },
+                        child: const Text('Logout', style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 24),
         child: Column(
@@ -145,11 +150,12 @@ class DashboardScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                'Welcome, household of ${user.householdSize}!',
+                'Welcome, household of \\${user.householdSize}!',
                 style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 18),
+            // Today Card
             Card(
               color: Colors.blue.shade700,
               elevation: 8,
@@ -158,10 +164,11 @@ class DashboardScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Today's Water Usage",
+                      "Today's Water Usageeee",
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -171,18 +178,29 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      totalAmount == 0 ? 'No usage logged yet.' : '${totalAmount.toStringAsFixed(1)} units',
-                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                      totalAmount == 0 ? 'No usage logged yet.' :
+                        '${totalAmount.toStringAsFixed(1)} units',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      activityCount == 1 ? '1 activity logged' : '$activityCount activities logged',
-                      style: const TextStyle(color: Colors.white70, fontSize: 15),
+                      activityCount == 1
+                        ? '1 activity logged'
+                        : '$activityCount activities logged',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 15,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
+            // This Week Card
             Card(
               color: Colors.blue.shade600,
               elevation: 6,
@@ -205,12 +223,17 @@ class DashboardScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       weekTotal == 0 ? 'No usage logged yet.' : '${weekTotal.toStringAsFixed(1)} units',
-                      style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
+            // Goal Progress Card
             Card(
               color: Colors.blue.shade50,
               elevation: 4,
@@ -253,6 +276,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ),
             ),
+            // Usage Chart
             UsageChart(logs: waterLogService.allLogs),
             const SizedBox(height: 16),
             Padding(
@@ -282,4 +306,4 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-}
+} 
