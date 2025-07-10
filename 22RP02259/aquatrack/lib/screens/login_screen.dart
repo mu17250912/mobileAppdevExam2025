@@ -37,7 +37,8 @@ Future<void> _login() async {
         .signInWithEmailAndPassword(email: _email, password: _password);
 
     final user = User(
-      householdSize: 1, // Replace with actual value
+      email: _email,
+      householdSize: 1, // Replace with actual value from Firestore
       averageWaterBill: null,
       waterUsageGoalPercent: 20,
       usesSmartMeter: false,

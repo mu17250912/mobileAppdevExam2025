@@ -248,6 +248,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 if (_formKey.currentState?.validate() ?? false) {
                                   _formKey.currentState?.save();
                                   final user = User(
+                                    email: '', // TODO: Pass actual email if available
                                     householdSize: _householdSize!,
                                     averageWaterBill: _averageWaterBill,
                                     waterUsageGoalPercent: _waterUsageGoalPercent!,
