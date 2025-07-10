@@ -36,9 +36,8 @@ Future<void> _login() async {
     final credential = await fb_auth.FirebaseAuth.instance
         .signInWithEmailAndPassword(email: _email, password: _password);
 
-    // After successful login, create your User model
     final user = User(
-      householdSize: 1, // You can fetch actual data from Firestore
+      householdSize: 1, // Replace with actual value
       averageWaterBill: null,
       waterUsageGoalPercent: 20,
       usesSmartMeter: false,
@@ -46,37 +45,28 @@ Future<void> _login() async {
 
     widget.onLogin(user);
   } on fb_auth.FirebaseAuthException catch (e) {
-    String message;
-    switch (e.code) {
-      case 'user-not-found':
-        message = 'No user found with this email.';
-        break;
-      case 'wrong-password':
-        message = 'Incorrect password. Please try again.';
-        break;
-      case 'invalid-email':
-        message = 'The email address is invalid.';
-        break;
-      case 'user-disabled':
-        message = 'This user account has been disabled.';
-        break;
-      case 'too-many-requests':
-        message = 'Too many login attempts. Try again later.';
-        break;
-      case 'network-request-failed':
-        message = 'Network error. Check your connection.';
-        break;
-      default:
-        message = 'Login failed: ${e.message ?? 'Unknown error occurred.'}';
-    }
-
     setState(() {
-      _errorMessage = message;
+      switch (e.code) {
+        case 'invalid-email':
+          _errorMessage = 'The email address is badly formatted.';
+          break;
+        case 'user-not-found':
+          _errorMessage = 'No user found for that email.';
+          break;
+        case 'wrong-password':
+          _errorMessage = 'Incorrect password. Please try again.';
+          break;
+        case 'user-disabled':
+          _errorMessage = 'This user account has been disabled.';
+          break;
+        default:
+          _errorMessage = 'Login failed: ${e.message}';
+      }
     });
   } catch (e) {
-    debugPrint('Unexpected login error: $e');
+    print('Login error: $e');
     setState(() {
-      _errorMessage = 'An unexpected error occurred. Please try again.';
+      _errorMessage = 'An unexpected error occurred. Please try again later.';
     });
   } finally {
     setState(() {
