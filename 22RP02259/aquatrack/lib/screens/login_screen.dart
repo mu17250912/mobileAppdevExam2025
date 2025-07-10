@@ -23,38 +23,68 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _loading = false;
   String? _errorMessage;
 
-  Future<void> _login() async {
-    if (!_formKey.currentState!.validate()) return;
+Future<void> _login() async {
+  if (!_formKey.currentState!.validate()) return;
 
-    _formKey.currentState!.save();
-    setState(() {
-      _loading = true;
-      _errorMessage = null;
-    });
+  _formKey.currentState!.save();
+  setState(() {
+    _loading = true;
+    _errorMessage = null;
+  });
 
-    try {
-      final credential = await fb_auth.FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: _password);
+  try {
+    final credential = await fb_auth.FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: _email, password: _password);
 
-      // After successful login, you can fetch user-specific data from Firestore if needed
-      final user = User(
-        householdSize: 1, // Replace with actual value from Firestore
-        averageWaterBill: null,
-        waterUsageGoalPercent: 20,
-        usesSmartMeter: false,
-      );
+    // After successful login, create your User model
+    final user = User(
+      householdSize: 1, // You can fetch actual data from Firestore
+      averageWaterBill: null,
+      waterUsageGoalPercent: 20,
+      usesSmartMeter: false,
+    );
 
-      widget.onLogin(user);
-    } on fb_auth.FirebaseAuthException catch (e) {
-      setState(() {
-        _errorMessage = e.message;
-      });
-    } finally {
-      setState(() {
-        _loading = false;
-      });
+    widget.onLogin(user);
+  } on fb_auth.FirebaseAuthException catch (e) {
+    String message;
+    switch (e.code) {
+      case 'user-not-found':
+        message = 'No user found with this email.';
+        break;
+      case 'wrong-password':
+        message = 'Incorrect password. Please try again.';
+        break;
+      case 'invalid-email':
+        message = 'The email address is invalid.';
+        break;
+      case 'user-disabled':
+        message = 'This user account has been disabled.';
+        break;
+      case 'too-many-requests':
+        message = 'Too many login attempts. Try again later.';
+        break;
+      case 'network-request-failed':
+        message = 'Network error. Check your connection.';
+        break;
+      default:
+        message = 'Login failed: ${e.message ?? 'Unknown error occurred.'}';
     }
+
+    setState(() {
+      _errorMessage = message;
+    });
+  } catch (e) {
+    debugPrint('Unexpected login error: $e');
+    setState(() {
+      _errorMessage = 'An unexpected error occurred. Please try again.';
+    });
+  } finally {
+    setState(() {
+      _loading = false;
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
