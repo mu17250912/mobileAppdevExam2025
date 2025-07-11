@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "100031582761",
+    "project_id": "karibufruit",
+    "storage_bucket": "karibufruit.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100031582761:android:57a8dee012c50bc3d64238",
+        "android_client_info": {
+          "package_name": "com.example.karibu_fruits_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB046j_t15F1XQ7ICqq5eMJlpOLsbJ7gAk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
