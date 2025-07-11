@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "277578152308",
+    "project_id": "goaltracker-ab959",
+    "storage_bucket": "goaltracker-ab959.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277578152308:android:7781a190d9038a91a0d421",
+        "android_client_info": {
+          "package_name": "com.example.goaltracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5sdaiwW3CEATb7YrU9RxUMaLulgpmOyI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
