@@ -37,6 +37,21 @@ class DashboardPage extends StatelessWidget {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
+            ListTile(
+              leading: const Icon(Icons.info_outline),
+              title: const Text('Onboard Info'),
+              onTap: () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Onboarding Information'),
+                    content: const Text('Welcome to AquTrack! Here you can track your household water usage, set goals, and view your progress. Use the dashboard to log water usage and monitor your achievements.'),
+                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                  ),
+                );
+              },
+            ),
             DrawerHeader(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -69,6 +84,21 @@ class DashboardPage extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.house),
+              title: const Text('House Info'),
+              onTap: () {
+                Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Household Information'),
+                    content: Text('Household Size: ${user.householdSize}\nWater Usage Goal: ${user.waterUsageGoalPercent}% reduction'),
+                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                  ),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.history),

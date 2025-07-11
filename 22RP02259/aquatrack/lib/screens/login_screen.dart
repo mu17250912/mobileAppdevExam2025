@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import '../models/user.dart'; // Your custom user model
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginScreen extends StatefulWidget {
   final void Function(User) onLogin;
@@ -36,15 +37,29 @@ Future<void> _login() async {
     final credential = await fb_auth.FirebaseAuth.instance
         .signInWithEmailAndPassword(email: _email, password: _password);
 
-    final user = User(
-      email: _email,
-      householdSize: 1, // Replace with actual value from Firestore
-      averageWaterBill: null,
-      waterUsageGoalPercent: 20,
-      usesSmartMeter: false,
-    );
-
-    widget.onLogin(user);
+      // Fetch user profile from Firestore
+      final doc = await FirebaseFirestore.instance.collection('users').doc(_email).get();
+      if (doc.exists) {
+        final data = doc.data()!;
+        final user = User(
+          email: data['email'] ?? _email,
+          householdSize: data['householdSize'] ?? 1,
+          averageWaterBill: (data['averageWaterBill'] as num?)?.toDouble(),
+          waterUsageGoalPercent: (data['waterUsageGoalPercent'] as num?)?.toDouble() ?? 20.0,
+          usesSmartMeter: data['usesSmartMeter'] ?? false,
+        );
+        widget.onLogin(user);
+      } else {
+        // Fallback if no profile found
+        final user = User(
+          email: _email,
+          householdSize: 1,
+          averageWaterBill: null,
+          waterUsageGoalPercent: 20.0,
+          usesSmartMeter: false,
+        );
+        widget.onLogin(user);
+      }
   } on fb_auth.FirebaseAuthException catch (e) {
     setState(() {
       switch (e.code) {

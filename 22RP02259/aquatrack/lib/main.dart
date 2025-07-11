@@ -92,7 +92,7 @@ class _WaterSaverAppState extends State<WaterSaverApp> {
                   onBackToLogin: _onBackToLogin,
                 )
               : _showOnboarding
-                  ? OnboardingScreen(onComplete: _onOnboardingComplete)
+                  ? OnboardingScreen(email: _user?.email ?? '', onComplete: _onOnboardingComplete)
                   : !_loggedIn
                       ? LoginScreen(
                           onLogin: _onLogin,

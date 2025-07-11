@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OnboardingScreen extends StatefulWidget {
+  final String email;
   final void Function(User) onComplete;
-  const OnboardingScreen({Key? key, required this.onComplete}) : super(key: key);
+  const OnboardingScreen({Key? key, required this.email, required this.onComplete}) : super(key: key);
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -244,16 +246,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 'Get Started',
                                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState?.validate() ?? false) {
                                   _formKey.currentState?.save();
+                                  final String email = widget.email;
                                   final user = User(
-                                    email: '', // TODO: Pass actual email if available
+                                    email: email,
                                     householdSize: _householdSize!,
                                     averageWaterBill: _averageWaterBill,
                                     waterUsageGoalPercent: _waterUsageGoalPercent!,
                                     usesSmartMeter: _usesSmartMeter,
                                   );
+                                  // Save to Firestore
+                                  await FirebaseFirestore.instance.collection('users').doc(email).set({
+                                    'email': user.email,
+                                    'householdSize': user.householdSize,
+                                    'averageWaterBill': user.averageWaterBill,
+                                    'waterUsageGoalPercent': user.waterUsageGoalPercent,
+                                    'usesSmartMeter': user.usesSmartMeter,
+                                  });
                                   widget.onComplete(user);
                                 }
                               },
