@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import '../services/analytics_service.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({super.key});
@@ -118,6 +119,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           ...expenseData,
           'created_at': FieldValue.serverTimestamp(),
         });
+        // Track expense addition
+        await AnalyticsService.logExpenseAdded(
+          category: category,
+          amount: amount.toDouble(),
+          note: note,
+        );
         if (mounted) {
           setState(() {
             _selectedMonth = month;
@@ -201,7 +208,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(10.0), // Reduced from 12.0
         child: SingleChildScrollView(
           controller: _scrollController,
           child: Column(
@@ -221,7 +228,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                       decoration: const InputDecoration(labelText: 'Month'),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8), // Reduced from 12
                   Expanded(
                     child: DropdownButtonFormField<int>(
                       value: _selectedYear,
@@ -235,7 +242,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8), // Reduced from 12
               // Expense Table
               Container(
                 decoration: BoxDecoration(
@@ -256,41 +263,41 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   year: _selectedYear,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12), // Reduced from 16
               if (_editingExpenseId != null)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.only(bottom: 6.0), // Reduced from 8.0
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
                         'Editing Expense',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blueAccent),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blueAccent), // Reduced from 16
                       ),
                       TextButton(
                         onPressed: _clearForm,
-                        child: const Text('Cancel Edit'),
+                        child: const Text('Cancel Edit', style: TextStyle(fontSize: 13)), // Added fontSize
                       )
                     ],
                   ),
                 ),
               const Text(
                 'Add new expense',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), // Reduced from 18
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6), // Reduced from 8
               // Amount
               TextField(
                 controller: _amountController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Amount',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6), // Reduced from 8
               // Category
               StreamBuilder<List<String>>(
                 stream: _getCategories(),
@@ -309,38 +316,38 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     },
                     decoration: InputDecoration(
                       labelText: 'Category',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
                     ),
                   );
                 },
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6), // Reduced from 8
               // Note
               TextField(
                 controller: _noteController,
                 decoration: InputDecoration(
                   labelText: 'Note',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6), // Reduced from 8
               // Date
               TextField(
                 controller: _dateController,
                 readOnly: true,
                 decoration: InputDecoration(
                   labelText: 'Date',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today),
+                    icon: const Icon(Icons.calendar_today, size: 20), // Added size
                     onPressed: _pickDate,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12), // Reduced from 16
               // Save Button
               SizedBox(
                 width: double.infinity,
@@ -348,18 +355,18 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[800],
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16), // Reduced from 20
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 10), // Reduced from 14
                   ),
                   onPressed: _isSaving ? null : _addExpense,
                   child: _isSaving
                       ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                          height: 18, // Reduced from 20
+                          width: 18, // Reduced from 20
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2), // Reduced from 3
                         )
-                      : Text(_editingExpenseId != null ? 'Update' : 'Save', style: const TextStyle(fontSize: 18)),
+                      : Text(_editingExpenseId != null ? 'Update' : 'Save', style: const TextStyle(fontSize: 16)), // Reduced from 18
                 ),
               ),
             ],

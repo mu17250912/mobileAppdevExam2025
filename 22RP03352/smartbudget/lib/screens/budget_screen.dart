@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import '../services/analytics_service.dart';
 
 class BudgetScreen extends StatefulWidget {
   const BudgetScreen({super.key});
@@ -123,6 +124,11 @@ class _BudgetScreenState extends State<BudgetScreen> {
             'year': _selectedYear,
             'created_at': FieldValue.serverTimestamp(),
           });
+          // Track budget creation
+          await AnalyticsService.logBudgetCreated(
+            category: category,
+            amount: amount.toDouble(),
+          );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Budget for "$category" added!')),
@@ -185,7 +191,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
         elevation: 0,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(10.0), // Reduced from 12.0
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -204,7 +210,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                       decoration: const InputDecoration(labelText: 'Month'),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8), // Reduced from 12
                   Expanded(
                     child: DropdownButtonFormField<int>(
                       value: _selectedYear,
@@ -218,7 +224,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8), // Reduced from 12
               // Budget Table
               Container(
                 decoration: BoxDecoration(
@@ -239,90 +245,90 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   year: _selectedYear,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12), // Reduced from 16
               if (_editingBudgetId != null)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.only(bottom: 6.0), // Reduced from 8.0
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
                         'Editing Budget',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blueAccent),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blueAccent), // Reduced from 16
                       ),
                       TextButton(
                         onPressed: _clearForm,
-                        child: const Text('Cancel Edit'),
+                        child: const Text('Cancel Edit', style: TextStyle(fontSize: 13)), // Added fontSize
                       )
                     ],
                   ),
                 ),
               const Text(
                 'Category_name',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), // Reduced from 16
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 3), // Reduced from 4
               TextField(
                 controller: _categoryController,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6), // Reduced from 8
               const Text(
                 'Budget_amount',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), // Reduced from 16
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 3), // Reduced from 4
               TextField(
                 controller: _amountController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6), // Reduced from 8
               const Text(
                 'Date',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), // Reduced from 16
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 3), // Reduced from 4
               TextField(
                 controller: _dateController,
                 readOnly: true,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today),
+                    icon: const Icon(Icons.calendar_today, size: 20), // Added size
                     onPressed: _pickDate,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12), // Reduced from 16
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green[800],
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16), // Reduced from 20
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 10), // Reduced from 14
                   ),
                   onPressed: _isSaving ? null : _addBudget,
                   child: _isSaving
                       ? const SizedBox(
-                          height: 20,
-                          width: 20,
+                          height: 18, // Reduced from 20
+                          width: 18, // Reduced from 20
                           child: CircularProgressIndicator(
                             color: Colors.white,
-                            strokeWidth: 3,
+                            strokeWidth: 2, // Reduced from 3
                           ),
                         )
-                      : Text(_editingBudgetId != null ? 'Update' : 'Save', style: const TextStyle(fontSize: 18)),
+                      : Text(_editingBudgetId != null ? 'Update' : 'Save', style: const TextStyle(fontSize: 16)), // Reduced from 18
                 ),
               ),
             ],

@@ -1,0 +1,162 @@
+# BudgetWise - Smart Budget Management App
+
+**Student Registration Number:** 22RP03352  
+**Academic Year:** 2024-2025  
+**Module:** Mobile Application Development (ITLMA701)  
+**Developer:** Sandrine Irah
+
+## 📱 App Overview
+
+BudgetWise is a budget management mobile application built with Flutter that helps users track their expenses, manage budgets by category, and visualize their spending with simple analytics and progress indicators.
+
+## 🎯 Problem Statement
+
+**The Problem:** Many people struggle with managing their personal finances due to:
+- Lack of awareness about spending patterns
+- Difficulty tracking expenses across multiple categories
+- No clear visualization of budget vs. actual spending
+
+**Our Solution:** BudgetWise provides an intuitive, user-friendly platform that:
+- Simplifies expense tracking and categorization
+- Provides real-time budget monitoring with visual progress indicators
+- Offers a basic analytics screen for premium users (advanced analytics planned)
+
+## 👥 Target Audience
+
+- Young professionals and students managing personal budgets
+- Anyone who wants a simple, mobile-first budgeting tool
+
+## 🏆 Unique Selling Proposition (USP)
+
+- **Category-Based Budgeting:** Easy-to-use interface for setting and tracking budgets by category
+- **Visual Progress:** Progress bars and circular indicators for budget utilization
+- **Firebase-Powered:** Secure, scalable cloud-based data storage
+
+## 💰 Monetization Strategy
+
+BudgetWise uses a **freemium monetization strategy**:
+
+- **Free users:**
+  - Access all core budgeting and expense features
+  - See banner ads (Google AdMob) in the app
+- **Premium (UI only, payment not implemented):**
+  - Removes ads
+  - Unlocks access to the Analytics screen (currently a placeholder)
+
+### **Commission-Based Monetization (Affiliate Link)**
+- The app includes a commission-based monetization feature via an affiliate link (Amazon).
+- When users click the "Shop on Amazon (Affiliate)" button, they are redirected to Amazon using a referral link.
+- Each click is tracked using Firebase Analytics (`ad_interaction` event with `adType: 'affiliate'`).
+- In a real deployment, this would use a valid affiliate ID to earn commissions on qualifying purchases. For this assessment, the affiliate link is a placeholder and no real commissions are earned.
+
+> **Note:** Payment/subscription logic is not implemented. The "Go Premium" button is for demonstration only. No real money is collected in this version.
+> **Bonus:** Payment gateway integration is not implemented (bonus marks only).
+> 
+> **Why No Real Income Collection:** This is a student project focused on demonstrating technical skills and monetization concepts. Real payment processing, affiliate accounts, and ad revenue require business registration, compliance, and published app status - the app has not been published yet.
+
+## 🔧 Key Features Implemented
+
+### **Core Features:**
+- User authentication (Firebase Auth)
+- Create and manage budgets by category
+- Add and categorize expenses
+- Visual progress indicators (circular and linear)
+- Quick actions (add expense, view budgets)
+- AdMob banner ads for free users
+- Affiliate button (Amazon link)
+- Analytics event tracking (Firebase Analytics)
+
+### **Premium Features (UI only, not functional):**
+- Analytics screen (currently a placeholder, no real charts)
+- Ad removal (UI only, no payment logic)
+
+## 📊 Analytics & Tracking
+
+- **Firebase Analytics** integration for user actions (budget creation, expense addition, feature usage, etc.)
+- Analytics events can be viewed in Firebase DebugView and Events tab
+
+### **How to View Analytics Data:**
+1. Go to [Firebase Console](https://console.firebase.google.com/), select your project.
+2. Navigate to **Analytics > DebugView** for real-time events, or **Analytics > Events** for aggregated data (may take up to 24 hours).
+3. Use the app or the Test Analytics button (debug mode) to see events appear.
+
+## 🔒 Security & Reliability
+
+- **Security:**
+  - Firebase Security Rules for database access
+  - Secure login with Firebase Auth
+  - Data privacy awareness (GDPR/local compliance considered)
+  - All data sent over secure HTTPS
+  - Only authenticated users can access their own data
+  - Secure API handling (all backend via Firebase)
+- **Reliability:**
+  - App tested on Android emulator and real device
+  - Error handling for network and data issues
+  - Bug fixing through iterative testing
+  - No known critical bugs at submission
+
+## ♿ Accessibility
+
+- Accessibility features (such as screen reader support and high-contrast mode) are **planned for future updates**.
+- Current version does not include explicit accessibility enhancements.
+
+## 🚀 Scalability & Performance
+
+- Firebase backend for scalability
+- Modular code structure for easy updates
+- Efficient data handling and queries
+- Designed for future growth in users and data
+
+## 🔄 Sustainability Plan
+
+- Codebase structured for easy updates and maintenance
+- **Feedback Loops:** User feedback will be collected via app reviews and future in-app feedback forms
+- **CAC Strategies:** Organic growth (word-of-mouth), potential referral programs (planned)
+- **User Retention/Engagement:**
+  - Core features are simple and useful
+  - Future plans for push notifications, gamification, and loyalty programs
+- **Continuous Updates:** Planned for new features and security improvements
+
+## 📱 Installation Instructions
+
+### **For End Users:**
+1. Download the APK file from provided zip folder.
+2. Enable "Install from Unknown Sources" in Android settings
+3. Install the APK file
+4. Open the app and create an account
+5. Start managing your budget!
+
+### **For Developers:**
+1. Clone the repository
+2. Install Flutter dependencies: `flutter pub get`
+3. Configure Firebase project
+4. Run the app: `flutter run`
+
+## 🛠️ Technical Stack
+
+- **Frontend:** Flutter (Dart)
+- **Backend:** Firebase (Firestore, Authentication, Analytics)
+- **Ads:** Google AdMob
+- **State Management:** Flutter StatefulWidget
+- **UI Framework:** Material Design
+- **Version Control:** Git
+
+## 📈 Future Roadmap (Planned/Not Yet Implemented)
+- Advanced analytics dashboard (charts, trends, export)
+- Payment/subscription for premium
+- Export to PDF/CSV
+- Push notifications
+- Gamification (badges, milestones)
+- Community features (forums, support)
+- Bill reminders, investment tracking, financial goals
+- AI-powered insights, banking API, multi-currency
+- Accessibility enhancements
+
+## 📞 Support & Contact
+
+- **Email:** irashimwakmsandrine@gmail.com
+- **GitHub:** [Repository link]
+
+---
+
+**Note:** This project is developed as part of the Mobile Application Development module assessment. Some features are planned for future updates and are not yet implemented.
