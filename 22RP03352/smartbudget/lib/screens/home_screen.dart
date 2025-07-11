@@ -6,6 +6,10 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'add_expense.dart';
 import 'budget_screen.dart';
 import 'settings_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'premium_service.dart'; // Added import for PremiumService
+import 'upgrade_screen.dart'; // Added import for UpgradeScreen
+import 'analytics_screen.dart'; // Added import for AnalyticsScreen
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -221,40 +225,156 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-          // Test Banner Ad or Placeholder
-          if (_isAdLoaded && _bannerAd != null)
-            Container(
-              width: _bannerAd!.size.width.toDouble(),
-              height: _bannerAd!.size.height.toDouble(),
-              child: AdWidget(ad: _bannerAd!),
-            )
-          else
-            Container(
-              width: 320,
-              height: 50,
-              color: Colors.grey[300],
-              child: Center(child: Text('Your ad could be here!', style: TextStyle(color: Colors.black54))),
+          // Show Ad only if not premium
+          FutureBuilder<bool>(
+            future: PremiumService.isPremium(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) return SizedBox.shrink();
+              if (snapshot.data == true) return SizedBox.shrink();
+              // Not premium, show ad
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _isAdLoaded && _bannerAd != null
+                    ? SizedBox(
+                        height: _bannerAd!.size.height.toDouble(),
+                        width: _bannerAd!.size.width.toDouble(),
+                        child: AdWidget(ad: _bannerAd!),
+                      )
+                    : SizedBox.shrink(),
+              );
+            },
+          ),
+          // Go Premium button (only for non-premium users)
+          FutureBuilder<bool>(
+            future: PremiumService.isPremium(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) return SizedBox.shrink();
+              if (snapshot.data == true) return SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.star, color: Colors.amber),
+                  label: Text('Go Premium'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[800],
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UpgradeScreen()));
+                  },
+                ),
+              );
+            },
+          ),
+          // Analytics button (only for premium users)
+          FutureBuilder<bool>(
+            future: PremiumService.isPremium(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) return SizedBox.shrink();
+              if (snapshot.data != true) return SizedBox.shrink();
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.bar_chart, color: Colors.white),
+                  label: Text('Analytics & Reports'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[700],
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AnalyticsScreen()));
+                  },
+                ),
+              );
+            },
+          ),
+          // Affiliate Button (replaces AdMob banner)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ElevatedButton.icon(
+              icon: Icon(Icons.shopping_cart_outlined),
+              label: Text('Shop on Amazon (Affiliate)'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange[800],
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              onPressed: () async {
+                final url = Uri.parse('https://www.amazon.com/dp/B08N5WRWNW?tag=youraffiliateid'); // Replace with your affiliate link
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Could not launch affiliate link')),
+                  );
+                }
+              },
             ),
+          ),
           // Footer
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Column(
-              children: [
-                Text(
-                  'BudgetWise v1.0.0',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '© 2024 BudgetWise',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Made with ❤️ by Sandrine',
-                  style: TextStyle(color: Colors.grey[700], fontSize: 13, fontStyle: FontStyle.italic),
-                ),
-              ],
+            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Divider(height: 24, thickness: 1),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.verified, color: Colors.green, size: 18),
+                      const SizedBox(width: 6),
+                      Text(
+                        'v1.0.0',
+                        style: TextStyle(color: Colors.grey[700], fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(width: 18),
+                      Icon(Icons.copyright, color: Colors.grey[600], size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        '2024 BudgetWise',
+                        style: TextStyle(color: Colors.grey[700], fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Made with',
+                        style: TextStyle(color: Colors.grey[700], fontSize: 14, fontStyle: FontStyle.italic),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(Icons.favorite, color: Colors.redAccent, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        'by Sandrine',
+                        style: TextStyle(color: Colors.grey[700], fontSize: 14, fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                ],
+              ),
             ),
           ),
         ],
