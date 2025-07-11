@@ -244,51 +244,55 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                         ),
                       const SizedBox(height: 18),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          icon: Image.asset(
-                            'assets/images/icon.png', // You can use a Google logo asset if available
-                            height: 24,
-                          ),
-                          label: const Text(
-                            'Sign in with Google',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            side: BorderSide(color: primaryGreen),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(22),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          OutlinedButton.icon(
+                            icon: Image.asset(
+                              'assets/images/google_logo.png',
+                              height: 24,
                             ),
-                          ),
-                          onPressed: () async {
-                            setState(() => _isLoading = true);
-                            try {
-                              // Google Sign-In logic
-                              // Import these at the top:
-                              // import 'package:google_sign_in/google_sign_in.dart';
-                              // import 'package:firebase_auth/firebase_auth.dart';
-                              final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-                              if (googleUser == null) {
-                                setState(() => _isLoading = false);
-                                return; // User cancelled
+                            label: const Text(
+                              'Sign in with Google',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              side: BorderSide(color: Colors.grey, width: 1.2),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
+                              alignment: Alignment.centerLeft,
+                            ),
+                            onPressed: () async {
+                              setState(() => _isLoading = true);
+                              try {
+                                final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+                                if (googleUser == null) {
+                                  setState(() => _isLoading = false);
+                                  return;
+                                }
+                                final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+                                final credential = GoogleAuthProvider.credential(
+                                  accessToken: googleAuth.accessToken,
+                                  idToken: googleAuth.idToken,
+                                );
+                                await FirebaseAuth.instance.signInWithCredential(credential);
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Google sign-in failed: \\${e.toString()}')),
+                                );
+                              } finally {
+                                if (mounted) setState(() => _isLoading = false);
                               }
-                              final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-                              final credential = GoogleAuthProvider.credential(
-                                accessToken: googleAuth.accessToken,
-                                idToken: googleAuth.idToken,
-                              );
-                              await FirebaseAuth.instance.signInWithCredential(credential);
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Google sign-in failed: \\${e.toString()}')),
-                              );
-                            } finally {
-                              if (mounted) setState(() => _isLoading = false);
-                            }
-                          },
-                        ),
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 10),
                       Row(

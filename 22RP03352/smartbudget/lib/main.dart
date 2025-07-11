@@ -60,7 +60,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
     _controller.forward();
-    Future.delayed(const Duration(seconds: 2), () {
+    // Change splash duration to 1 second
+    Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const AuthCheck()),
