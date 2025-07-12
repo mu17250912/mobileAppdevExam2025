@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import '../main.dart'; // For highContrastMode
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -334,6 +335,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       applicationLegalese: '© 2024 BudgetWise Team',
                     );
                   },
+                ),
+                ListTile(
+                  leading: Icon(Icons.contrast, color: Colors.amber[800]),
+                  title: Text('High Contrast Mode', style: TextStyle(fontWeight: FontWeight.bold)),
+                  trailing: ValueListenableBuilder<bool>(
+                    valueListenable: highContrastMode,
+                    builder: (context, isHighContrast, _) {
+                      return Switch(
+                        value: isHighContrast,
+                        onChanged: (val) => highContrastMode.value = val,
+                        activeColor: Colors.amber[800],
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

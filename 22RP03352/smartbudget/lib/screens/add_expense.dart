@@ -3,9 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import '../services/analytics_service.dart';
+import '../main.dart'; // For selectedMonthYear
 
 class AddExpenseScreen extends StatefulWidget {
-  const AddExpenseScreen({super.key});
+  final int? selectedMonth;
+  final int? selectedYear;
+  const AddExpenseScreen({super.key, this.selectedMonth, this.selectedYear});
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -21,8 +24,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final ScrollController _scrollController = ScrollController();
   bool _isSaving = false;
   String? _editingExpenseId; // To track which expense is being edited
-  int _selectedMonth = DateTime.now().month;
-  int _selectedYear = DateTime.now().year;
+  // Remove local _selectedMonth/_selectedYear
+
+  @override
+  void initState() {
+    super.initState();
+    // No need to set local state, use selectedMonthYear
+  }
 
   @override
   void dispose() {
@@ -126,10 +134,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           note: note,
         );
         if (mounted) {
-          setState(() {
-            _selectedMonth = month;
-            _selectedYear = year;
-          });
+          // setState(() { // This line is removed as per the edit hint
+          //   _selectedMonth = month;
+          //   _selectedYear = year;
+          // });
+          selectedMonthYear.value = DateTime(year, month); // Update the notifier
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Expense for "$category" added!')),
           );
@@ -192,187 +201,197 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        backgroundColor: Colors.green[800],
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'ADD EXPENSE',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0), // Reduced from 12.0
-        child: SingleChildScrollView(
-          controller: _scrollController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Month/Year Pickers
-              Row(
+    return ValueListenableBuilder<DateTime>(
+      valueListenable: selectedMonthYear,
+      builder: (context, selectedDate, _) {
+        final _selectedMonth = selectedDate.month;
+        final _selectedYear = selectedDate.year;
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: AppBar(
+            backgroundColor: Colors.green[800],
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: const Text(
+              'ADD EXPENSE',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            centerTitle: true,
+            elevation: 0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0), // Reduced from 12.0
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: DropdownButtonFormField<int>(
-                      value: _selectedMonth,
-                      items: List.generate(12, (index) => DropdownMenuItem(
-                        value: index + 1,
-                        child: Text(DateFormat.MMMM().format(DateTime(0, index + 1))),
-                      )),
-                      onChanged: (val) => setState(() => _selectedMonth = val!),
-                      decoration: const InputDecoration(labelText: 'Month'),
+                  // Month/Year Pickers
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<int>(
+                          value: _selectedMonth,
+                          items: List.generate(12, (index) => DropdownMenuItem(
+                            value: index + 1,
+                            child: Text(DateFormat.MMMM().format(DateTime(0, index + 1))),
+                          )),
+                          onChanged: (val) => setState(() => selectedMonthYear.value = DateTime(_selectedYear, val!)), // Update notifier
+                          decoration: const InputDecoration(labelText: 'Month'),
+                        ),
+                      ),
+                      const SizedBox(width: 8), // Reduced from 12
+                      Expanded(
+                        child: DropdownButtonFormField<int>(
+                          value: _selectedYear,
+                          items: List.generate(5, (index) {
+                            int year = DateTime.now().year - 2 + index;
+                            return DropdownMenuItem(value: year, child: Text('$year'));
+                          }),
+                          onChanged: (val) => setState(() => selectedMonthYear.value = DateTime(val!, _selectedMonth)), // Update notifier
+                          decoration: const InputDecoration(labelText: 'Year'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8), // Reduced from 12
+                  // Expense Table
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: _ExpenseTable(
+                      currentUser: currentUser,
+                      onEdit: _startEditing,
+                      month: _selectedMonth,
+                      year: _selectedYear,
                     ),
                   ),
-                  const SizedBox(width: 8), // Reduced from 12
-                  Expanded(
-                    child: DropdownButtonFormField<int>(
-                      value: _selectedYear,
-                      items: List.generate(5, (index) {
-                        int year = DateTime.now().year - 2 + index;
-                        return DropdownMenuItem(value: year, child: Text('$year'));
-                      }),
-                      onChanged: (val) => setState(() => _selectedYear = val!),
-                      decoration: const InputDecoration(labelText: 'Year'),
+                  const SizedBox(height: 12), // Reduced from 16
+                  if (_editingExpenseId != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6.0), // Reduced from 8.0
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Editing Expense',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).colorScheme.primary),
+                          ),
+                          TextButton(
+                            onPressed: _clearForm,
+                            child: Text('Cancel Edit', style: TextStyle(fontSize: 13)), // Added fontSize
+                          )
+                        ],
+                      ),
+                    ),
+                  const Text(
+                    'Add new expense',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), // Reduced from 18
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6), // Reduced from 8
+                  // Amount
+                  TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Amount',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
+                    ),
+                  ),
+                  const SizedBox(height: 6), // Reduced from 8
+                  // Category
+                  StreamBuilder<List<String>>(
+                    stream: _getCategories(),
+                    builder: (context, snapshot) {
+                      final categories = snapshot.data?.toSet().toList() ?? [];
+                      if (!categories.contains(_selectedCategory)) {
+                        _selectedCategory = null;
+                      }
+                      return DropdownButtonFormField<String>(
+                        value: _selectedCategory,
+                        items: categories
+                            .map((cat) => DropdownMenuItem(
+                                  value: cat,
+                                  child: Text(cat),
+                                ))
+                            .toList(),
+                        onChanged: (val) {
+                          if (val != null) setState(() => _selectedCategory = val);
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Category',
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 6), // Reduced from 8
+                  // Note
+                  TextField(
+                    controller: _noteController,
+                    decoration: InputDecoration(
+                      labelText: 'Note',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
+                    ),
+                  ),
+                  const SizedBox(height: 6), // Reduced from 8
+                  // Date
+                  TextField(
+                    controller: _dateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: 'Date',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today, size: 20), // Added size
+                        onPressed: _pickDate,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12), // Reduced from 16
+                  // Save Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[800],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16), // Reduced from 20
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10), // Reduced from 14
+                      ),
+                      onPressed: _isSaving ? null : _addExpense,
+                      child: _isSaving
+                          ? const SizedBox(
+                              height: 18, // Reduced from 20
+                              width: 18, // Reduced from 20
+                              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2), // Reduced from 3
+                            )
+                          : Text(_editingExpenseId != null ? 'Update' : 'Save', style: const TextStyle(fontSize: 16)), // Reduced from 18
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8), // Reduced from 12
-              // Expense Table
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: _ExpenseTable(
-                  currentUser: currentUser,
-                  onEdit: _startEditing,
-                  month: _selectedMonth,
-                  year: _selectedYear,
-                ),
-              ),
-              const SizedBox(height: 12), // Reduced from 16
-              if (_editingExpenseId != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 6.0), // Reduced from 8.0
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Editing Expense',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blueAccent), // Reduced from 16
-                      ),
-                      TextButton(
-                        onPressed: _clearForm,
-                        child: const Text('Cancel Edit', style: TextStyle(fontSize: 13)), // Added fontSize
-                      )
-                    ],
-                  ),
-                ),
-              const Text(
-                'Add new expense',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), // Reduced from 18
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 6), // Reduced from 8
-              // Amount
-              TextField(
-                controller: _amountController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Amount',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
-                ),
-              ),
-              const SizedBox(height: 6), // Reduced from 8
-              // Category
-              StreamBuilder<List<String>>(
-                stream: _getCategories(),
-                builder: (context, snapshot) {
-                  final categories = snapshot.data ?? [];
-                  return DropdownButtonFormField<String>(
-                    value: categories.contains(_selectedCategory) ? _selectedCategory : null,
-                    items: categories
-                        .map((cat) => DropdownMenuItem(
-                              value: cat,
-                              child: Text(cat),
-                            ))
-                        .toList(),
-                    onChanged: (val) {
-                      if (val != null) setState(() => _selectedCategory = val);
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Category',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 6), // Reduced from 8
-              // Note
-              TextField(
-                controller: _noteController,
-                decoration: InputDecoration(
-                  labelText: 'Note',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
-                ),
-              ),
-              const SizedBox(height: 6), // Reduced from 8
-              // Date
-              TextField(
-                controller: _dateController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: 'Date',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today, size: 20), // Added size
-                    onPressed: _pickDate,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12), // Reduced from 16
-              // Save Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[800],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16), // Reduced from 20
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 10), // Reduced from 14
-                  ),
-                  onPressed: _isSaving ? null : _addExpense,
-                  child: _isSaving
-                      ? const SizedBox(
-                          height: 18, // Reduced from 20
-                          width: 18, // Reduced from 20
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2), // Reduced from 3
-                        )
-                      : Text(_editingExpenseId != null ? 'Update' : 'Save', style: const TextStyle(fontSize: 16)), // Reduced from 18
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

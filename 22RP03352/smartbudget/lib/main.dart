@@ -43,6 +43,39 @@ class NotificationHelper {
   }
 }
 
+final ValueNotifier<bool> highContrastMode = ValueNotifier(false);
+final ValueNotifier<DateTime> selectedMonthYear = ValueNotifier(DateTime.now());
+
+final ThemeData highContrastTheme = ThemeData(
+  brightness: Brightness.dark,
+  primarySwatch: Colors.amber,
+  scaffoldBackgroundColor: Colors.black,
+  cardColor: Colors.grey[900],
+  appBarTheme: AppBarTheme(
+    backgroundColor: Colors.amber[800],
+    foregroundColor: Colors.black,
+  ),
+  colorScheme: ColorScheme.fromSwatch(
+    primarySwatch: Colors.amber,
+    brightness: Brightness.dark, // Ensure brightness matches
+  ).copyWith(
+    secondary: Colors.amberAccent,
+    brightness: Brightness.dark, // Ensure brightness matches
+  ),
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+    bodyMedium: TextStyle(color: Colors.white),
+    titleLarge: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.amber[800],
+      foregroundColor: Colors.black,
+      textStyle: const TextStyle(fontWeight: FontWeight.bold),
+    ),
+  ),
+);
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -61,15 +94,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'BudgetWise',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.green),
-      home: const SplashScreen(),
-      // Firebase Analytics configuration
-      navigatorObservers: [
-        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
-      ],
+    return ValueListenableBuilder<bool>(
+      valueListenable: highContrastMode,
+      builder: (context, isHighContrast, child) {
+        return MaterialApp(
+          title: 'BudgetWise',
+          debugShowCheckedModeBanner: false,
+          theme: isHighContrast ? highContrastTheme : ThemeData(primarySwatch: Colors.green),
+          home: const SplashScreen(),
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          ],
+        );
+      },
     );
   }
 }

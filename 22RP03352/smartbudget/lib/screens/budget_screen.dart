@@ -3,9 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import '../services/analytics_service.dart';
+import '../main.dart'; // For selectedMonthYear
 
 class BudgetScreen extends StatefulWidget {
-  const BudgetScreen({super.key});
+  final int? selectedMonth;
+  final int? selectedYear;
+  const BudgetScreen({super.key, this.selectedMonth, this.selectedYear});
 
   @override
   State<BudgetScreen> createState() => _BudgetScreenState();
@@ -19,8 +22,12 @@ class _BudgetScreenState extends State<BudgetScreen> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
   bool _isSaving = false;
   String? _editingBudgetId; // To track which budget is being edited
-  int _selectedMonth = DateTime.now().month;
-  int _selectedYear = DateTime.now().year;
+
+  @override
+  void initState() {
+    super.initState();
+    // No need to set local state, use selectedMonthYear
+  }
 
   @override
   void dispose() {
@@ -92,8 +99,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
           'category': category,
           'amount': amount,
           'date': date,
-          'month': _selectedMonth,
-          'year': _selectedYear,
+          'month': selectedMonthYear.value.month,
+          'year': selectedMonthYear.value.year,
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -104,8 +111,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
         // Check if a budget with this category already exists before adding new
         final querySnapshot = await budgetsRef
           .where('category', isEqualTo: category)
-          .where('month', isEqualTo: _selectedMonth)
-          .where('year', isEqualTo: _selectedYear)
+          .where('month', isEqualTo: selectedMonthYear.value.month)
+          .where('year', isEqualTo: selectedMonthYear.value.year)
           .limit(1)
           .get();
         if (querySnapshot.docs.isNotEmpty) {
@@ -120,8 +127,8 @@ class _BudgetScreenState extends State<BudgetScreen> {
             'category': category,
             'amount': amount,
             'date': date,
-            'month': _selectedMonth,
-            'year': _selectedYear,
+            'month': selectedMonthYear.value.month,
+            'year': selectedMonthYear.value.year,
             'created_at': FieldValue.serverTimestamp(),
           });
           // Track budget creation
@@ -175,166 +182,181 @@ class _BudgetScreenState extends State<BudgetScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        backgroundColor: Colors.green[800],
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: const Text(
-          'BUDGET',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0), // Reduced from 12.0
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Month/Year Pickers
-              Row(
+    return ValueListenableBuilder<DateTime>(
+      valueListenable: selectedMonthYear,
+      builder: (context, selectedDate, _) {
+        final _selectedMonth = selectedDate.month;
+        final _selectedYear = selectedDate.year;
+        return Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          appBar: AppBar(
+            backgroundColor: Colors.green[800],
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            title: const Text(
+              'BUDGET',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            centerTitle: true,
+            elevation: 0,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(10.0), // Reduced from 12.0
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: DropdownButtonFormField<int>(
-                      value: _selectedMonth,
-                      items: List.generate(12, (index) => DropdownMenuItem(
-                        value: index + 1,
-                        child: Text(DateFormat.MMMM().format(DateTime(0, index + 1))),
-                      )),
-                      onChanged: (val) => setState(() => _selectedMonth = val!),
-                      decoration: const InputDecoration(labelText: 'Month'),
+                  // Month/Year Pickers
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<int>(
+                          value: _selectedMonth,
+                          items: List.generate(12, (index) => DropdownMenuItem(
+                            value: index + 1,
+                            child: Text(DateFormat.MMMM().format(DateTime(0, index + 1))),
+                          )),
+                          onChanged: (val) {
+                            setState(() {
+                              selectedMonthYear.value = DateTime(selectedDate.year, val!, 1);
+                            });
+                          },
+                          decoration: const InputDecoration(labelText: 'Month'),
+                        ),
+                      ),
+                      const SizedBox(width: 8), // Reduced from 12
+                      Expanded(
+                        child: DropdownButtonFormField<int>(
+                          value: _selectedYear,
+                          items: List.generate(5, (index) {
+                            int year = DateTime.now().year - 2 + index;
+                            return DropdownMenuItem(value: year, child: Text('$year'));
+                          }),
+                          onChanged: (val) {
+                            setState(() {
+                              selectedMonthYear.value = DateTime(val!, selectedDate.month, 1);
+                            });
+                          },
+                          decoration: const InputDecoration(labelText: 'Year'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8), // Reduced from 12
+                  // Budget Table
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: _BudgetTable(
+                      currentUser: currentUser,
+                      onEdit: _startEditing,
+                      month: _selectedMonth,
+                      year: _selectedYear,
                     ),
                   ),
-                  const SizedBox(width: 8), // Reduced from 12
-                  Expanded(
-                    child: DropdownButtonFormField<int>(
-                      value: _selectedYear,
-                      items: List.generate(5, (index) {
-                        int year = DateTime.now().year - 2 + index;
-                        return DropdownMenuItem(value: year, child: Text('$year'));
-                      }),
-                      onChanged: (val) => setState(() => _selectedYear = val!),
-                      decoration: const InputDecoration(labelText: 'Year'),
+                  const SizedBox(height: 12), // Reduced from 16
+                  if (_editingBudgetId != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6.0), // Reduced from 8.0
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Editing Budget',
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).colorScheme.primary),
+                          ),
+                          TextButton(
+                            onPressed: _clearForm,
+                            child: Text('Cancel Edit', style: TextStyle(fontSize: 13)), // Added fontSize
+                          )
+                        ],
+                      ),
+                    ),
+                  Text(
+                    'Category_name',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).textTheme.bodyLarge?.color),
+                  ),
+                  const SizedBox(height: 3), // Reduced from 4
+                  TextField(
+                    controller: _categoryController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
+                    ),
+                  ),
+                  const SizedBox(height: 6), // Reduced from 8
+                  Text(
+                    'Budget_amount',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).textTheme.bodyLarge?.color),
+                  ),
+                  const SizedBox(height: 3), // Reduced from 4
+                  TextField(
+                    controller: _amountController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
+                    ),
+                  ),
+                  const SizedBox(height: 6), // Reduced from 8
+                  Text(
+                    'Date',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).textTheme.bodyLarge?.color),
+                  ),
+                  const SizedBox(height: 3), // Reduced from 4
+                  TextField(
+                    controller: _dateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today, size: 20), // Added size
+                        onPressed: _pickDate,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12), // Reduced from 16
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[800],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16), // Reduced from 20
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10), // Reduced from 14
+                      ),
+                      onPressed: _isSaving ? null : _addBudget,
+                      child: _isSaving
+                          ? const SizedBox(
+                              height: 18, // Reduced from 20
+                              width: 18, // Reduced from 20
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2, // Reduced from 3
+                              ),
+                            )
+                          : Text(_editingBudgetId != null ? 'Update' : 'Save', style: const TextStyle(fontSize: 16)), // Reduced from 18
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8), // Reduced from 12
-              // Budget Table
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: _BudgetTable(
-                  currentUser: currentUser,
-                  onEdit: _startEditing,
-                  month: _selectedMonth,
-                  year: _selectedYear,
-                ),
-              ),
-              const SizedBox(height: 12), // Reduced from 16
-              if (_editingBudgetId != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 6.0), // Reduced from 8.0
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Editing Budget',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.blueAccent), // Reduced from 16
-                      ),
-                      TextButton(
-                        onPressed: _clearForm,
-                        child: const Text('Cancel Edit', style: TextStyle(fontSize: 13)), // Added fontSize
-                      )
-                    ],
-                  ),
-                ),
-              const Text(
-                'Category_name',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), // Reduced from 16
-              ),
-              const SizedBox(height: 3), // Reduced from 4
-              TextField(
-                controller: _categoryController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
-                ),
-              ),
-              const SizedBox(height: 6), // Reduced from 8
-              const Text(
-                'Budget_amount',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), // Reduced from 16
-              ),
-              const SizedBox(height: 3), // Reduced from 4
-              TextField(
-                controller: _amountController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
-                ),
-              ),
-              const SizedBox(height: 6), // Reduced from 8
-              const Text(
-                'Date',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14), // Reduced from 16
-              ),
-              const SizedBox(height: 3), // Reduced from 4
-              TextField(
-                controller: _dateController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)), // Reduced from 20
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), // Reduced from 16
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today, size: 20), // Added size
-                    onPressed: _pickDate,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12), // Reduced from 16
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[800],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16), // Reduced from 20
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 10), // Reduced from 14
-                  ),
-                  onPressed: _isSaving ? null : _addBudget,
-                  child: _isSaving
-                      ? const SizedBox(
-                          height: 18, // Reduced from 20
-                          width: 18, // Reduced from 20
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2, // Reduced from 3
-                          ),
-                        )
-                      : Text(_editingBudgetId != null ? 'Update' : 'Save', style: const TextStyle(fontSize: 16)), // Reduced from 18
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

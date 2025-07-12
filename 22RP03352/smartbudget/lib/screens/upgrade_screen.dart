@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/premium_service.dart'; // Correct import for PremiumService
 
 class UpgradeScreen extends StatelessWidget {
   const UpgradeScreen({super.key});
@@ -29,11 +30,34 @@ class UpgradeScreen extends StatelessWidget {
             ),
             SizedBox(height: 24),
             ElevatedButton(
-              onPressed: () {
-                // TODO: Implement purchase logic
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Purchase flow coming soon!')),
+              onPressed: () async {
+                final result = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Simulated Payment'),
+                    content: Text('This is a simulated payment for assessment purposes. Proceed to unlock premium features?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text('Pay & Upgrade'),
+                      ),
+                    ],
+                  ),
                 );
+                if (result == true) {
+                  // Simulate payment success
+                  await PremiumService.setPremium(true);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Premium unlocked! Enjoy your new features.')),
+                    );
+                    Navigator.of(context).pop();
+                  }
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[800],
