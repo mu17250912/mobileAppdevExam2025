@@ -4,6 +4,7 @@ import '../services/water_log_service.dart';
 import '../screens/log_water_screen.dart';
 import '../widgets/usage_chart.dart';
 import '../widgets/add_house_info_form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DashboardPage extends StatelessWidget {
   final User user;
@@ -100,7 +101,7 @@ class DashboardPage extends StatelessWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('Add House Info'),
-                        content: const AddHouseInfoForm(),
+                        content: AddHouseInfoForm(email: user.email),
                         contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
                         actions: [], // Form handles its own actions
                       ),
@@ -110,15 +111,53 @@ class DashboardPage extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.manage_accounts),
                   title: const Text('Manage House Info'),
-                  onTap: () {
+                  onTap: () async {
                     Navigator.pop(context);
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Manage House Info'),
-                        content: Text('Household Size: 24{user.householdSize}\nWater Usage Goal: 24{user.waterUsageGoalPercent}% reduction'),
-                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                      ),
+                      barrierDismissible: false,
+                      builder: (context) {
+                        return FutureBuilder<Widget>(
+                          future: (() async {
+                            final doc = await FirebaseFirestore.instance.collection('users').doc(user.email).get();
+                            if (!doc.exists) {
+                              return AlertDialog(
+                                title: const Text('Manage House Info'),
+                                content: const Text('No house info found.'),
+                                actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                              );
+                            }
+                            final data = doc.data()!;
+                            return AlertDialog(
+                              title: const Text('Manage House Info'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Household Size:  ${data['householdSize'] ?? '-'}'),
+                                  Text('Location:  ${data['location'] ?? '-'}'),
+                                  Text('Goal:  ${data['waterUsageGoalPercent'] ?? '-'}%'),
+                                  Text('Reasons:  ${data['goalReasons'] as List? ?? '-'}'),
+                                  if (data['goalReasonOther'] != null && (data['goalReasonOther'] as String).isNotEmpty)
+                                    Text('Other Reason:  ${data['goalReasonOther']}'),
+                                  Text('Water Bill:  ${data['averageWaterBill'] ?? '-'}'),
+                                  Text('Meter Option:  ${data['usesSmartMeter'] == true ? 'Smart Meter' : 'Manual'}'),
+                                ],
+                              ),
+                              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                            );
+                          })(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const AlertDialog(
+                                title: Text('Manage House Info'),
+                                content: SizedBox(height: 60, child: Center(child: CircularProgressIndicator())),
+                              );
+                            }
+                            return snapshot.data!;
+                          },
+                        );
+                      },
                     );
                   },
                 ),

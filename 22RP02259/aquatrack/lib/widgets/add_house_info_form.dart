@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddHouseInfoForm extends StatefulWidget {
-  const AddHouseInfoForm({Key? key}) : super(key: key);
+  final String email;
+  const AddHouseInfoForm({Key? key, required this.email}) : super(key: key);
 
   @override
   State<AddHouseInfoForm> createState() => _AddHouseInfoFormState();
@@ -17,6 +19,7 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
   double? waterBill;
   String meterOption = 'manual';
   int? customGoalPercent;
+  bool _saving = false;
 
   final List<String> reasons = [
     'Reduce utility bills',
@@ -24,6 +27,48 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
     'Drought in my area',
     'Other',
   ];
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    _formKey.currentState?.save();
+    setState(() { _saving = true; });
+    final selectedGoal = goalPercent == -1 ? customGoalPercent : goalPercent;
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(widget.email).set({
+        'email': widget.email,
+        'householdSize': householdSize,
+        'location': location,
+        'waterUsageGoalPercent': selectedGoal,
+        'goalReasons': goalReasons,
+        'goalReasonOther': goalReasonOther,
+        'averageWaterBill': waterBill,
+        'usesSmartMeter': meterOption == 'smart',
+      }, SetOptions(merge: true));
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Success'),
+            content: const Text('House info saved successfully!'),
+            actions: [TextButton(onPressed: () { Navigator.pop(context); Navigator.pop(context); }, child: const Text('OK'))],
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Failed to save: $e'),
+            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() { _saving = false; });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,34 +237,13 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: _saving ? null : () => Navigator.pop(context),
                   child: const Text('Cancel'),
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      _formKey.currentState?.save();
-                      final selectedGoal = goalPercent == -1 ? customGoalPercent : goalPercent;
-                      // For now, just show a dialog with the entered info
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('House Info Submitted'),
-                          content: Text(
-                            'Household Size: $householdSize\n'
-                            'Location: ${location ?? '-'}\n'
-                            'Goal: $selectedGoal%\n'
-                            'Reasons: ${goalReasons.join(", ")}${goalReasonOther != null ? " ($goalReasonOther)" : ""}\n'
-                            'Water Bill: ${waterBill ?? '-'}\n'
-                            'Meter Option: $meterOption',
-                          ),
-                          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Submit'),
+                  onPressed: _saving ? null : _submit,
+                  child: _saving ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Text('Submit'),
                 ),
               ],
             ),
