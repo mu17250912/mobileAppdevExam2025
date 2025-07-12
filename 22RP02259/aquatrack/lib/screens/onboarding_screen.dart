@@ -17,6 +17,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   double? _averageWaterBill;
   double? _waterUsageGoalPercent;
   bool _usesSmartMeter = false;
+  bool _loading = false;
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -242,32 +244,71 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                               ),
-                              child: const Text(
-                                'Get Started',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
-                              ),
-                              onPressed: () async {
-                                if (_formKey.currentState?.validate() ?? false) {
-                                  _formKey.currentState?.save();
-                                  final String email = widget.email;
-                                  final user = User(
-                                    email: email,
-                                    householdSize: _householdSize!,
-                                    averageWaterBill: _averageWaterBill,
-                                    waterUsageGoalPercent: _waterUsageGoalPercent!,
-                                    usesSmartMeter: _usesSmartMeter,
-                                  );
-                                  // Save to Firestore
-                                  await FirebaseFirestore.instance.collection('users').doc(email).set({
-                                    'email': user.email,
-                                    'householdSize': user.householdSize,
-                                    'averageWaterBill': user.averageWaterBill,
-                                    'waterUsageGoalPercent': user.waterUsageGoalPercent,
-                                    'usesSmartMeter': user.usesSmartMeter,
-                                  });
-                                  widget.onComplete(user);
-                                }
-                              },
+                              child: _loading
+                                  ? const SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                                    )
+                                  : const Text(
+                                      'Get Started',
+                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1),
+                                    ),
+                              onPressed: _loading
+                                  ? null
+                                  : () async {
+                                      print('Get Started button pressed');
+                                      print('Email: \'${widget.email}\'');
+                                      setState(() {
+                                        _loading = true;
+                                        _errorMessage = null;
+                                      });
+                                      print('Loading set to true');
+                                      try {
+                                        if (_formKey.currentState?.validate() ?? false) {
+                                          print('Form validated');
+                                          _formKey.currentState?.save();
+                                          final String email = widget.email;
+                                          print('Saving for email: ' + email);
+                                          final user = User(
+                                            email: email,
+                                            householdSize: _householdSize!,
+                                            averageWaterBill: _averageWaterBill,
+                                            waterUsageGoalPercent: _waterUsageGoalPercent!,
+                                            usesSmartMeter: _usesSmartMeter,
+                                          );
+                                          await FirebaseFirestore.instance.collection('users').doc(email).set({
+                                            'email': user.email,
+                                            'householdSize': user.householdSize,
+                                            'averageWaterBill': user.averageWaterBill,
+                                            'waterUsageGoalPercent': user.waterUsageGoalPercent,
+                                            'usesSmartMeter': user.usesSmartMeter,
+                                          });
+                                          print('Firestore write successful');
+                                          widget.onComplete(user);
+                                        } else {
+                                          print('Form validation failed');
+                                        }
+                                      } catch (e) {
+                                        print('Firestore error: ' + e.toString());
+                                        setState(() {
+                                          _errorMessage = 'Failed to save data. Please try again.';
+                                        });
+                                      } finally {
+                                        print('Loading set to false');
+                                        setState(() {
+                                          _loading = false;
+                                        });
+                                      }
+                                    },
+                            ),
+                          ),
+                        if (_errorMessage != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: Text(
+                              _errorMessage!,
+                              style: const TextStyle(color: Colors.red),
                             ),
                           ),
                         ],

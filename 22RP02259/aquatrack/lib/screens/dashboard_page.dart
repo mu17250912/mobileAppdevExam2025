@@ -85,20 +85,42 @@ class DashboardPage extends StatelessWidget {
                 ],
               ),
             ),
-            ListTile(
+            // Replace House Info ListTile with ExpansionTile
+            ExpansionTile(
               leading: const Icon(Icons.house),
               title: const Text('House Info'),
-              onTap: () {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Household Information'),
-                    content: Text('Household Size: ${user.householdSize}\nWater Usage Goal: ${user.waterUsageGoalPercent}% reduction'),
-                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                  ),
-                );
-              },
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.add_home),
+                  title: const Text('Add House Info'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Add House Info'),
+                        content: const Text('This feature is coming soon!'),
+                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.manage_accounts),
+                  title: const Text('Manage House Info'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Manage House Info'),
+                        content: Text('Household Size: 24{user.householdSize}\nWater Usage Goal: 24{user.waterUsageGoalPercent}% reduction'),
+                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             ListTile(
               leading: const Icon(Icons.history),
