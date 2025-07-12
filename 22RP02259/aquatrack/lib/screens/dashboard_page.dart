@@ -6,6 +6,7 @@ import '../widgets/usage_chart.dart';
 import '../widgets/add_house_info_form.dart';
 import '../widgets/daily_water_log_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/water_log.dart'; // Added import for WaterLog
 
 class DashboardPage extends StatelessWidget {
   final User user;
@@ -51,6 +52,17 @@ class DashboardPage extends StatelessWidget {
             'unit': data['unit'],
             'note': data['note'],
           };
+        }).toList();
+        // For UsageChart, convert logs to WaterLog objects (if needed)
+        final chartLogs = docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          return WaterLog(
+            timestamp: DateTime.tryParse(data['date'] ?? '') ?? DateTime.now(),
+            activityType: data['activityType']?.toString() ?? '',
+            amount: (data['amount'] is num) ? (data['amount'] as num).toDouble() : 0.0,
+            unit: data['unit']?.toString() ?? '',
+            note: data['note']?.toString(),
+          );
         }).toList();
         // Calculate stats
         final now = DateTime.now();
@@ -581,28 +593,19 @@ class DashboardPage extends StatelessWidget {
                 // UsageChart and button (optional: you can update UsageChart to use logs)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: UsageChart(logs: []), // You can update this to use logs if needed
+                  child: UsageChart(logs: chartLogs),
                 ),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.water_drop),
-                    label: const Text('Log Water Usage'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade700,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 24.0),
+                      child: Text(
+                        '© SHYAKA Aimable Mobile App development',
+                        style: TextStyle(color: Colors.grey.shade600, fontSize: 14, fontWeight: FontWeight.w500),
+                      ),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LogWaterScreen(logService: waterLogService, email: user.email),
-                        ),
-                      );
-                    },
                   ),
                 ),
                 const SizedBox(height: 32),
