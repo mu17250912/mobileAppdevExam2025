@@ -15,9 +15,8 @@ class _AdBannerState extends State<AdBanner> {
   @override
   void initState() {
     super.initState();
-    _bannerAd = BannerAd(
-      adUnitId: 'ca-app-pub-4640305421851017/9085817759', // Test Banner ID
-      // adUnitId: 'ca-app-pub-3940256099942544/6300978111', // Test Banner ID
+    _bannerAd = BannerAd( // Google's test banner
+      adUnitId: 'ca-app-pub-4640305421851017/9085817759', // Your test banner
       size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(

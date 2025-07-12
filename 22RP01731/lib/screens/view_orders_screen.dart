@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/order.dart' as model_order;
-import 'package:firebase_auth/firebase_auth.dart';
 
 class ViewOrdersScreen extends StatefulWidget {
   const ViewOrdersScreen({super.key});

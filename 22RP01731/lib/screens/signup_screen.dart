@@ -416,11 +416,11 @@ class _SignupScreenState extends State<SignupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Row(
+            content: const Row(
               children: [
                 Icon(Icons.check_circle, color: Colors.white),
-                const SizedBox(width: 8),
-                const Text('Account created successfully! Please sign in.'),
+                SizedBox(width: 8),
+                Text('Account created successfully! Please sign in.'),
               ],
             ),
             backgroundColor: Colors.green.shade600,
