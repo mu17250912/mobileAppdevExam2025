@@ -35,7 +35,7 @@ class UpgradeScreen extends StatelessWidget {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text('Simulated Payment'),
-                    content: Text('This is a simulated payment for assessment purposes. Proceed to unlock premium features?'),
+                    content: Text('This is a simulated payment. Proceed to unlock premium features?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(false),

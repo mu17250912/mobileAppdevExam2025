@@ -3,6 +3,9 @@ import 'package:fl_chart/fl_chart.dart';
 import '../services/enhanced_analytics_service.dart';
 import '../services/accessibility_service.dart';
 import '../services/gamification_service.dart';
+import '../screens/premium_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../main.dart'; // For selectedMonthYear
 
 class EnhancedAnalyticsScreen extends StatefulWidget {
   const EnhancedAnalyticsScreen({super.key});
@@ -21,12 +24,16 @@ class _EnhancedAnalyticsScreenState extends State<EnhancedAnalyticsScreen>
   List<Map<String, dynamic>> _expenseHistory = [];
   Map<String, double> _categorySpending = {};
   List<Map<String, dynamic>> _budgetInsights = [];
+  bool _isPremium = false;
+  DateTime _selectedDate = selectedMonthYear.value;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    _loadAnalyticsData();
+    selectedMonthYear.addListener(_onMonthYearChanged);
+    _selectedDate = selectedMonthYear.value;
+    _checkPremiumAndLoad();
     _initializeAccessibility();
   }
 
@@ -46,13 +53,13 @@ class _EnhancedAnalyticsScreenState extends State<EnhancedAnalyticsScreen>
       final analyticsService = EnhancedAnalyticsService();
       
       // Load comprehensive analytics data
-      _analyticsData = await analyticsService.getComprehensiveAnalytics(_selectedPeriod);
-      _expenseHistory = await analyticsService.getExpenseHistory(_selectedPeriod);
-      _categorySpending = await analyticsService.getCategorySpending(_selectedPeriod);
-      _budgetInsights = await analyticsService.getBudgetInsights(_selectedPeriod);
+      _analyticsData = await analyticsService.getComprehensiveAnalyticsForMonthYear(_selectedDate.month, _selectedDate.year);
+      _expenseHistory = await analyticsService.getExpenseHistoryForMonthYear(_selectedDate.month, _selectedDate.year);
+      _categorySpending = await analyticsService.getCategorySpendingForMonthYear(_selectedDate.month, _selectedDate.year);
+      _budgetInsights = await analyticsService.getBudgetInsightsForMonthYear(_selectedDate.month, _selectedDate.year);
       
       // Update gamification progress
-      await GamificationService.updateAnalyticsProgress(_analyticsData);
+      // await GamificationService.updateAnalyticsProgress(_analyticsData);
       
     } catch (e) {
       if (mounted) {
@@ -67,8 +74,27 @@ class _EnhancedAnalyticsScreenState extends State<EnhancedAnalyticsScreen>
     }
   }
 
+  Future<void> _checkPremiumAndLoad() async {
+    final premium = await PremiumService.isPremium();
+    setState(() {
+      _isPremium = premium;
+    });
+    if (premium) {
+      _loadAnalyticsData();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_isPremium) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Enhanced Analytics')),
+        body: Center(
+          child: Text('Upgrade to Premium to access Enhanced Analytics!',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Semantics(
@@ -80,11 +106,6 @@ class _EnhancedAnalyticsScreenState extends State<EnhancedAnalyticsScreen>
             icon: Icon(Icons.refresh),
             onPressed: _loadAnalyticsData,
             tooltip: 'Refresh analytics',
-          ),
-          IconButton(
-            icon: Icon(Icons.download),
-            onPressed: _exportAnalyticsData,
-            tooltip: 'Export data',
           ),
         ],
         bottom: TabBar(
@@ -137,17 +158,17 @@ class _EnhancedAnalyticsScreenState extends State<EnhancedAnalyticsScreen>
       children: [
         Row(
           children: [
-            Expanded(child: _buildSummaryCard('Total Spent', '\$${totalSpent.toStringAsFixed(2)}', Colors.red)),
+            Expanded(child: _buildSummaryCard('Total Spent', 'RWF ${totalSpent.toStringAsFixed(2)}', Colors.red)),
             SizedBox(width: 12),
-            Expanded(child: _buildSummaryCard('Budget', '\$${budget.toStringAsFixed(2)}', Colors.blue)),
+            Expanded(child: _buildSummaryCard('Budget', 'RWF ${budget.toStringAsFixed(2)}', Colors.blue)),
           ],
         ),
         SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: _buildSummaryCard('Savings', '\$${savings.toStringAsFixed(2)}', Colors.green)),
+            Expanded(child: _buildSummaryCard('Savings', 'RWF ${savings.toStringAsFixed(2)}', Colors.green)),
             SizedBox(width: 12),
-            Expanded(child: _buildSummaryCard('Daily Avg', '\$${avgDaily.toStringAsFixed(2)}', Colors.orange)),
+            Expanded(child: _buildSummaryCard('Daily Avg', 'RWF ${avgDaily.toStringAsFixed(2)}', Colors.orange)),
           ],
         ),
       ],
@@ -208,17 +229,23 @@ class _EnhancedAnalyticsScreenState extends State<EnhancedAnalyticsScreen>
           children: [
             Text('Recent Activity', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 12),
-            ..._expenseHistory.take(5).map((expense) => 
-              ListTile(
+            ..._expenseHistory.take(5).map((expense) {
+              final note = expense['note']?.toString().trim();
+              final category = expense['category']?.toString() ?? '';
+              final amount = expense['amount'] ?? 0.0;
+              final date = expense['date'] is Timestamp ? (expense['date'] as Timestamp).toDate() : null;
+              final title = (note != null && note.isNotEmpty) ? note : (category.isNotEmpty ? category : 'No description');
+              final dateStr = date != null ? '${date.day}/${date.month}/${date.year}' : '';
+              return ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.grey[200],
                   child: Icon(Icons.receipt, color: Colors.grey[600]),
                 ),
-                title: Text(expense['description'] ?? 'Unknown'),
-                subtitle: Text(expense['category'] ?? 'Uncategorized'),
-                trailing: Text('\$${(expense['amount'] ?? 0.0).toStringAsFixed(2)}'),
-              ),
-            ),
+                title: Text(title),
+                subtitle: Text(category + (dateStr.isNotEmpty ? ' • $dateStr' : '')),
+                trailing: Text('RWF ${amount.toStringAsFixed(2)}'),
+              );
+            }),
           ],
         ),
       ),
@@ -545,27 +572,18 @@ class _EnhancedAnalyticsScreenState extends State<EnhancedAnalyticsScreen>
     return colors[category] ?? Colors.grey;
   }
 
-  Future<void> _exportAnalyticsData() async {
-    try {
-      final analyticsService = EnhancedAnalyticsService();
-      final success = await analyticsService.exportAnalyticsData(_selectedPeriod);
-      
-      if (success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Analytics data exported successfully')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error exporting data: $e')),
-        );
-      }
+  void _onMonthYearChanged() {
+    setState(() {
+      _selectedDate = selectedMonthYear.value;
+    });
+    if (_isPremium) {
+      _loadAnalyticsData();
     }
   }
 
   @override
   void dispose() {
+    selectedMonthYear.removeListener(_onMonthYearChanged);
     _tabController.dispose();
     super.dispose();
   }

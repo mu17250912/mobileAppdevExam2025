@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dart:math';
+import '../main.dart'; // For selectedMonthYear
 
 class AnalyticsScreen extends StatelessWidget {
   const AnalyticsScreen({super.key});
@@ -11,9 +12,9 @@ class AnalyticsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final now = DateTime.now();
-    final currentMonth = now.month;
-    final currentYear = now.year;
+    final selected = selectedMonthYear.value;
+    final selectedMonth = selected.month;
+    final selectedYear = selected.year;
 
     return FutureBuilder<bool>(
       future: PremiumService.isPremium(),
@@ -38,7 +39,7 @@ class AnalyticsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Spending by Category (This Month)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text('Spending by Category (${selectedMonth}/${selectedYear})', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 SizedBox(height: 12),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
@@ -46,8 +47,8 @@ class AnalyticsScreen extends StatelessWidget {
                         .collection('expenses')
                         .doc(user!.uid)
                         .collection('user_expenses')
-                        .where('month', isEqualTo: currentMonth)
-                        .where('year', isEqualTo: currentYear)
+                        .where('month', isEqualTo: selectedMonth)
+                        .where('year', isEqualTo: selectedYear)
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {

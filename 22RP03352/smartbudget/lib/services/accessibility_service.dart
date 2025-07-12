@@ -152,14 +152,15 @@ class AccessibilityService {
 
   // Focus management for keyboard navigation
   static FocusNode createAccessibleFocusNode(String identifier) {
-    return FocusNode(
+    final node = FocusNode(
       debugLabel: identifier,
-      onFocusChange: (hasFocus) {
-        if (hasFocus) {
-          // Announce when element receives focus
-          debugPrint('Focus received: $identifier');
-        }
-      },
     );
+    node.addListener(() {
+      if (node.hasFocus) {
+        // Announce when element receives focus
+        debugPrint('Focus received: $identifier');
+      }
+    });
+    return node;
   }
 } 

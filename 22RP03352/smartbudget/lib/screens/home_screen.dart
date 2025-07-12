@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'premium_service.dart'; // Added import for PremiumService
 import 'upgrade_screen.dart'; // Added import for UpgradeScreen
 import 'analytics_screen.dart'; // Added import for AnalyticsScreen
+import 'enhanced_analytics_screen.dart'; // Added import for EnhancedAnalyticsScreen
 import 'package:flutter/foundation.dart';
 import '../services/analytics_service.dart'; // Added import for AnalyticsService
 import '../main.dart'; // For selectedMonthYear
@@ -177,6 +178,46 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.of(context).pop();
               },
               child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAnalyticsOptions() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Choose Analytics Type'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.bar_chart, color: Colors.blue),
+                title: Text('Basic Analytics'),
+                subtitle: Text('Simple charts and reports'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AnalyticsScreen()));
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.analytics, color: Colors.green),
+                title: Text('Enhanced Analytics'),
+                subtitle: Text('Advanced insights and AI recommendations'),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EnhancedAnalyticsScreen()));
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
             ),
           ],
         );
@@ -493,7 +534,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: Colors.green[700]!,
                                       onPressed: () async {
                                         await AnalyticsService.logFeatureUsage(featureName: 'analytics_button');
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AnalyticsScreen()));
+                                        _showAnalyticsOptions();
                                       },
                                     ),
                                     // Only show "Shop on Amazon" button if not premium
@@ -537,7 +578,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       color: Colors.green[700]!,
                                       onPressed: () async {
                                         await AnalyticsService.logFeatureUsage(featureName: 'analytics_button');
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AnalyticsScreen()));
+                                        _showAnalyticsOptions();
                                       },
                                     ),
                                     // Only show "Shop on Amazon" button if not premium

@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../main.dart';
 
 class EnhancedNotificationService {
@@ -23,7 +24,7 @@ class EnhancedNotificationService {
     'daily_reminders',
     'Daily Reminders',
     description: 'Daily reminders to track expenses',
-    importance: Importance.medium,
+    importance: Importance.defaultImportance,
   );
 
   static const AndroidNotificationChannel achievementChannel = AndroidNotificationChannel(
@@ -35,6 +36,12 @@ class EnhancedNotificationService {
 
   // Initialize notification service
   static Future<void> initialize() async {
+    // Skip Firebase Messaging initialization on web for now
+    if (kIsWeb) {
+      print('Firebase Messaging skipped on web platform');
+      return;
+    }
+    
     // Request permissions
     final settings = await _firebaseMessaging.requestPermission(
       alert: true,
@@ -72,19 +79,23 @@ class EnhancedNotificationService {
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(achievementChannel);
 
-    // Handle Firebase messages
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessage);
-    FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessage);
-
-    // Get FCM token
-    final token = await _firebaseMessaging.getToken();
-    if (token != null) {
-      await _saveFCMToken(token);
+    // Handle Firebase messages (skip on web)
+    if (!kIsWeb) {
+      FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+      FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessage);
+      FirebaseMessaging.onBackgroundMessage(_handleBackgroundMessage);
     }
 
-    // Listen for token refresh
-    _firebaseMessaging.onTokenRefresh.listen(_saveFCMToken);
+    // Get FCM token (skip on web)
+    if (!kIsWeb) {
+      final token = await _firebaseMessaging.getToken();
+      if (token != null) {
+        await _saveFCMToken(token);
+      }
+
+      // Listen for token refresh
+      _firebaseMessaging.onTokenRefresh.listen(_saveFCMToken);
+    }
   }
 
   // Save FCM token to Firestore
@@ -165,8 +176,8 @@ class EnhancedNotificationService {
       'daily_reminders',
       'Daily Reminders',
       channelDescription: 'Daily reminders to track expenses',
-      importance: Importance.medium,
-      priority: Priority.medium,
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
     );
 
     const NotificationDetails platformChannelSpecifics = NotificationDetails(

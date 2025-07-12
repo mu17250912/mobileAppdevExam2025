@@ -9,6 +9,7 @@ import 'screens/home_screen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'services/enhanced_notification_service.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -86,6 +87,7 @@ void main() async {
     await MobileAds.instance.initialize();
   }
   await initializeNotifications();
+  await EnhancedNotificationService.initialize();
   runApp(const MyApp());
 }
 
