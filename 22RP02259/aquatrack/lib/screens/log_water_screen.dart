@@ -4,7 +4,8 @@ import '../services/water_log_service.dart';
 
 class LogWaterScreen extends StatefulWidget {
   final WaterLogService logService;
-  const LogWaterScreen({Key? key, required this.logService}) : super(key: key);
+  final String email;
+  const LogWaterScreen({Key? key, required this.logService, required this.email}) : super(key: key);
 
   @override
   State<LogWaterScreen> createState() => _LogWaterScreenState();
