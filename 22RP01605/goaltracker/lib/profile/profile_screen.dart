@@ -12,6 +12,10 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../payment/lnpay_service.dart';
+import '../payment/payment_tracker.dart';
+import '../payment/api_test.dart';
+import '../shared/app_theme.dart';
+import '../settings/theme_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -22,6 +26,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final ProfileService _profileService = ProfileService();
+  final PaymentTracker _paymentTracker = PaymentTracker();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _xpController = TextEditingController();
@@ -36,6 +41,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   int _referralCount = 0;
   bool _premium = false;
   String? _phoneForPayment;
+  Map<String, dynamic>? _latestPayment;
+  String _currentTemplate = 'Elegant Purple';
 
   @override
   void initState() {
@@ -43,12 +50,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _reloadUserAndLoadProfile();
     _delayedShowVerificationCard();
     _phoneForPayment = _telephoneController.text;
+    _loadLatestPayment();
+    _startPaymentListener();
+    _loadTemplate();
   }
 
   Future<void> _delayedShowVerificationCard() async {
     setState(() => _showVerificationCard = false);
     await Future.delayed(const Duration(seconds: 3));
     if (mounted) setState(() => _showVerificationCard = true);
+  }
+
+  Future<void> _loadLatestPayment() async {
+    try {
+      final payment = await _paymentTracker.getLatestPayment();
+      if (mounted) {
+        setState(() {
+          _latestPayment = payment;
+        });
+      }
+    } catch (e) {
+      print('[ProfileScreen] Error loading latest payment: $e');
+    }
+  }
+
+  IconData _getPaymentStatusIcon(String status) {
+    switch (status) {
+      case 'completed':
+        return Icons.check_circle;
+      case 'processing':
+        return Icons.hourglass_empty;
+      case 'failed':
+        return Icons.error;
+      case 'timeout':
+        return Icons.schedule;
+      default:
+        return Icons.info;
+    }
+  }
+
+  Color _getPaymentStatusColor(String status) {
+    switch (status) {
+      case 'completed':
+        return Colors.green;
+      case 'processing':
+        return Colors.orange;
+      case 'failed':
+        return Colors.red;
+      case 'timeout':
+        return Colors.grey;
+      default:
+        return Colors.blue;
+    }
+  }
+
+  String _getPaymentStatusText(String status) {
+    switch (status) {
+      case 'completed':
+        return 'Payment Completed';
+      case 'processing':
+        return 'Payment Processing';
+      case 'failed':
+        return 'Payment Failed';
+      case 'timeout':
+        return 'Payment Timeout';
+      default:
+        return 'Payment Pending';
+    }
+  }
+
+  void _startPaymentListener() {
+    _paymentTracker.getPaymentHistory().listen((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        final latestPayment =
+            snapshot.docs.first.data() as Map<String, dynamic>;
+        if (mounted) {
+          setState(() {
+            _latestPayment = latestPayment;
+          });
+
+          // Auto-reload profile if payment is completed
+          if (latestPayment['status'] == 'completed') {
+            _loadProfile();
+          }
+        }
+      }
+    });
   }
 
   Future<void> _reloadUserAndLoadProfile() async {
@@ -106,6 +193,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     }
     setState(() => _loading = false);
+  }
+
+  Future<void> _loadTemplate() async {
+    final template = await ThemeService.getCurrentTemplate();
+    setState(() {
+      _currentTemplate = template;
+    });
   }
 
   Future<void> _saveProfile() async {
@@ -185,8 +279,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _requestPremiumPayment() async {
-    final phone = _telephoneController.text.trim();
+  Future<Map<String, dynamic>> requestPaymentProxy(
+    int amount,
+    String phone, {
+    required String apiKey,
+    String network = 'mtn',
+  }) async {
+    final url = Uri.parse('https://www.lanari.rw/pay/lnpay/pay_proxy.php');
+    final payload = {
+      'amount': amount,
+      'phone': phone,
+      'network': network,
+      'apiKey': apiKey,
+    };
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      );
+
+      dynamic decoded;
+      try {
+        decoded = jsonDecode(response.body);
+      } catch (_) {
+        decoded = response.body;
+      }
+
+      return {'status': response.statusCode, 'response': decoded};
+    } catch (e) {
+      return {'status': -1, 'response': 'Network error: $e'};
+    }
+  }
+
+  void _showPhoneInputDialog() {
+    final phoneController = TextEditingController(
+      text: _telephoneController.text,
+    );
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Enter Phone Number'),
+          content: TextField(
+            controller: phoneController,
+            keyboardType: TextInputType.phone,
+            decoration: const InputDecoration(
+              labelText: 'Phone Number',
+              prefixIcon: Icon(Icons.phone),
+              hintText: 'e.g. 07XXXXXXXX',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context), // Cancel
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final phone = phoneController.text.trim();
+                if (phone.isEmpty || phone.length < 10) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter a valid phone number.'),
+                    ),
+                  );
+                  return;
+                }
+                Navigator.pop(context); // Close dialog
+                await _requestPremiumPayment(phone); // Pass phone to payment
+              },
+              child: const Text('Pay'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _requestPremiumPayment(String phone) async {
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -195,37 +368,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
       return;
     }
-    final lnpay = LnPay(
-      '6949156a26cafc9d148b0e36158bb005af91b67160f892ed9592cc595eaa818c',
-    );
+
+    setState(() => _loading = true);
+
     try {
-      final result = await lnpay.requestPayment(
-        amount: 5000,
+      print('[ProfileScreen] Processing payment for phone: $phone');
+      await _paymentTracker.processPayment(
+        amount: 10000,
         phone: phone,
         network: 'mtn',
       );
-      if (result['status'] == 200) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Payment request sent! We will automatically upgrade you to premium once payment is confirmed.',
+          ),
+        ),
+      );
+
+      // Reload profile to check for premium status
+      await _loadProfile();
+      await _loadLatestPayment();
+
+      // Check if user is now premium
+      if (_premium) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Payment request sent! You will be upgraded to premium after payment.',
-            ),
+            content: Text('🎉 Congratulations! You are now a premium user!'),
+            backgroundColor: Colors.green,
           ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Payment failed: ${result['response']}')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Payment error: $e')));
+      debugPrint('PAYMENT ERROR: $e');
+    } finally {
+      setState(() => _loading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final templateData = ThemeService.getTemplateData(_currentTemplate);
     final user = FirebaseAuth.instance.currentUser;
     print(
       '[ProfileScreen] user.emailVerified: ${user?.emailVerified}, auth email: ${user?.email}, profile email: ${_emailController.text}',
@@ -233,8 +420,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final emailsMatch = user != null && user.email == _emailController.text;
     final isVerified = user != null && user.emailVerified && emailsMatch;
     return Scaffold(
+      backgroundColor: templateData['backgroundColor'],
       appBar: AppBar(
         title: const Text('Profile'),
+        backgroundColor: templateData['appBarColor'],
+        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -261,10 +451,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (!_premium) ...[
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16),
-                        child: ElevatedButton.icon(
-                          icon: const Icon(Icons.lock_open),
-                          label: const Text('Upgrade to Premium (5000 RWF)'),
-                          onPressed: _requestPremiumPayment,
+                        child: Column(
+                          children: [
+                            ElevatedButton.icon(
+                              icon: const Icon(Icons.lock_open),
+                              label: const Text(
+                                'Upgrade to Premium (10000 RWF)',
+                              ),
+                              onPressed: _showPhoneInputDialog,
+                            ),
+                            const SizedBox(height: 8),
+                          ],
                         ),
                       ),
                     ],
@@ -284,121 +481,363 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    if (_latestPayment != null && !_premium) ...[
+                      Card(
+                        color: Colors.blue[50],
+                        margin: const EdgeInsets.only(bottom: 16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    _getPaymentStatusIcon(
+                                      _latestPayment!['status'],
+                                    ),
+                                    color: _getPaymentStatusColor(
+                                      _latestPayment!['status'],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Payment Status: ${_getPaymentStatusText(_latestPayment!['status'])}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: _getPaymentStatusColor(
+                                          _latestPayment!['status'],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.refresh, size: 18),
+                                    onPressed: () async {
+                                      await _loadLatestPayment();
+                                      await _loadProfile();
+                                    },
+                                    tooltip: 'Refresh payment status',
+                                  ),
+                                ],
+                              ),
+                              if (_latestPayment!['status'] ==
+                                  'processing') ...[
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Please complete the payment to upgrade to premium.',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
+                              if (_latestPayment!['status'] == 'failed' ||
+                                  _latestPayment!['status'] == 'timeout') ...[
+                                const SizedBox(height: 8),
+                                ElevatedButton(
+                                  onPressed: () => _showPhoneInputDialog(),
+                                  child: const Text('Try Again'),
+                                ),
+                              ],
+                              if (_latestPayment!['errorMessage'] != null) ...[
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Error: ${_latestPayment!['errorMessage']}',
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     if (isVerified &&
                         _referralCode != null &&
                         _referralCode!.isNotEmpty) ...[
-                      Row(
-                        children: [
-                          const Icon(Icons.card_giftcard, color: Colors.blue),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Referral Code: $_referralCode',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.copy, size: 18),
-                            tooltip: 'Copy referral code',
-                            onPressed: () {
-                              Clipboard.setData(
-                                ClipboardData(text: _referralCode!),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Referral code copied!'),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.card_giftcard,
+                                  color: Colors.blue,
                                 ),
-                              );
-                            },
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Referral Code: $_referralCode',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.copy,
+                                    size: 18,
+                                    color: Colors.black,
+                                  ),
+                                  tooltip: 'Copy referral code',
+                                  onPressed: () {
+                                    Clipboard.setData(
+                                      ClipboardData(text: _referralCode!),
+                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Referral code copied!'),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
+                        ),
                       ),
                       const SizedBox(height: 8),
                     ],
                     if (isVerified) ...[
-                      Row(
-                        children: [
-                          const Icon(Icons.group, color: Colors.green),
-                          const SizedBox(width: 8),
-                          Text('Referrals: $_referralCount'),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.group, color: Colors.green),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Referrals: $_referralCount',
+                                  style: const TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 16),
                     ],
-                    TextFormField(
-                      controller: _emailController,
-                      enabled: _editing, // Email now editable
-                      decoration: const InputDecoration(
-                        labelText: 'Profile Email (Firestore)',
-                        prefixIcon: Icon(Icons.email),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Enter email';
-                        // Improved email validation regex
-                        final emailRegex = RegExp(
-                          r'^[^@\s]+@[^@\s]+\.[^@\s]+ *',
-                        );
-                        if (!emailRegex.hasMatch(v))
-                          return 'Enter a valid email address';
-                        return null;
-                      },
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Email Address',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        TextFormField(
+                          controller: _emailController,
+                          enabled: _editing,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            hintText: 'Enter your email',
+                            hintStyle: const TextStyle(color: Colors.black54),
+                            prefixIcon: const Icon(
+                              Icons.email,
+                              color: Colors.black,
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return 'Enter email';
+                            final emailRegex = RegExp(
+                              r'^[^@\s]+@[^@\s]+\.[^@\s]+ *',
+                            );
+                            if (!emailRegex.hasMatch(v))
+                              return 'Enter a valid email address';
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _usernameController,
-                      enabled: _editing,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        prefixIcon: Icon(Icons.person),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Enter username';
-                        return null;
-                      },
+                    const SizedBox(height: 18),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Username',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        TextFormField(
+                          controller: _usernameController,
+                          enabled: _editing,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            hintText: 'Enter your username',
+                            hintStyle: const TextStyle(color: Colors.black54),
+                            prefixIcon: const Icon(
+                              Icons.person,
+                              color: Colors.black,
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return 'Enter username';
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _telephoneController,
-                      enabled: _editing,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: 'Telephone',
-                        prefixIcon: Icon(Icons.phone),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Enter telephone';
-                        return null;
-                      },
+                    const SizedBox(height: 18),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Phone Number',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        TextFormField(
+                          controller: _telephoneController,
+                          enabled: _editing,
+                          keyboardType: TextInputType.phone,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            hintText: 'Enter your phone number',
+                            hintStyle: const TextStyle(color: Colors.black54),
+                            prefixIcon: const Icon(
+                              Icons.phone,
+                              color: Colors.black,
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty)
+                              return 'Enter phone number';
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _xpController,
-                      enabled: _editing,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'XP',
-                        prefixIcon: Icon(Icons.star),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Enter XP';
-                        if (int.tryParse(v) == null)
-                          return 'XP must be a number';
-                        return null;
-                      },
+                    const SizedBox(height: 18),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'XP',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        TextFormField(
+                          controller: _xpController,
+                          enabled: _editing,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            hintText: 'Enter your XP',
+                            hintStyle: const TextStyle(color: Colors.black54),
+                            prefixIcon: const Icon(
+                              Icons.star,
+                              color: Colors.black,
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return 'Enter XP';
+                            if (int.tryParse(v) == null)
+                              return 'XP must be a number';
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      enabled: _editing,
-                      initialValue: _trackedGoals.join(', '),
-                      decoration: const InputDecoration(
-                        labelText: 'Tracked Goals (comma separated)',
-                        prefixIcon: Icon(Icons.flag),
-                      ),
-                      onChanged: (v) {
-                        _trackedGoals = v
-                            .split(',')
-                            .map((e) => e.trim())
-                            .where((e) => e.isNotEmpty)
-                            .toList();
-                      },
+                    const SizedBox(height: 18),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Tracked Goals',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        TextFormField(
+                          enabled: _editing,
+                          initialValue: _trackedGoals.join(', '),
+                          style: const TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            hintText: 'Enter tracked goals (comma separated)',
+                            hintStyle: const TextStyle(color: Colors.black54),
+                            prefixIcon: const Icon(
+                              Icons.flag,
+                              color: Colors.black,
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white.withOpacity(0.3),
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onChanged: (v) {
+                            _trackedGoals = v
+                                .split(',')
+                                .map((e) => e.trim())
+                                .where((e) => e.isNotEmpty)
+                                .toList();
+                          },
+                        ),
+                      ],
                     ),
                     if (_error != null) ...[
                       const SizedBox(height: 16),

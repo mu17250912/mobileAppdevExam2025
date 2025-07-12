@@ -10,25 +10,90 @@ import 'analytics/analytics_screen.dart';
 import 'profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'splash_screen.dart';
+import 'shared/app_theme.dart';
+import 'settings/settings_screen.dart';
+import 'settings/theme_service.dart';
 
-class GoalTrackerApp extends StatelessWidget {
+class GoalTrackerApp extends StatefulWidget {
   const GoalTrackerApp({super.key});
 
   @override
+  State<GoalTrackerApp> createState() => _GoalTrackerAppState();
+}
+
+class _GoalTrackerAppState extends State<GoalTrackerApp> {
+  bool _showSplash = true;
+  String _currentTemplate = 'Elegant Purple';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTemplate();
+  }
+
+  Future<void> _loadTemplate() async {
+    final template = await ThemeService.getCurrentTemplate();
+    setState(() {
+      _currentTemplate = template;
+    });
+  }
+
+  void _onSplashComplete() {
+    setState(() {
+      _showSplash = false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final templateData = ThemeService.getTemplateData(_currentTemplate);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'GoalTracker',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: templateData['primaryColor'],
+        ),
         useMaterial3: true,
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+          hintStyle: TextStyle(color: Colors.black54),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black, width: 2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          fillColor: Colors.white,
+          filled: true,
+        ),
       ),
-      home: const RootScreen(),
+      home: _showSplash
+          ? SplashScreen(onSplashComplete: _onSplashComplete)
+          : const RootScreen(),
+      routes: {
+        '/profile': (context) => ProfileScreen(),
+        '/settings': (context) => SettingsScreen(),
+      },
       builder: (context, child) {
-        NotificationService.initialize(context!);
-        // Show a motivational notification on app launch
-        final quote = (List.of(QuoteWidget.quotes)..shuffle()).first;
-        NotificationService.showMotivationNotification(quote);
+        if (!_showSplash) {
+          NotificationService.initialize(context!);
+          // Show a motivational notification on app launch
+          final quote = (List.of(QuoteWidget.quotes)..shuffle()).first;
+          NotificationService.showMotivationNotification(quote);
+        }
         return child!;
       },
     );
@@ -169,11 +234,20 @@ class _MainNavScreenState extends State<MainNavScreen> {
   int _selectedIndex = 0;
   final _screens = [_GoalWithQuoteScreen(), AnalyticsScreen(), ProfileScreen()];
   String _usernameInitial = '?';
+  String _currentTemplate = 'Elegant Purple';
 
   @override
   void initState() {
     super.initState();
     _fetchUsernameInitial();
+    _loadTemplate();
+  }
+
+  Future<void> _loadTemplate() async {
+    final template = await ThemeService.getCurrentTemplate();
+    setState(() {
+      _currentTemplate = template;
+    });
   }
 
   Future<void> _fetchUsernameInitial() async {
@@ -194,17 +268,26 @@ class _MainNavScreenState extends State<MainNavScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final templateData = ThemeService.getTemplateData(_currentTemplate);
+
     return Scaffold(
+      backgroundColor: templateData['backgroundColor'],
       appBar: AppBar(
         title: const Text('GoalTracker'),
+        backgroundColor: templateData['appBarColor'],
+        foregroundColor: Colors.white,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: PopupMenuButton<String>(
               icon: CircleAvatar(
+                backgroundColor: Colors.white,
                 child: Text(
                   _usernameInitial,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: templateData['primaryColor'],
+                  ),
                 ),
               ),
               itemBuilder: (context) => [
@@ -238,12 +321,18 @@ class _MainNavScreenState extends State<MainNavScreen> {
               },
             ),
           ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Navigator.pushNamed(context, '/settings'),
+          ),
         ],
       ),
       body: _screens[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+        backgroundColor: templateData['cardColor'],
+        indicatorColor: templateData['primaryColor'].withOpacity(0.2),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.flag), label: 'Goals'),
           NavigationDestination(

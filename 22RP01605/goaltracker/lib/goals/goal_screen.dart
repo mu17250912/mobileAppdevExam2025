@@ -7,6 +7,8 @@ import '../profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../shared/app_theme.dart';
+import '../settings/theme_service.dart';
 
 class GoalScreen extends StatefulWidget {
   const GoalScreen({super.key});
@@ -19,6 +21,7 @@ class _GoalScreenState extends State<GoalScreen> {
   final GoalService _goalService = GoalService();
   ProfileService _profileService = ProfileService();
   bool _isPremium = false;
+  String _currentTemplate = 'Elegant Purple';
 
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
@@ -32,6 +35,14 @@ class _GoalScreenState extends State<GoalScreen> {
   void initState() {
     super.initState();
     _loadPremiumStatus();
+    _loadTemplate();
+  }
+
+  Future<void> _loadTemplate() async {
+    final template = await ThemeService.getCurrentTemplate();
+    setState(() {
+      _currentTemplate = template;
+    });
   }
 
   Future<void> _loadPremiumStatus() async {
@@ -76,14 +87,13 @@ class _GoalScreenState extends State<GoalScreen> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () async {
-                await _profileService.upgradeToPremium();
-                await _loadPremiumStatus();
-                Navigator.pop(context);
-                // Navigate to profile screen after upgrading
-                Navigator.of(context).pushReplacementNamed('/profile');
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog first
+                Navigator.of(
+                  context,
+                ).pushReplacementNamed('/profile'); // Redirect to profile page
               },
-              child: const Text('Go Premium (Simulated)'),
+              child: const Text('Go Premium'),
             ),
           ],
         ),
@@ -101,12 +111,34 @@ class _GoalScreenState extends State<GoalScreen> {
               children: [
                 TextField(
                   controller: _titleController,
-                  decoration: const InputDecoration(labelText: 'Title'),
+                  style: const TextStyle(color: Colors.black),
+                  decoration: const InputDecoration(
+                    labelText: 'Goal Title',
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    hintText: 'Enter goal title',
+                    hintStyle: TextStyle(color: Colors.black54),
+                    prefixIcon: Icon(Icons.flag, color: Colors.black),
+                  ),
                   onChanged: (_) => setState(() {}),
                 ),
                 TextField(
                   controller: _descController,
-                  decoration: const InputDecoration(labelText: 'Description'),
+                  style: const TextStyle(color: Colors.black),
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                    hintText: 'Enter description',
+                    hintStyle: TextStyle(color: Colors.black54),
+                    prefixIcon: Icon(Icons.description, color: Colors.black),
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -216,194 +248,84 @@ class _GoalScreenState extends State<GoalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final templateData = ThemeService.getTemplateData(_currentTemplate);
+
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.userChanges(),
-      builder: (context, userSnapshot) {
-        return FutureBuilder(
-          future: Future.wait([
-            Future.value(userSnapshot.data),
-            _profileService.getProfile(),
-          ]),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              );
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final user = snapshot.data;
+        if (user == null) {
+          return const Center(child: Text('Please log in'));
+        }
+        return StreamBuilder<bool>(
+          stream: Stream.value(user.emailVerified),
+          builder: (context, emailSnapshot) {
+            if (emailSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
             }
-            final user = snapshot.data?[0] as User?;
-            final profile = snapshot.data?[1] as Map<String, dynamic>?;
-            final isVerified =
-                user != null &&
-                user.emailVerified &&
-                user.email == profile?['email'];
+            final isEmailVerified = emailSnapshot.data ?? false;
             return Scaffold(
-              drawer: Drawer(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: [
-                    DrawerHeader(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      child: Text(
-                        'GoalTracker',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.flag),
-                      title: Text('Goals'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        // Already on Goals
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.bar_chart),
-                      title: Text('Analytics'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => AnalyticsScreen()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.person),
-                      title: Text('Profile'),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => ProfileScreen()),
-                        );
-                      },
-                    ),
-                    Divider(),
-                    ListTile(
-                      leading: Icon(Icons.logout),
-                      title: Text('Logout'),
-                      onTap: () async {
-                        Navigator.pop(context);
-                        await FirebaseAuth.instance.signOut();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              appBar: AppBar(
-                title: const Text('Your Goals'),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.help_outline),
-                    tooltip: 'Help',
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('How to Use'),
-                          content: const Text(
-                            'Tap the + button to add a new goal. Tap on a goal to expand and see subgoals. Check off subgoals as you complete them.',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('Got it'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+              backgroundColor: templateData['backgroundColor'],
               body: Column(
                 children: [
-                  if (!isVerified)
-                    Card(
-                      color: Colors.orange[50],
-                      margin: const EdgeInsets.all(16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          children: [
-                            const Icon(
-                              Icons.warning,
-                              color: Colors.orange,
-                              size: 32,
+                  if (!isEmailVerified)
+                    Container(
+                      width: double.infinity,
+                      color: Colors.orange,
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          const Text(
+                            'Please verify your email to add goals',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Your email ( ${user?.email}) is not verified. Please verify your email by ( ${profile?['email']}) or check span to unlock all features. If done, reflesh',
-                              style: const TextStyle(
-                                color: Colors.orange,
-                                fontWeight: FontWeight.bold,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  if (user != null) {
+                                    await user.sendEmailVerification();
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Verification email resent!',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                                icon: const Icon(Icons.email),
+                                label: const Text('Resend Verification Email'),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                const gmailUrl = 'https://mail.google.com';
-                                final uri = Uri.parse(gmailUrl);
-                                try {
-                                  await launchUrl(
-                                    uri,
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          'Error opening Gmail: $e',
-                                        ),
-                                      ),
-                                    );
+                              const SizedBox(height: 8),
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  if (user != null) {
+                                    await user.reload();
+                                    if (context.mounted) {
+                                      // Triggers StreamBuilder to rebuild
+                                      (context as Element).markNeedsBuild();
+                                    }
                                   }
-                                }
-                              },
-                              icon: const Icon(Icons.open_in_new),
-                              label: const Text('Open Gmail'),
-                            ),
-                            const SizedBox(height: 8),
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                if (user != null) {
-                                  await user.sendEmailVerification();
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Verification email resent!',
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                }
-                              },
-                              icon: const Icon(Icons.email),
-                              label: const Text('Resend Verification Email'),
-                            ),
-                            const SizedBox(height: 8),
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                if (user != null) {
-                                  await user.reload();
-                                  if (context.mounted) {
-                                    // Triggers StreamBuilder to rebuild
-                                    (context as Element).markNeedsBuild();
-                                  }
-                                }
-                              },
-                              icon: const Icon(Icons.refresh),
-                              label: const Text('Refresh Status'),
-                            ),
-                          ],
-                        ),
+                                },
+                                icon: const Icon(Icons.refresh),
+                                label: const Text('Refresh Status'),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   Expanded(
@@ -462,12 +384,16 @@ class _GoalScreenState extends State<GoalScreen> {
                                 horizontal: 16,
                                 vertical: 8,
                               ),
+                              color: templateData['cardColor'],
+                              elevation: 4,
                               child: ExpansionTile(
                                 title: Text(
                                   goal['title'] ?? '',
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        color: templateData['primaryColor'],
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -583,8 +509,17 @@ class _GoalScreenState extends State<GoalScreen> {
                                     ),
                                   ),
                                   ListTile(
-                                    title: const Text('Add subgoal'),
-                                    leading: const Icon(Icons.add),
+                                    title: Text(
+                                      'Add subgoal',
+                                      style: TextStyle(
+                                        color: templateData['primaryColor'],
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    leading: Icon(
+                                      Icons.add,
+                                      color: templateData['primaryColor'],
+                                    ),
                                     onTap: () async {
                                       final controller =
                                           TextEditingController();
@@ -601,10 +536,25 @@ class _GoalScreenState extends State<GoalScreen> {
                                                 children: [
                                                   TextField(
                                                     controller: controller,
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                    ),
                                                     decoration:
                                                         const InputDecoration(
                                                           labelText:
                                                               'Subgoal Title',
+                                                          labelStyle: TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 18,
+                                                          ),
+                                                          hintText:
+                                                              'Enter subgoal title',
+                                                          hintStyle: TextStyle(
+                                                            color:
+                                                                Colors.black54,
+                                                          ),
                                                         ),
                                                   ),
                                                   const SizedBox(height: 8),
@@ -745,6 +695,8 @@ class _GoalScreenState extends State<GoalScreen> {
                   return FloatingActionButton(
                     onPressed: () => _showAddGoalDialog(currentGoalCount),
                     tooltip: 'Add new goal',
+                    backgroundColor: templateData['primaryColor'],
+                    foregroundColor: Colors.white,
                     child: const Icon(Icons.add),
                   );
                 },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'auth_service.dart';
 import '../profile/profile_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../shared/app_theme.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key, this.onAuthSuccess});
@@ -115,15 +116,12 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppTheme.scaffoldWithBackground(
+      context: context,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
-          child: Card(
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
-            ),
+          child: AppTheme.createCard(
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Form(
@@ -139,9 +137,20 @@ class _AuthScreenState extends State<AuthScreen> {
                     const SizedBox(height: 24),
                     TextFormField(
                       controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: Icon(Icons.email),
+                      style: const TextStyle(color: Colors.black),
+                      decoration: InputDecoration(
+                        labelText: 'Email Address',
+                        labelStyle: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        hintText: 'Enter your email',
+                        hintStyle: const TextStyle(color: Colors.black54),
+                        prefixIcon: const Icon(
+                          Icons.email,
+                          color: Colors.black,
+                        ),
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (v) => v != null && v.contains('@')
@@ -150,27 +159,47 @@ class _AuthScreenState extends State<AuthScreen> {
                       enabled: !_loading,
                     ),
                     if (!_isLogin) ...[
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 18),
                       TextFormField(
                         controller: _referralController,
-                        decoration: const InputDecoration(
-                          labelText: 'Referral Code (optional)',
-                          prefixIcon: Icon(Icons.card_giftcard),
+                        style: const TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          labelText: 'Referral Code (Optional)',
+                          labelStyle: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                          hintText: 'Enter referral code',
+                          hintStyle: const TextStyle(color: Colors.black54),
+                          prefixIcon: const Icon(
+                            Icons.card_giftcard,
+                            color: Colors.black,
+                          ),
                         ),
                         enabled: !_loading,
                       ),
                     ],
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
                     TextFormField(
                       controller: _passwordController,
+                      style: const TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: const Icon(Icons.lock),
+                        labelStyle: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        hintText: 'Enter your password',
+                        hintStyle: const TextStyle(color: Colors.black54),
+                        prefixIcon: const Icon(Icons.lock, color: Colors.black),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscurePassword
                                 ? Icons.visibility
                                 : Icons.visibility_off,
+                            color: Colors.black,
                           ),
                           onPressed: _loading
                               ? null
