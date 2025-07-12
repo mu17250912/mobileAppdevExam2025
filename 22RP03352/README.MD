@@ -7,7 +7,7 @@
 
 ## 📱 App Overview
 
-BudgetWise is a budget management mobile application built with Flutter that helps users track their expenses, manage budgets by category, and visualize their spending with simple analytics and progress indicators.
+BudgetWise is a budget management mobile application built with Flutter that helps users track their expenses, manage budgets by category, and visualize their spending with comprehensive analytics and progress indicators.
 
 ## 🎯 Problem Statement
 
@@ -19,7 +19,7 @@ BudgetWise is a budget management mobile application built with Flutter that hel
 **Our Solution:** BudgetWise provides an intuitive, user-friendly platform that:
 - Simplifies expense tracking and categorization
 - Provides real-time budget monitoring with visual progress indicators
-- Offers a basic analytics screen for premium users (advanced analytics planned)
+- Offers comprehensive analytics with charts, trends, and insights for premium users
 
 ## 👥 Target Audience
 
@@ -31,6 +31,8 @@ BudgetWise is a budget management mobile application built with Flutter that hel
 - **Category-Based Budgeting:** Easy-to-use interface for setting and tracking budgets by category
 - **Visual Progress:** Progress bars and circular indicators for budget utilization
 - **Firebase-Powered:** Secure, scalable cloud-based data storage
+- **Gamification:** Monthly badges and confetti for first expense and first budget each month
+- **Advanced Analytics:** Comprehensive charts, trends, and insights for premium users
 
 ## 💰 Monetization Strategy
 
@@ -39,9 +41,12 @@ BudgetWise uses a **freemium monetization strategy**:
 - **Free users:**
   - Access all core budgeting and expense features
   - See banner ads (Google AdMob) in the app
-- **Premium (UI only, payment not implemented):**
+- **Premium (Simulated Payment):**
   - Removes ads
-  - Unlocks access to the Analytics screen (currently a placeholder)
+  - Unlocks access to comprehensive Analytics and Enhanced Analytics screens
+  - Access to advanced analytics, charts, trends, and insights
+  - Data export functionality (CSV, TXT formats)
+  - **Upgrade is done through a realistic payment simulation (no real money is collected)**
 
 ### **Commission-Based Monetization (Affiliate Link)**
 - The app includes a commission-based monetization feature via an affiliate link (Amazon).
@@ -49,12 +54,9 @@ BudgetWise uses a **freemium monetization strategy**:
 - Each click is tracked using Firebase Analytics (`ad_interaction` event with `adType: 'affiliate'`).
 - In a real deployment, this would use a valid affiliate ID to earn commissions on qualifying purchases. For this assessment, the affiliate link is a placeholder and no real commissions are earned.
 
-> **Note:** Payment/subscription logic is not implemented. The "Go Premium" button is for demonstration only. No real money is collected in this version.
-> **Bonus:** Payment gateway integration is not implemented (bonus marks only).
+> **Note:** Payment/subscription logic is **simulated only**. The "Go Premium" button launches a realistic payment flow, but no real money is collected. All payment screens, validation, and history are for demonstration purposes only.
 > 
 > **Why No Real Income Collection:** This is a student project focused on demonstrating technical skills and monetization concepts. Real payment processing, affiliate accounts, and ad revenue require business registration, compliance, and published app status - the app has not been published yet.
-
-**Justification:** The freemium model with ads and affiliate links is ideal for students and young professionals who may not want to pay upfront. It allows free access to essential features while providing optional upgrades and non-intrusive monetization. This approach fits a budgeting app where trust and accessibility are important, and users are cost-conscious.
 
 ## 🔧 Key Features Implemented
 
@@ -68,16 +70,54 @@ BudgetWise uses a **freemium monetization strategy**:
 - Affiliate button (Amazon link)
 - Analytics event tracking (Firebase Analytics)
 
-### **Premium Features (UI only, not functional):**
-- Analytics screen (currently a placeholder, no real charts)
-- Ad removal (UI only, no payment logic)
+### **Premium Features (Simulated Payment):**
+- **Realistic payment simulation for premium upgrades:**
+  - Multiple payment methods (Credit Card, Debit Card, PayPal, Apple Pay)
+  - Card number validation and card type detection
+  - Simulated payment errors (declined, insufficient funds, etc.)
+  - Professional payment form UI
+  - Payment summary and confirmation dialogs
+  - Payment history screen with transaction details
+  - **Push notification sent after successful upgrade**
+  - No real money is collected; all payments are simulated for demo purposes
+- **Comprehensive Analytics Screen:**
+  - Pie charts for spending by category
+  - Bar charts for monthly spending trends
+  - Budget vs actual spending comparisons
+  - Interactive charts with real data
+- **Enhanced Analytics Screen:**
+  - Advanced insights and recommendations
+  - Comprehensive spending analysis
+  - AI-powered financial insights
+  - Detailed trend analysis
+- **Data Export Functionality:**
+  - Export expenses to CSV format
+  - Export budget reports to CSV
+  - Export monthly summaries to TXT
+  - Share functionality for exported files
+- Ad removal (UI only, no real payment logic)
+
+### **Gamification & Engagement:**
+- **Monthly Badges:**
+  - Earn a badge and see a confetti animation every time you add your first expense or first budget for each month.
+  - Badges are stored in Firestore and sync across devices.
+  - Motivates users to keep tracking and budgeting every month.
+- **Confetti Animation:**
+  - Fun, celebratory confetti appears with a congratulatory dialog when a badge is earned.
+- **Push Notification:**
+  - After a successful premium upgrade, users receive a local push notification.
+- **No Streaks:**
+  - The streaks feature has been removed for a cleaner experience.
 
 ## 📊 Analytics & Tracking
 
 - **Firebase Analytics** integration for user actions (budget creation, expense addition, feature usage, etc.)
 - Analytics events can be viewed in Firebase DebugView and Events tab
-
-**Using Analytics for Improvement:** Analytics data will be used to understand user behavior, identify popular features, and optimize ad/affiliate placements. Insights from analytics will guide future updates, feature prioritization, and monetization strategies to maximize engagement and revenue while keeping the app user-friendly.
+- **Comprehensive Analytics Implementation:**
+  - Real-time spending analysis by category
+  - Monthly trend analysis with interactive charts
+  - Budget vs actual spending comparisons
+  - Enhanced analytics with AI insights and recommendations
 
 ### **How to View Analytics Data:**
 1. Go to [Firebase Console](https://console.firebase.google.com/), select your project.
@@ -101,8 +141,18 @@ BudgetWise uses a **freemium monetization strategy**:
 
 ## ♿ Accessibility
 
-- Accessibility features (such as screen reader support and high-contrast mode) are **planned for future updates**.
-- Current version does not include explicit accessibility enhancements.
+- **Accessibility Service Implementation:**
+  - Screen reader support with semantic labels
+  - Navigation guidance for different screens
+  - Accessibility hints for interactive elements
+  - High contrast mode support
+  - Large text support
+  - Focus management for keyboard navigation
+- **Current Features:**
+  - Semantic labels for all major UI elements
+  - Screen reader announcements
+  - Accessibility hints for user interactions
+  - Voice guidance for navigation
 
 ## 🚀 Scalability & Performance
 
@@ -118,7 +168,9 @@ BudgetWise uses a **freemium monetization strategy**:
 - **CAC Strategies:** Organic growth (word-of-mouth), potential referral programs (planned)
 - **User Retention/Engagement:**
   - Core features are simple and useful
-  - Future plans for push notifications, gamification, and loyalty programs
+  - **Monthly badges and confetti for first expense and budget each month**
+  - **Push notification after premium upgrade to increase engagement**
+  - Future plans for more push notifications, gamification, and loyalty programs
 - **Continuous Updates:** Planned for new features and security improvements
 
 ## 📱 Installation Instructions
@@ -131,7 +183,7 @@ BudgetWise uses a **freemium monetization strategy**:
 5. Start managing your budget!
 
 ### **For Developers:**
-1. Clone the repository
+1. Clone the repository(https://github.com/Sandrine-Ira/mobileAppdevExam2025.git)
 2. Install Flutter dependencies: `flutter pub get`
 3. Configure Firebase project
 4. Run the app: `flutter run`
@@ -143,24 +195,23 @@ BudgetWise uses a **freemium monetization strategy**:
 - **Ads:** Google AdMob
 - **State Management:** Flutter StatefulWidget
 - **UI Framework:** Material Design
+- **Charts:** fl_chart for data visualization
+- **Export:** share_plus for file sharing
 - **Version Control:** Git
 
 ## 📈 Future Roadmap (Planned/Not Yet Implemented)
-- Advanced analytics dashboard (charts, trends, export)
-- Payment/subscription for premium
-- Export to PDF/CSV
-- Push notifications
-- Gamification (badges, milestones)
+- Real payment/subscription for premium (currently simulated)
 - Community features (forums, support)
 - Bill reminders, investment tracking, financial goals
 - AI-powered insights, banking API, multi-currency
-- Accessibility enhancements
+- More advanced push notifications (beyond upgrade event)
+- More gamification (additional badges, challenges, etc.)
 
 ## 📞 Support & Contact
 
 - **Email:** irashimwakmsandrine@gmail.com
-- **GitHub:** [Repository link]
+- **GitHub:** https://github.com/Sandrine-Ira/mobileAppdevExam2025.git
 
 ---
 
-**Note:** This project is developed as part of the Mobile Application Development module assessment. Some features are planned for future updates and are not yet implemented.
+**Note:** This project is developed as part of the Mobile Application Development module assessment. Most features are fully implemented and functional, with payment processing simulated for educational purposes.
