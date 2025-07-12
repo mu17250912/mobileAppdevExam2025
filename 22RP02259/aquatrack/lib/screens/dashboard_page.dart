@@ -7,6 +7,8 @@ import '../widgets/add_house_info_form.dart';
 import '../widgets/daily_water_log_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/water_log.dart'; // Added import for WaterLog
+import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
+import '../screens/login_screen.dart';
 
 class DashboardPage extends StatelessWidget {
   final User user;
@@ -656,12 +658,34 @@ class DashboardPage extends StatelessWidget {
                     );
                   },
                 ),
-                const Divider(),
+                const SizedBox(height: 24),
+                Divider(),
                 ListTile(
-                  leading: const Icon(Icons.logout),
-                  title: const Text('Logout'),
-                  onTap: () {
-                    Navigator.popUntil(context, (route) => route.isFirst);
+                  leading: const Icon(Icons.logout, color: Colors.red),
+                  title: const Text('Logout', style: TextStyle(color: Colors.red)),
+                  onTap: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirm Logout'),
+                        content: const Text('Are you sure you want to log out?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Logout', style: TextStyle(color: Colors.red))),
+                        ],
+                      ),
+                    );
+                    if (confirm == true) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(
+                            onLogin: (user) {}, // TODO: Replace with your actual onLogin callback
+                            onCreateAccount: () {}, // TODO: Replace with your actual onCreateAccount callback
+                          ),
+                        ),
+                        (route) => false,
+                      );
+                    }
                   },
                 ),
               ],

@@ -63,11 +63,12 @@ class _WaterSaverAppState extends State<WaterSaverApp> {
     });
   }
 
-  void _onAccountCreated() {
+  void _onAccountCreated(User user) {
     setState(() {
+      _user = user;
       _showCreateAccount = false;
-      _showOnboarding = true;
-      _isNewlyRegistered = true;
+      _showOnboarding = false;
+      _isNewlyRegistered = false;
       _loggedIn = true;
     });
   }

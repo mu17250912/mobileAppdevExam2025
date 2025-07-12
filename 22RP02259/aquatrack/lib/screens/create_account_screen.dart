@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
+import '../models/user.dart';
 
 class CreateAccountScreen extends StatefulWidget {
-  final VoidCallback onAccountCreated;
+  final void Function(User) onAccountCreated;
   final VoidCallback onBackToLogin;
 
   const CreateAccountScreen({
@@ -45,9 +46,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       await fb_auth.FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: _email, password: _password);
 
-      // You can store _name to Firestore here later if needed
+      // Create a User object with default values (customize as needed)
+      final user = User(
+        email: _email,
+        householdSize: 1,
+        averageWaterBill: null,
+        waterUsageGoalPercent: 20.0,
+        usesSmartMeter: false,
+      );
 
-      widget.onAccountCreated();
+      widget.onAccountCreated(user);
     } on fb_auth.FirebaseAuthException catch (e) {
       setState(() {
         _errorMessage = e.message;
