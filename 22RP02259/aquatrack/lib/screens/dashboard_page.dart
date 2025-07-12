@@ -4,6 +4,7 @@ import '../services/water_log_service.dart';
 import '../screens/log_water_screen.dart';
 import '../widgets/usage_chart.dart';
 import '../widgets/add_house_info_form.dart';
+import '../widgets/daily_water_log_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -235,9 +236,44 @@ class DashboardPage extends StatelessWidget {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Check Water Usage'),
-                        content: const Text('This feature is coming soon!'),
-                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                        title: const Text('Daily Water Usage Log'),
+                        content: DailyWaterLogForm(
+                          initialLocation: null,
+                          onSubmit: (data) async {
+                            Navigator.pop(context); // Close the form dialog
+                            try {
+                              await FirebaseFirestore.instance.collection('daily_water_logs').add({
+                                'userEmail': user.email,
+                                ...data,
+                                'date': (data['date'] as DateTime).toIso8601String(),
+                              });
+                              // Show success dialog
+                              if (context.mounted) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Saved'),
+                                    content: const Text('Your daily water log has been saved.'),
+                                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                                  ),
+                                );
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Error'),
+                                    content: Text('Failed to save: $e'),
+                                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                        actions: [],
                       ),
                     );
                   },
