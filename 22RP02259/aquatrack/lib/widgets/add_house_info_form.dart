@@ -3,7 +3,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddHouseInfoForm extends StatefulWidget {
   final String email;
-  const AddHouseInfoForm({Key? key, required this.email}) : super(key: key);
+  final int? initialHouseholdSize;
+  final String? initialLocation;
+  final int? initialGoalPercent;
+  final List<String>? initialGoalReasons;
+  final String? initialGoalReasonOther;
+  final double? initialWaterBill;
+  final String? initialMeterOption;
+
+  const AddHouseInfoForm({
+    Key? key,
+    required this.email,
+    this.initialHouseholdSize,
+    this.initialLocation,
+    this.initialGoalPercent,
+    this.initialGoalReasons,
+    this.initialGoalReasonOther,
+    this.initialWaterBill,
+    this.initialMeterOption,
+  }) : super(key: key);
 
   @override
   State<AddHouseInfoForm> createState() => _AddHouseInfoFormState();
@@ -13,7 +31,7 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
   final _formKey = GlobalKey<FormState>();
   int? householdSize;
   String? location;
-  int? goalPercent = 10;
+  int? goalPercent;
   String? goalReasonOther;
   List<String> goalReasons = [];
   double? waterBill;
@@ -27,6 +45,22 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
     'Drought in my area',
     'Other',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    householdSize = widget.initialHouseholdSize;
+    location = widget.initialLocation;
+    goalPercent = widget.initialGoalPercent ?? 10;
+    goalReasons = List<String>.from(widget.initialGoalReasons ?? []);
+    goalReasonOther = widget.initialGoalReasonOther;
+    waterBill = widget.initialWaterBill;
+    meterOption = widget.initialMeterOption ?? 'manual';
+    if (goalPercent != null && goalPercent != 10 && goalPercent != 20 && goalPercent != -1) {
+      customGoalPercent = goalPercent;
+      goalPercent = -1;
+    }
+  }
 
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
@@ -82,6 +116,7 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
             const Text('1. Household Information', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextFormField(
+              initialValue: householdSize?.toString(),
               decoration: const InputDecoration(
                 labelText: 'Number of people in the household',
                 border: OutlineInputBorder(),
@@ -97,6 +132,7 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
             ),
             const SizedBox(height: 12),
             TextFormField(
+              initialValue: location,
               decoration: const InputDecoration(
                 labelText: 'Location/Region (optional)',
                 border: OutlineInputBorder(),
@@ -131,6 +167,7 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
                         SizedBox(
                           width: 60,
                           child: TextFormField(
+                            initialValue: customGoalPercent?.toString(),
                             decoration: const InputDecoration(suffixText: '%'),
                             keyboardType: TextInputType.number,
                             validator: (value) {
@@ -173,6 +210,7 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
                       Padding(
                         padding: const EdgeInsets.only(left: 24.0),
                         child: TextFormField(
+                          initialValue: goalReasonOther,
                           decoration: const InputDecoration(labelText: 'Please specify'),
                           onChanged: (v) => goalReasonOther = v,
                         ),
@@ -199,6 +237,7 @@ class _AddHouseInfoFormState extends State<AddHouseInfoForm> {
             const Text('3. Water Bill (Optional)', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextFormField(
+              initialValue: waterBill?.toString(),
               decoration: const InputDecoration(
                 labelText: 'Monthly water bill (in currency)',
                 border: OutlineInputBorder(),

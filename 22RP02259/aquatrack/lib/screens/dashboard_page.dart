@@ -181,7 +181,25 @@ class DashboardPage extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    // Will implement edit logic after updating the form
+                                    Navigator.pop(context); // Close the manage dialog
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Edit House Info'),
+                                        content: AddHouseInfoForm(
+                                          email: user.email,
+                                          initialHouseholdSize: data['householdSize'] is int ? data['householdSize'] : int.tryParse(data['householdSize']?.toString() ?? ''),
+                                          initialLocation: data['location'] as String?,
+                                          initialGoalPercent: data['waterUsageGoalPercent'] is int ? data['waterUsageGoalPercent'] : (data['waterUsageGoalPercent'] is double ? (data['waterUsageGoalPercent'] as double).toInt() : int.tryParse(data['waterUsageGoalPercent']?.toString() ?? '')),
+                                          initialGoalReasons: (data['goalReasons'] as List?)?.map((e) => e.toString()).toList(),
+                                          initialGoalReasonOther: data['goalReasonOther'] as String?,
+                                          initialWaterBill: data['averageWaterBill'] is double ? data['averageWaterBill'] : (data['averageWaterBill'] is int ? (data['averageWaterBill'] as int).toDouble() : double.tryParse(data['averageWaterBill']?.toString() ?? '')),
+                                          initialMeterOption: data['usesSmartMeter'] == true ? 'smart' : 'manual',
+                                        ),
+                                        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                                        actions: [],
+                                      ),
+                                    );
                                   },
                                   child: const Text('Edit'),
                                 ),
