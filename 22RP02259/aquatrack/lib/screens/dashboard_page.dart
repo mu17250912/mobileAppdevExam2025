@@ -222,20 +222,42 @@ class DashboardPage extends StatelessWidget {
                 ),
               ],
             ),
-            ListTile(
+            // Replace Recent Logs ListTile with ExpansionTile
+            ExpansionTile(
               leading: const Icon(Icons.history),
               title: const Text('Recent Logs'),
-              onTap: () {
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Recent Logs'),
-                    content: const Text('This feature is coming soon!'),
-                    actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                  ),
-                );
-              },
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.check_circle_outline),
+                  title: const Text('Check Water Usage'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Check Water Usage'),
+                        content: const Text('This feature is coming soon!'),
+                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.list_alt),
+                  title: const Text('View Recent Log'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('View Recent Log'),
+                        content: const Text('This feature is coming soon!'),
+                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             ListTile(
               leading: const Icon(Icons.person),
