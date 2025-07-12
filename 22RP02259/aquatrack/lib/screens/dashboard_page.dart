@@ -3,6 +3,7 @@ import '../models/user.dart';
 import '../services/water_log_service.dart';
 import '../screens/log_water_screen.dart';
 import '../widgets/usage_chart.dart';
+import '../widgets/add_house_info_form.dart';
 
 class DashboardPage extends StatelessWidget {
   final User user;
@@ -99,8 +100,9 @@ class DashboardPage extends StatelessWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('Add House Info'),
-                        content: const Text('This feature is coming soon!'),
-                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                        content: const AddHouseInfoForm(),
+                        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
+                        actions: [], // Form handles its own actions
                       ),
                     );
                   },
