@@ -601,11 +601,58 @@ class DashboardPage extends StatelessWidget {
                     Navigator.pop(context);
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Settings'),
-                        content: const Text('This feature is coming soon!'),
-                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                      ),
+                      builder: (context) {
+                        bool isDarkTheme = false;
+                        bool notificationsOn = true;
+                        return StatefulBuilder(
+                          builder: (context, setState) => AlertDialog(
+                            title: const Text('Settings'),
+                            content: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text('Theme'),
+                                      Switch(
+                                        value: isDarkTheme,
+                                        onChanged: (v) => setState(() => isDarkTheme = v),
+                                      ),
+                                      Text(isDarkTheme ? 'Dark' : 'Light'),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text('Notifications'),
+                                      Switch(
+                                        value: notificationsOn,
+                                        onChanged: (v) => setState(() => notificationsOn = v),
+                                      ),
+                                      Text(notificationsOn ? 'On' : 'Off'),
+                                    ],
+                                  ),
+                                  const Divider(),
+                                  const Text('App Version: 1.0.0'),
+                                  const SizedBox(height: 8),
+                                  const Text('About:'),
+                                  const Text('AquTrack helps you track and reduce your household water usage.'),
+                                  const SizedBox(height: 8),
+                                  const Text('Contact: support@aqutrack.com'),
+                                  const SizedBox(height: 8),
+                                  GestureDetector(
+                                    onTap: () {},
+                                    child: const Text('Privacy Policy', style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue)),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
