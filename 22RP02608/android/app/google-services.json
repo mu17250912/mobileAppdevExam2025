@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "357204460452",
+    "project_id": "safegirl-28a9a",
+    "storage_bucket": "safegirl.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357204460452:android:035656e8e9d00d09aa3731",
+        "android_client_info": {
+          "package_name": "safegirlapp.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZlfT-nIag64UUwYDdzrI1pl47oeab3HA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

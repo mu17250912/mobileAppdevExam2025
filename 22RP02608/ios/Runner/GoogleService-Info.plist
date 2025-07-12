@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyCZlfT-nIag64UUwYDdzrI1pl47oeab3HA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>357204460452</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>safegirlapp.com</string>
+	<key>PROJECT_ID</key>
+	<string>safegirl-28a9a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>safegirl.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false/>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<true/>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true/>
+	<key>IS_GCM_ENABLED</key>
+	<true/>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true/>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:357204460452:ios:035656e8e9d00d09aa3731</string>
+</dict>
+</plist> 
