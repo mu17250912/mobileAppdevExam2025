@@ -137,14 +137,55 @@ class DashboardPage extends StatelessWidget {
                                   Text('Household Size:  ${data['householdSize'] ?? '-'}'),
                                   Text('Location:  ${data['location'] ?? '-'}'),
                                   Text('Goal:  ${data['waterUsageGoalPercent'] ?? '-'}%'),
-                                  Text('Reasons:  ${data['goalReasons'] as List? ?? '-'}'),
+                                  Text('Reasons:  ${(data['goalReasons'] as List?)?.join(", ") ?? '-'}'),
                                   if (data['goalReasonOther'] != null && (data['goalReasonOther'] as String).isNotEmpty)
                                     Text('Other Reason:  ${data['goalReasonOther']}'),
                                   Text('Water Bill:  ${data['averageWaterBill'] ?? '-'}'),
                                   Text('Meter Option:  ${data['usesSmartMeter'] == true ? 'Smart Meter' : 'Manual'}'),
                                 ],
                               ),
-                              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text('Close'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text('Delete House Info'),
+                                        content: const Text('Are you sure you want to delete your house info? This cannot be undone.'),
+                                        actions: [
+                                          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                                          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete', style: TextStyle(color: Colors.red))),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      await FirebaseFirestore.instance.collection('users').doc(user.email).delete();
+                                      if (context.mounted) {
+                                        Navigator.pop(context); // Close the manage dialog
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text('Deleted'),
+                                            content: const Text('House info deleted.'),
+                                            actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    // Will implement edit logic after updating the form
+                                  },
+                                  child: const Text('Edit'),
+                                ),
+                              ],
                             );
                           })(),
                           builder: (context, snapshot) {
