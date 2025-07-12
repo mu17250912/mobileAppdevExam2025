@@ -285,11 +285,68 @@ class DashboardPage extends StatelessWidget {
                     Navigator.pop(context);
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('View Recent Log'),
-                        content: const Text('This feature is coming soon!'),
-                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                      ),
+                      builder: (context) {
+                        return FutureBuilder<QuerySnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('daily_water_logs')
+                              .where('userEmail', isEqualTo: user.email)
+                              .orderBy('date', descending: true)
+                              .limit(7)
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return AlertDialog(
+                                title: const Text('Error'),
+                                content: Text('Error: \n${snapshot.error}'),
+                                actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                              );
+                            }
+                            if (!snapshot.hasData) {
+                              return const AlertDialog(
+                                title: Text('Recent Logs'),
+                                content: SizedBox(height: 60, child: Center(child: CircularProgressIndicator())),
+                              );
+                            }
+                            final docs = snapshot.data!.docs;
+                            if (docs.isEmpty) {
+                              return AlertDialog(
+                                title: const Text('Recent Logs'),
+                                content: const Text('No recent logs found.'),
+                                actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                              );
+                            }
+                            return AlertDialog(
+                              title: const Text('Recent Logs'),
+                              content: SizedBox(
+                                width: 350,
+                                height: 400,
+                                child: ListView.separated(
+                                  shrinkWrap: true,
+                                  itemCount: docs.length,
+                                  separatorBuilder: (_, __) => const Divider(),
+                                  itemBuilder: (context, i) {
+                                    final data = docs[i].data() as Map<String, dynamic>;
+                                    final date = DateTime.tryParse(data['date'] ?? '') ?? DateTime.now();
+                                    final totalLiters = data['totalLiters'] ?? '-';
+                                    final tip = data['tip'] ?? '';
+                                    return ListTile(
+                                      title: Text('${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}'),
+                                      subtitle: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Total: ${totalLiters.toStringAsFixed(1)} liters'),
+                                          if (tip.isNotEmpty) Text('Tip: $tip'),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close'))],
+                            );
+                          },
+                        );
+                      },
                     );
                   },
                 ),
