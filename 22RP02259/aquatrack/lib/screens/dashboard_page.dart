@@ -407,11 +407,51 @@ class DashboardPage extends StatelessWidget {
                     Navigator.pop(context);
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Profile'),
-                        content: const Text('This feature is coming soon!'),
-                        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-                      ),
+                      builder: (context) {
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance.collection('users').doc(user.email).get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return AlertDialog(
+                                title: const Text('Profile'),
+                                content: Text('Error: \n${snapshot.error}'),
+                                actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                              );
+                            }
+                            if (!snapshot.hasData) {
+                              return const AlertDialog(
+                                title: Text('Profile'),
+                                content: SizedBox(height: 60, child: Center(child: CircularProgressIndicator())),
+                              );
+                            }
+                            final data = snapshot.data!.data() as Map<String, dynamic>?;
+                            if (data == null) {
+                              return AlertDialog(
+                                title: const Text('Profile'),
+                                content: const Text('No profile data found.'),
+                                actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                              );
+                            }
+                            return AlertDialog(
+                              title: const Text('Profile'),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Email: ${data['email'] ?? '-'}'),
+                                    Text('Household Size: ${data['householdSize']?.toString() ?? 'Not set'}'),
+                                    Text('Water Usage Goal: ${data['waterUsageGoalPercent']?.toString() ?? 'Not set'}%'),
+                                    Text('Average Water Bill: ${data['averageWaterBill']?.toString() ?? 'Not set'}'),
+                                    Text('Smart Meter: ${data['usesSmartMeter'] == true ? 'Yes' : 'No'}'),
+                                  ],
+                                ),
+                              ),
+                              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                            );
+                          },
+                        );
+                      },
                     );
                   },
                 ),
@@ -424,7 +464,131 @@ class DashboardPage extends StatelessWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('Achievements'),
-                        content: const Text('This feature is coming soon!'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Need Payment Method to Unlock Premium'),
+                            const SizedBox(height: 16),
+                            ListTile(
+                              leading: const Icon(Icons.star, color: Colors.amber),
+                              title: const Text('Premium'),
+                              onTap: () {
+                                Navigator.pop(context);
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Go Premium'),
+                                    content: const Text('Unlock premium features for just 5 USD!'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              String paymentMethod = 'PayPal';
+                                              final controller = TextEditingController();
+                                              return StatefulBuilder(
+                                                builder: (context, setState) => AlertDialog(
+                                                  title: const Text('Choose Payment Method'),
+                                                  content: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      DropdownButton<String>(
+                                                        value: paymentMethod,
+                                                        items: [
+                                                          DropdownMenuItem(
+                                                            value: 'PayPal',
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons.account_balance_wallet, color: Colors.blue),
+                                                                const SizedBox(width: 8),
+                                                                const Text('PayPal'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          DropdownMenuItem(
+                                                            value: 'Mobile Money',
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons.phone_android, color: Colors.amber),
+                                                                const SizedBox(width: 8),
+                                                                const Text('Mobile Money'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          DropdownMenuItem(
+                                                            value: 'Bank of Kigali',
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons.account_balance, color: Colors.green),
+                                                                const SizedBox(width: 8),
+                                                                const Text('Bank of Kigali'),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                        onChanged: (v) => setState(() => paymentMethod = v!),
+                                                      ),
+                                                      const SizedBox(height: 12),
+                                                      if (paymentMethod == 'Mobile Money')
+                                                        TextField(
+                                                          controller: controller,
+                                                          decoration: const InputDecoration(labelText: 'Mobile Money Number'),
+                                                          keyboardType: TextInputType.phone,
+                                                        ),
+                                                      if (paymentMethod == 'PayPal' || paymentMethod == 'Bank of Kigali')
+                                                        TextField(
+                                                          controller: controller,
+                                                          decoration: const InputDecoration(labelText: 'Account Number'),
+                                                          keyboardType: TextInputType.text,
+                                                        ),
+                                                      const SizedBox(height: 16),
+                                                      const Text('Amount: 5 USD'),
+                                                    ],
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(context),
+                                                      child: const Text('Cancel'),
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () async {
+                                                        Navigator.pop(context);
+                                                        // Show simple notification dialog
+                                                        if (context.mounted) {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (context) => AlertDialog(
+                                                              title: const Text('Payment Processed'),
+                                                              content: const Text('Your payment is processed. Feature will be unlocked soon.'),
+                                                              actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                      child: const Text('Pay'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: const Text('Subscribe'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                         actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
                       ),
                     );
@@ -464,7 +628,7 @@ class DashboardPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Text(
-                    'Welcome, household of ${user.householdSize}!',
+                    'Welcome, ${user.email}!',
                     style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
