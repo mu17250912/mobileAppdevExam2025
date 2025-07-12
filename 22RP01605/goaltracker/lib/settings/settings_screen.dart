@@ -64,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
+          : SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
