@@ -1,10 +1,12 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AnalyticsService {
   static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Debug logging for development
   static void _debugLog(String eventName, Map<String, Object>? parameters) {
@@ -271,6 +273,116 @@ class AnalyticsService {
       parameters: parameters,
     );
     _debugLog('conversion', parameters);
+  }
+
+  // Get spending by category for charts
+  static Future<Map<String, double>> getSpendingByCategory(int month, int year) async {
+    final user = _auth.currentUser;
+    if (user == null) return {};
+
+    final querySnapshot = await _firestore
+        .collection('expenses')
+        .doc(user.uid)
+        .collection('user_expenses')
+        .where('month', isEqualTo: month)
+        .where('year', isEqualTo: year)
+        .get();
+
+    final Map<String, double> categoryTotals = {};
+    for (var doc in querySnapshot.docs) {
+      final category = doc['category'] as String;
+      final amount = (doc['amount'] as num).toDouble();
+      categoryTotals[category] = (categoryTotals[category] ?? 0) + amount;
+    }
+
+    return categoryTotals;
+  }
+
+  // Get monthly spending trends (last 6 months)
+  static Future<List<Map<String, dynamic>>> getMonthlyTrends() async {
+    final user = _auth.currentUser;
+    if (user == null) return [];
+
+    final now = DateTime.now();
+    final List<Map<String, dynamic>> trends = [];
+
+    for (int i = 5; i >= 0; i--) {
+      final date = DateTime(now.year, now.month - i, 1);
+      final month = date.month;
+      final year = date.year;
+
+      final querySnapshot = await _firestore
+          .collection('expenses')
+          .doc(user.uid)
+          .collection('user_expenses')
+          .where('month', isEqualTo: month)
+          .where('year', isEqualTo: year)
+          .get();
+
+      double totalSpent = 0;
+      for (var doc in querySnapshot.docs) {
+        totalSpent += (doc['amount'] as num).toDouble();
+      }
+
+      trends.add({
+        'month': '${_getMonthName(month)} ${year}',
+        'amount': totalSpent,
+        'monthNumber': month,
+        'year': year,
+      });
+    }
+
+    return trends;
+  }
+
+  // Get budget vs actual spending
+  static Future<Map<String, dynamic>> getBudgetVsActual(int month, int year) async {
+    final user = _auth.currentUser;
+    if (user == null) return {};
+
+    // Get budgets
+    final budgetSnapshot = await _firestore
+        .collection('budgets')
+        .doc(user.uid)
+        .collection('user_budgets')
+        .where('month', isEqualTo: month)
+        .where('year', isEqualTo: year)
+        .get();
+
+    double totalBudget = 0;
+    for (var doc in budgetSnapshot.docs) {
+      totalBudget += (doc['amount'] as num).toDouble();
+    }
+
+    // Get expenses
+    final expenseSnapshot = await _firestore
+        .collection('expenses')
+        .doc(user.uid)
+        .collection('user_expenses')
+        .where('month', isEqualTo: month)
+        .where('year', isEqualTo: year)
+        .get();
+
+    double totalSpent = 0;
+    for (var doc in expenseSnapshot.docs) {
+      totalSpent += (doc['amount'] as num).toDouble();
+    }
+
+    return {
+      'budget': totalBudget,
+      'actual': totalSpent,
+      'remaining': totalBudget - totalSpent,
+      'percentage': totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
+    };
+  }
+
+  // Helper method to get month name
+  static String _getMonthName(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
   }
 
   // Test analytics function

@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import '../services/analytics_service.dart';
 import '../main.dart'; // For selectedMonthYear
+import '../services/gamification_service.dart';
+import 'package:confetti/confetti.dart';
 
 class BudgetScreen extends StatefulWidget {
   final int? selectedMonth;
@@ -22,10 +24,12 @@ class _BudgetScreenState extends State<BudgetScreen> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
   bool _isSaving = false;
   String? _editingBudgetId; // To track which budget is being edited
+  ConfettiController? _confettiController;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
     // No need to set local state, use selectedMonthYear
   }
 
@@ -34,6 +38,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
     _categoryController.dispose();
     _amountController.dispose();
     _dateController.dispose();
+    _confettiController?.dispose();
     super.dispose();
   }
 
@@ -131,6 +136,13 @@ class _BudgetScreenState extends State<BudgetScreen> {
             'year': selectedMonthYear.value.year,
             'created_at': FieldValue.serverTimestamp(),
           });
+          // Check for first budget badge for this month
+          final badgeKey = 'first_budget_${selectedMonthYear.value.year}_${selectedMonthYear.value.month.toString().padLeft(2, '0')}';
+          final monthBudgets = await budgetsRef.where('month', isEqualTo: selectedMonthYear.value.month).where('year', isEqualTo: selectedMonthYear.value.year).get();
+          if (monthBudgets.docs.length == 1 && !(await GamificationService.hasBadge(badgeKey))) {
+            await GamificationService.awardBadge(badgeKey);
+            if (mounted) _showBadgeDialog('First Budget', 'You created your first budget for this month! Great start!');
+          }
           // Track budget creation
           await AnalyticsService.logBudgetCreated(
             category: category,
@@ -178,6 +190,52 @@ class _BudgetScreenState extends State<BudgetScreen> {
     setState(() {
       _selectedDate = null;
     });
+  }
+
+  void _showBadgeDialog(String title, String message) {
+    _confettiController?.play();
+    showDialog(
+      context: context,
+      builder: (context) => Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confettiController!,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              colors: const [Colors.green, Colors.amber, Colors.blue, Colors.purple],
+              numberOfParticles: 30,
+              maxBlastForce: 20,
+              minBlastForce: 8,
+            ),
+          ),
+          AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.emoji_events, color: Colors.amber),
+                SizedBox(width: 8),
+                Text('Badge Unlocked!'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                SizedBox(height: 8),
+                Text(message),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Awesome!'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override

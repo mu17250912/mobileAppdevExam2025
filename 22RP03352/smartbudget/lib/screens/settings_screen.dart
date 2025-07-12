@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../main.dart'; // For highContrastMode
+import 'payment_history_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -306,6 +307,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onTap: () async {
                     await FirebaseAuth.instance.signOut();
                     Navigator.of(context).popUntil((route) => route.isFirst);
+                  },
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+          // Payment Section
+          const Text(
+            'Payment',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            margin: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.receipt_long, color: Colors.green),
+                  title: const Text('Payment History'),
+                  subtitle: const Text('View your transaction history'),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const PaymentHistoryScreen(),
+                      ),
+                    );
                   },
                 ),
               ],

@@ -43,6 +43,15 @@ dependencies:
   # 🔔 Enhanced Notifications
   firebase_messaging: ^14.9.4
   
+  # 💳 Payment Integration
+  stripe_platform_interface: ^8.0.0
+  stripe_android: ^8.0.0
+  stripe_ios: ^8.0.0
+  http: ^1.1.0
+  
+  # 📤 Export & Share
+  share_plus: ^7.2.1
+  
   # ♿ Accessibility
   # flutter_semantics: ^1.0.0  # Removed - Flutter has built-in semantic support
 
@@ -52,6 +61,10 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.13.1
+  
+  # 🧪 Testing
+  mockito: ^5.4.4
+  build_runner: ^2.4.8
 
 flutter:
   uses-material-design: true

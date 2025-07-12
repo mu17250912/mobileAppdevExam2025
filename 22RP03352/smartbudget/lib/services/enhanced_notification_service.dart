@@ -166,6 +166,14 @@ class EnhancedNotificationService {
     );
   }
 
+  // Show local notification
+  static Future<void> showLocalNotification({
+    required String title,
+    required String body,
+  }) async {
+    await _showLocalNotification(title: title, body: body);
+  }
+
   // Schedule daily reminder
   static Future<void> scheduleDailyReminder({
     required int hour,

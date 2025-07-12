@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import '../services/analytics_service.dart';
 import '../main.dart'; // For selectedMonthYear
+import '../services/gamification_service.dart';
+import 'package:confetti/confetti.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final int? selectedMonth;
@@ -25,10 +27,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   bool _isSaving = false;
   String? _editingExpenseId; // To track which expense is being edited
   // Remove local _selectedMonth/_selectedYear
+  ConfettiController? _confettiController;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
     // No need to set local state, use selectedMonthYear
   }
 
@@ -38,6 +42,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     _noteController.dispose();
     _dateController.dispose();
     _scrollController.dispose();
+    _confettiController?.dispose();
     super.dispose();
   }
 
@@ -133,11 +138,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           amount: amount.toDouble(),
           note: note,
         );
+        // Check for first expense badge for this month
+        final badgeKey = 'first_expense_${year}_${month.toString().padLeft(2, '0')}';
+        final monthExpenses = await expensesRef.where('month', isEqualTo: month).where('year', isEqualTo: year).get();
+        if (monthExpenses.docs.length == 1 && !(await GamificationService.hasBadge(badgeKey))) {
+          await GamificationService.awardBadge(badgeKey);
+          if (mounted) _showBadgeDialog('First Expense', 'You added your first expense for this month! Keep it up!');
+        }
         if (mounted) {
-          // setState(() { // This line is removed as per the edit hint
-          //   _selectedMonth = month;
-          //   _selectedYear = year;
-          // });
           selectedMonthYear.value = DateTime(year, month); // Update the notifier
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Expense for "$category" added!')),
@@ -392,6 +400,52 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           ),
         );
       },
+    );
+  }
+
+  void _showBadgeDialog(String title, String message) {
+    _confettiController?.play();
+    showDialog(
+      context: context,
+      builder: (context) => Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confettiController!,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              colors: const [Colors.green, Colors.amber, Colors.blue, Colors.purple],
+              numberOfParticles: 30,
+              maxBlastForce: 20,
+              minBlastForce: 8,
+            ),
+          ),
+          AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.emoji_events, color: Colors.amber),
+                SizedBox(width: 8),
+                Text('Badge Unlocked!'),
+              ],
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                SizedBox(height: 8),
+                Text(message),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Awesome!'),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

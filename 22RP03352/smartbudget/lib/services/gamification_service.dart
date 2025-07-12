@@ -60,6 +60,29 @@ class GamificationService {
     },
   };
 
+  static Future<List<String>> getUserBadges() async {
+    final user = _auth.currentUser;
+    if (user == null) return [];
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    final data = doc.data();
+    if (data == null || data['badges'] == null) return [];
+    return List<String>.from(data['badges']);
+  }
+
+  static Future<bool> hasBadge(String badgeId) async {
+    final badges = await getUserBadges();
+    return badges.contains(badgeId);
+  }
+
+  static Future<void> awardBadge(String badgeId) async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    final docRef = _firestore.collection('users').doc(user.uid);
+    await docRef.set({
+      'badges': FieldValue.arrayUnion([badgeId])
+    }, SetOptions(merge: true));
+  }
+
   // Check and award achievements
   static Future<List<String>> checkAchievements() async {
     final user = _auth.currentUser;

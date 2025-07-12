@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import '../services/analytics_service.dart'; // Added import for AnalyticsService
 import '../main.dart'; // For selectedMonthYear
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/accessibility_service.dart'; // Import accessibility service
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,8 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final Set<String> _notified100 = {};
   final List<_BudgetNotification> _notifications = [];
   int _unreadNotifications = 0;
-  int _streak = 1;
-  DateTime? _lastOpened;
 
   @override
   void initState() {
@@ -41,8 +40,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadBannerAd();
     _fetchDisplayName();
     _initializeAnalytics();
-    _loadStreak();
-    _updateStreak();
+  }
+
+  void _initializeAccessibility() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AccessibilityService.announceToScreenReader(
+        context,
+        AccessibilityService.getNavigationGuidance('home'),
+      );
+    });
   }
 
   Future<void> _initializeAnalytics() async {
@@ -86,37 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Future<void> _loadStreak() async {
-    final prefs = await SharedPreferences.getInstance();
-    _streak = prefs.getInt('streak') ?? 1;
-    final lastOpenedStr = prefs.getString('lastOpened');
-    if (lastOpenedStr != null) {
-      _lastOpened = DateTime.tryParse(lastOpenedStr);
-    }
-    setState(() {});
-  }
-
-  Future<void> _updateStreak() async {
-    final prefs = await SharedPreferences.getInstance();
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final lastOpenedStr = prefs.getString('lastOpened');
-    DateTime? lastOpened = lastOpenedStr != null ? DateTime.tryParse(lastOpenedStr) : null;
-    if (lastOpened != null) {
-      final lastDay = DateTime(lastOpened.year, lastOpened.month, lastOpened.day);
-      if (today.difference(lastDay).inDays == 1) {
-        _streak = (prefs.getInt('streak') ?? 1) + 1;
-      } else if (today.difference(lastDay).inDays > 1) {
-        _streak = 1;
-      }
-    } else {
-      _streak = 1;
-    }
-    await prefs.setInt('streak', _streak);
-    await prefs.setString('lastOpened', today.toIso8601String());
-    setState(() {});
-  }
-
   @override
   void dispose() {
     _bannerAd?.dispose();
@@ -147,41 +122,45 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showNotificationsDialog() {
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Notifications'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: _notifications.isEmpty
-                ? Text('No notifications yet.')
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _notifications.length,
-                    itemBuilder: (context, index) {
-                      final n = _notifications[index];
-                      return ListTile(
-                        leading: Icon(Icons.notifications, color: Colors.green[800]),
-                        title: Text(n.title, style: TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(n.body),
-                        trailing: Text(
-                          '${n.timestamp.hour.toString().padLeft(2, '0')}:${n.timestamp.minute.toString().padLeft(2, '0')}',
-                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                        ),
-                      );
-                    },
-                  ),
+      builder: (context) => AlertDialog(
+        title: Text('Notifications'),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 300,
+          child: _notifications.isEmpty
+              ? Center(child: Text('No notifications'))
+              : ListView.builder(
+                  itemCount: _notifications.length,
+                  itemBuilder: (context, index) {
+                    final notification = _notifications[index];
+                    return ListTile(
+                      title: Text(notification.title),
+                      subtitle: Text(notification.body),
+                      trailing: Text(
+                        DateFormat('MMM dd, HH:mm').format(notification.timestamp),
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    );
+                  },
+                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _notifications.clear();
+                _unreadNotifications = 0;
+              });
+              Navigator.of(context).pop();
+            },
+            child: Text('Clear All'),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                setState(() => _unreadNotifications = 0);
-                Navigator.of(context).pop();
-              },
-              child: Text('Close'),
-            ),
-          ],
-        );
-      },
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -234,17 +213,24 @@ class _HomeScreenState extends State<HomeScreen> {
         final selectedYear = selectedDate.year;
         return Scaffold(
           appBar: AppBar(
-            title: const Text('BudgetWise Dashboard'),
+            title: Semantics(
+              label: AccessibilityService.getSemanticLabel('app_title'),
+              child: const Text('BudgetWise Dashboard'),
+            ),
             backgroundColor: Colors.green[800],
             elevation: 0,
             actions: [
               // Notification bell
               Stack(
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.notifications, color: Colors.white),
-                    tooltip: 'Notifications',
-                    onPressed: _showNotificationsDialog,
+                  Semantics(
+                    label: AccessibilityService.getSemanticLabel('notifications_button'),
+                    hint: AccessibilityService.getAccessibilityHint('view_notifications'),
+                    child: IconButton(
+                      icon: Icon(Icons.notifications, color: Colors.white),
+                      tooltip: 'Notifications',
+                      onPressed: _showNotificationsDialog,
+                    ),
                   ),
                   if (_unreadNotifications > 0)
                     Positioned(
@@ -270,71 +256,82 @@ class _HomeScreenState extends State<HomeScreen> {
               if (currentUser != null)
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
-                  child: Tooltip(
-                    message: displayName != null && displayName!.isNotEmpty
-                        ? displayName!
-                        : (currentUser?.email ?? 'User'),
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.person, color: Colors.green[800], size: 20),
+                  child: Semantics(
+                    label: AccessibilityService.getSemanticLabel('user_profile'),
+                    child: Tooltip(
+                      message: displayName != null && displayName!.isNotEmpty
+                          ? displayName!
+                          : (currentUser?.email ?? 'User'),
+                      child: CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.person, color: Colors.green[800], size: 20),
+                      ),
                     ),
                   ),
                 ),
-              IconButton(
-                icon: const Icon(Icons.settings, color: Colors.white),
-                tooltip: 'Settings',
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                  );
-                },
+              Semantics(
+                label: AccessibilityService.getSemanticLabel('settings_button'),
+                hint: AccessibilityService.getAccessibilityHint('open_settings'),
+                child: IconButton(
+                  icon: const Icon(Icons.settings, color: Colors.white),
+                  tooltip: 'Settings',
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                    );
+                  },
+                ),
               ),
-              IconButton(
-                icon: const Icon(Icons.logout, color: Colors.white),
-                tooltip: 'Logout',
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  // AuthCheck will handle navigation
-                },
+              Semantics(
+                label: AccessibilityService.getSemanticLabel('logout_button'),
+                hint: AccessibilityService.getAccessibilityHint('logout'),
+                child: IconButton(
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  tooltip: 'Logout',
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                    // AuthCheck will handle navigation
+                  },
+                ),
               ),
             ],
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6), // Reduced from 10
+              // Month selector
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                color: Colors.green[50],
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_left),
-                      onPressed: () => _changeMonth(-1),
+                    Semantics(
+                      label: AccessibilityService.getSemanticLabel('previous_month'),
+                      child: IconButton(
+                        icon: const Icon(Icons.chevron_left),
+                        onPressed: () => _changeMonth(-1),
+                      ),
                     ),
-                    Text(
-                      '${DateFormat.yMMMM().format(DateTime(selectedYear, selectedMonth))}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), // Reduced from 18
+                    Semantics(
+                      label: AccessibilityService.getSemanticLabel('current_month'),
+                      child: Text(
+                        DateFormat('MMMM yyyy').format(selectedDate),
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.arrow_right),
-                      onPressed: () => _changeMonth(1),
+                    Semantics(
+                      label: AccessibilityService.getSemanticLabel('next_month'),
+                      child: IconButton(
+                        icon: const Icon(Icons.chevron_right),
+                        onPressed: () => _changeMonth(1),
+                      ),
                     ),
                   ],
                 ),
               ),
-              // At the top of the body Column, after the month selector, always show the streak badge:
-              Padding(
-                padding: const EdgeInsets.only(top: 4, bottom: 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.local_fire_department, color: Colors.orange, size: 22),
-                    SizedBox(width: 6),
-                    Text('$_streak-day streak!', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.orange, fontSize: 16)),
-                  ],
-                ),
-              ),
+              // Main content
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -347,9 +344,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context, budgetSnapshot) {
                     if (budgetSnapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
-                    }
-                    if (!budgetSnapshot.hasData || budgetSnapshot.data!.docs.isEmpty) {
-                      return _buildEmptyState();
                     }
 
                     return StreamBuilder<QuerySnapshot>(
@@ -365,24 +359,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           return const Center(child: CircularProgressIndicator());
                         }
 
-                        final budgetDocs = budgetSnapshot.data!.docs;
+                        final budgetDocs = budgetSnapshot.data?.docs ?? [];
                         final expenseDocs = expenseSnapshot.data?.docs ?? [];
 
-                        final budgetCategories = budgetDocs.map((doc) => doc['category'] as String).toSet();
-                        final expenseCategories = expenseDocs.map((doc) => doc['category'] as String).toSet();
+                        double totalBudget = 0;
+                        double totalExpenses = 0;
 
-                        // Only sum expenses for categories that have a budget
-                        final filteredExpenseDocs = expenseDocs.where((doc) => budgetCategories.contains(doc['category'])).toList();
+                        for (var doc in budgetDocs) {
+                          totalBudget += (doc['amount'] as num).toDouble();
+                        }
 
-                        // Only sum budgets for categories that exist in the current month
-                        final filteredBudgetDocs = budgetDocs.where((doc) => expenseCategories.contains(doc['category'])).toList();
+                        for (var doc in expenseDocs) {
+                          totalExpenses += (doc['amount'] as num).toDouble();
+                        }
 
-                        double totalBudget = budgetDocs.fold(0.0, (sum, doc) => sum + (doc['amount'] as num));
-                        double totalExpenses = expenseDocs.fold(0.0, (sum, doc) => sum + (doc['amount'] as num));
-                        double remaining = totalBudget > 0 ? (totalBudget - totalExpenses) : 0.0;
-
-                        debugPrint('Total Budget: RWF $totalBudget, Total Spent: RWF $totalExpenses, Remaining: RWF $remaining');
-
+                        final remaining = totalBudget - totalExpenses;
                         final budgetsByCategory = {for (var doc in budgetDocs) doc['category']: (doc['amount'] as num).toDouble()};
                         final expensesByCategory = <String, double>{};
                         for (var doc in expenseDocs) {
@@ -414,50 +405,46 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ),
                             ),
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  final category = budgetsByCategory.keys.elementAt(index);
-                                  final budgetAmount = budgetsByCategory[category]!;
-                                  final expenseAmount = expensesByCategory[category] ?? 0.0;
-                                  // Track budget exceeded events
-                                  if (expenseAmount > budgetAmount) {
-                                    AnalyticsService.logBudgetExceeded(
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              sliver: SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final category = budgetsByCategory.keys.elementAt(index);
+                                    final budgetAmount = budgetsByCategory[category] ?? 0;
+                                    final expenseAmount = expensesByCategory[category] ?? 0;
+
+                                    // Budget notifications
+                                    if (budgetAmount > 0 && expenseAmount >= budgetAmount * 0.8 && expenseAmount < budgetAmount && !_notified80.contains(category)) {
+                                      NotificationHelper.showNotification(
+                                        title: 'Budget Alert',
+                                        body: "You've used 80% of your $category budget!",
+                                      );
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        _addNotification('Budget Alert', "You've used 80% of your $category budget!");
+                                      });
+                                      _notified80.add(category);
+                                    }
+
+                                    if (budgetAmount > 0 && expenseAmount >= budgetAmount && !_notified100.contains(category)) {
+                                      NotificationHelper.showNotification(
+                                        title: 'Budget Exceeded',
+                                        body: "You've exceeded your $category budget!",
+                                      );
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        _addNotification('Budget Exceeded', "You've exceeded your $category budget!");
+                                      });
+                                      _notified100.add(category);
+                                    }
+                                    
+                                    return _CategoryProgressCard(
                                       category: category,
                                       budgetAmount: budgetAmount,
                                       spentAmount: expenseAmount,
                                     );
-                                  }
-                                  // Notify at 80%
-                                  if (budgetAmount > 0 && expenseAmount >= 0.8 * budgetAmount && expenseAmount < budgetAmount && !_notified80.contains(category)) {
-                                    NotificationHelper.showNotification(
-                                      title: 'Budget Alert',
-                                      body: "You've spent 80% of your $category budget!",
-                                    );
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      _addNotification('Budget Alert', "You've spent 80% of your $category budget!");
-                                    });
-                                    _notified80.add(category);
-                                  }
-                                  // Notify at 100%
-                                  if (budgetAmount > 0 && expenseAmount >= budgetAmount && !_notified100.contains(category)) {
-                                    NotificationHelper.showNotification(
-                                      title: 'Budget Exceeded',
-                                      body: "You've exceeded your $category budget!",
-                                    );
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      _addNotification('Budget Exceeded', "You've exceeded your $category budget!");
-                                    });
-                                    _notified100.add(category);
-                                  }
-                                  
-                                  return _CategoryProgressCard(
-                                    category: category,
-                                    budgetAmount: budgetAmount,
-                                    spentAmount: expenseAmount,
-                                  );
-                                },
-                                childCount: budgetsByCategory.length,
+                                  },
+                                  childCount: budgetsByCategory.length,
+                                ),
                               ),
                             ),
                           ],
@@ -477,10 +464,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0), // Reduced from 8.0
                     child: _isAdLoaded && _bannerAd != null
-                        ? SizedBox(
-                            height: _bannerAd!.size.height.toDouble(),
-                            width: _bannerAd!.size.width.toDouble(),
-                            child: AdWidget(ad: _bannerAd!),
+                        ? Semantics(
+                            label: AccessibilityService.getSemanticLabel('advertisement'),
+                            child: SizedBox(
+                              height: _bannerAd!.size.height.toDouble(),
+                              width: _bannerAd!.size.width.toDouble(),
+                              child: AdWidget(ad: _bannerAd!),
+                            ),
                           )
                         : SizedBox.shrink(),
                   );
@@ -489,20 +479,9 @@ class _HomeScreenState extends State<HomeScreen> {
               // Replace individual button paddings with a grouped card
               FutureBuilder<bool>(
                 future: PremiumService.isPremium(),
-                builder: (context, premiumSnapshot) {
-                  if (premiumSnapshot.connectionState == ConnectionState.waiting) {
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                    );
-                  }
-                  
-                  final isPremium = premiumSnapshot.data ?? false;
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) return SizedBox.shrink();
+                  final isPremium = snapshot.data ?? false;
                   
                   return LayoutBuilder(
                     builder: (context, constraints) {
@@ -612,23 +591,15 @@ class _HomeScreenState extends State<HomeScreen> {
               // Analytics Test Button (Debug Mode Only)
               if (kDebugMode)
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: ElevatedButton.icon(
-                    icon: Icon(Icons.analytics, size: 18),
-                    label: Text('Test Analytics'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[600],
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                      textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
                     onPressed: () async {
                       await AnalyticsService.testAnalytics();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Analytics test completed! Check console for details.')),
+                        const SnackBar(content: Text('Analytics test completed! Check console for details.')),
                       );
                     },
+                    child: const Text('Test Analytics (Debug)'),
                   ),
                 ),
               // Footer
