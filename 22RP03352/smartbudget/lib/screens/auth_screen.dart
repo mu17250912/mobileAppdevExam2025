@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -272,17 +273,24 @@ class _AuthScreenState extends State<AuthScreen> {
                             onPressed: () async {
                               setState(() => _isLoading = true);
                               try {
-                                final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-                                if (googleUser == null) {
-                                  setState(() => _isLoading = false);
-                                  return;
+                                if (kIsWeb) {
+                                  // Web: Use signInWithPopup
+                                  GoogleAuthProvider googleProvider = GoogleAuthProvider();
+                                  await FirebaseAuth.instance.signInWithPopup(googleProvider);
+                                } else {
+                                  // Mobile: Use GoogleSignIn
+                                  final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+                                  if (googleUser == null) {
+                                    setState(() => _isLoading = false);
+                                    return;
+                                  }
+                                  final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+                                  final credential = GoogleAuthProvider.credential(
+                                    accessToken: googleAuth.accessToken,
+                                    idToken: googleAuth.idToken,
+                                  );
+                                  await FirebaseAuth.instance.signInWithCredential(credential);
                                 }
-                                final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-                                final credential = GoogleAuthProvider.credential(
-                                  accessToken: googleAuth.accessToken,
-                                  idToken: googleAuth.idToken,
-                                );
-                                await FirebaseAuth.instance.signInWithCredential(credential);
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text('Google sign-in failed: \\${e.toString()}')),

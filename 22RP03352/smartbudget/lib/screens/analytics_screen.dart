@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'premium_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'dart:math';
 
 class AnalyticsScreen extends StatelessWidget {
   const AnalyticsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    final now = DateTime.now();
+    final currentMonth = now.month;
+    final currentYear = now.year;
+
     return FutureBuilder<bool>(
       future: PremiumService.isPremium(),
       builder: (context, snapshot) {
@@ -24,15 +33,91 @@ class AnalyticsScreen extends StatelessWidget {
         // Premium content
         return Scaffold(
           appBar: AppBar(title: Text('Analytics & Reports')),
-          body: Center(
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(Icons.bar_chart, size: 80, color: Colors.green[800]),
-                SizedBox(height: 24),
-                Text('Advanced Analytics & Reports', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                Text('Spending by Category (This Month)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 SizedBox(height: 12),
-                Text('Charts, trends, and export options coming soon!', style: TextStyle(fontSize: 16)),
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('expenses')
+                        .doc(user!.uid)
+                        .collection('user_expenses')
+                        .where('month', isEqualTo: currentMonth)
+                        .where('year', isEqualTo: currentYear)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      final docs = snapshot.data?.docs ?? [];
+                      if (docs.isEmpty) {
+                        return Center(child: Text('No expenses found for this month.'));
+                      }
+                      // Aggregate by category
+                      final Map<String, double> categoryTotals = {};
+                      double totalSpent = 0;
+                      for (var doc in docs) {
+                        final category = doc['category'] as String;
+                        final amount = (doc['amount'] as num).toDouble();
+                        categoryTotals[category] = (categoryTotals[category] ?? 0) + amount;
+                        totalSpent += amount;
+                      }
+                      final colors = [
+                        Colors.green,
+                        Colors.blue,
+                        Colors.orange,
+                        Colors.purple,
+                        Colors.red,
+                        Colors.teal,
+                        Colors.brown,
+                        Colors.pink,
+                        Colors.indigo,
+                        Colors.cyan,
+                      ];
+                      int colorIdx = 0;
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 200,
+                            child: PieChart(
+                              PieChartData(
+                                sections: categoryTotals.entries.map((entry) {
+                                  final color = colors[colorIdx % colors.length];
+                                  colorIdx++;
+                                  return PieChartSectionData(
+                                    color: color,
+                                    value: entry.value,
+                                    title: entry.key,
+                                    radius: 60,
+                                    titleStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                                  );
+                                }).toList(),
+                                sectionsSpace: 2,
+                                centerSpaceRadius: 30,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Text('Total Spent: RWF ${totalSpent.toStringAsFixed(0)}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                          SizedBox(height: 16),
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Export to CSV coming soon!')),
+                              );
+                            },
+                            icon: Icon(Icons.download),
+                            label: Text('Export CSV'),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ],
             ),
           ),

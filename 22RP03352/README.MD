@@ -54,6 +54,8 @@ BudgetWise uses a **freemium monetization strategy**:
 > 
 > **Why No Real Income Collection:** This is a student project focused on demonstrating technical skills and monetization concepts. Real payment processing, affiliate accounts, and ad revenue require business registration, compliance, and published app status - the app has not been published yet.
 
+**Justification:** The freemium model with ads and affiliate links is ideal for students and young professionals who may not want to pay upfront. It allows free access to essential features while providing optional upgrades and non-intrusive monetization. This approach fits a budgeting app where trust and accessibility are important, and users are cost-conscious.
+
 ## 🔧 Key Features Implemented
 
 ### **Core Features:**
@@ -74,6 +76,8 @@ BudgetWise uses a **freemium monetization strategy**:
 
 - **Firebase Analytics** integration for user actions (budget creation, expense addition, feature usage, etc.)
 - Analytics events can be viewed in Firebase DebugView and Events tab
+
+**Using Analytics for Improvement:** Analytics data will be used to understand user behavior, identify popular features, and optimize ad/affiliate placements. Insights from analytics will guide future updates, feature prioritization, and monetization strategies to maximize engagement and revenue while keeping the app user-friendly.
 
 ### **How to View Analytics Data:**
 1. Go to [Firebase Console](https://console.firebase.google.com/), select your project.

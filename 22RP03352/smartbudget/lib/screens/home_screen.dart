@@ -12,6 +12,7 @@ import 'upgrade_screen.dart'; // Added import for UpgradeScreen
 import 'analytics_screen.dart'; // Added import for AnalyticsScreen
 import 'package:flutter/foundation.dart';
 import '../services/analytics_service.dart'; // Added import for AnalyticsService
+import '../main.dart'; // For NotificationHelper
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,6 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
   BannerAd? _bannerAd;
   bool _isAdLoaded = false;
   String? displayName;
+  final Set<String> _notified80 = {};
+  final Set<String> _notified100 = {};
+  final List<_BudgetNotification> _notifications = [];
+  int _unreadNotifications = 0;
 
   @override
   void initState() {
@@ -96,6 +101,54 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _addNotification(String title, String body) {
+    setState(() {
+      _notifications.insert(0, _BudgetNotification(title, body, DateTime.now()));
+      _unreadNotifications++;
+    });
+  }
+
+  void _showNotificationsDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Notifications'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: _notifications.isEmpty
+                ? Text('No notifications yet.')
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _notifications.length,
+                    itemBuilder: (context, index) {
+                      final n = _notifications[index];
+                      return ListTile(
+                        leading: Icon(Icons.notifications, color: Colors.green[800]),
+                        title: Text(n.title, style: TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(n.body),
+                        trailing: Text(
+                          '${n.timestamp.hour.toString().padLeft(2, '0')}:${n.timestamp.minute.toString().padLeft(2, '0')}',
+                          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                setState(() => _unreadNotifications = 0);
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,6 +157,49 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.green[800],
         elevation: 0,
         actions: [
+          // Notification bell
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications, color: Colors.white),
+                tooltip: 'Notifications',
+                onPressed: _showNotificationsDialog,
+              ),
+              if (_unreadNotifications > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    constraints: BoxConstraints(minWidth: 16, minHeight: 16),
+                    child: Text(
+                      '${_unreadNotifications}',
+                      style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          // User avatar with tooltip
+          if (currentUser != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Tooltip(
+                message: displayName != null && displayName!.isNotEmpty
+                    ? displayName!
+                    : (currentUser?.email ?? 'User'),
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, color: Colors.green[800], size: 20),
+                ),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
             tooltip: 'Settings',
@@ -179,10 +275,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     final budgetDocs = budgetSnapshot.data!.docs;
                     final expenseDocs = expenseSnapshot.data?.docs ?? [];
 
-                    double totalBudget = budgetDocs.fold(0.0, (sum, doc) => sum + (doc['amount'] as num));
-                    double totalExpenses = expenseDocs.fold(0.0, (sum, doc) => sum + (doc['amount'] as num));
-                    double remaining = totalBudget - totalExpenses;
-                    double progress = totalBudget > 0 ? (totalExpenses / totalBudget).clamp(0.0, 1.0) : 0;
+                    final budgetCategories = budgetDocs.map((doc) => doc['category'] as String).toSet();
+                    final expenseCategories = expenseDocs.map((doc) => doc['category'] as String).toSet();
+
+                    // Only sum expenses for categories that have a budget
+                    final filteredExpenseDocs = expenseDocs.where((doc) => budgetCategories.contains(doc['category'])).toList();
+
+                    // Only sum budgets for categories that exist in the current month
+                    final filteredBudgetDocs = budgetDocs.where((doc) => expenseCategories.contains(doc['category'])).toList();
+
+                    double totalBudget = filteredBudgetDocs.fold(0.0, (sum, doc) => sum + (doc['amount'] as num));
+                    double totalExpenses = filteredExpenseDocs.fold(0.0, (sum, doc) => sum + (doc['amount'] as num));
+                    double remaining = (totalBudget - totalExpenses).clamp(0.0, double.infinity);
+
+                    debugPrint('Total Budget: RWF $totalBudget, Total Spent: RWF $totalExpenses, Remaining: RWF $remaining');
 
                     final budgetsByCategory = {for (var doc in budgetDocs) doc['category']: (doc['amount'] as num).toDouble()};
                     final expensesByCategory = <String, double>{};
@@ -195,17 +301,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     return CustomScrollView(
                       slivers: [
                         SliverToBoxAdapter(
-                          child: _WelcomeCard(
-                            displayName: displayName,
-                            currentUser: currentUser,
-                          ),
-                        ),
-                        SliverToBoxAdapter(
                           child: _SummaryCard(
                             totalBudget: totalBudget,
                             totalExpenses: totalExpenses,
                             remaining: remaining,
-                            progress: progress,
+                            progress: totalBudget > 0 ? (totalExpenses / totalBudget).clamp(0.0, 1.0) : 0,
                           ),
                         ),
                         _QuickActions(),
@@ -214,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 6), // Reduced from 24, 8
                             child: Text(
                               'Spending by Category',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, fontSize: 16), // Reduced font size
                             ),
                           ),
                         ),
@@ -231,6 +331,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                   budgetAmount: budgetAmount,
                                   spentAmount: expenseAmount,
                                 );
+                              }
+                              // Notify at 80%
+                              if (budgetAmount > 0 && expenseAmount >= 0.8 * budgetAmount && expenseAmount < budgetAmount && !_notified80.contains(category)) {
+                                NotificationHelper.showNotification(
+                                  title: 'Budget Alert',
+                                  body: "You've spent 80% of your $category budget!",
+                                );
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  _addNotification('Budget Alert', "You've spent 80% of your $category budget!");
+                                });
+                                _notified80.add(category);
+                              }
+                              // Notify at 100%
+                              if (budgetAmount > 0 && expenseAmount >= budgetAmount && !_notified100.contains(category)) {
+                                NotificationHelper.showNotification(
+                                  title: 'Budget Exceeded',
+                                  body: "You've exceeded your $category budget!",
+                                );
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  _addNotification('Budget Exceeded', "You've exceeded your $category budget!");
+                                });
+                                _notified100.add(category);
                               }
                               
                               return _CategoryProgressCard(
@@ -268,83 +390,99 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          // Go Premium button (only for non-premium users)
-          FutureBuilder<bool>(
-            future: PremiumService.isPremium(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) return SizedBox.shrink();
-              if (snapshot.data == true) return SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0), // Reduced from 8.0
-                child: ElevatedButton.icon(
-                  icon: Icon(Icons.star, color: Colors.amber, size: 18), // Reduced icon size
-                  label: Text('Go Premium'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[800],
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8), // Reduced from 24, 12
-                    textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // Reduced from 16
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Reduced from 12
-                  ),
-                  onPressed: () async {
-                    await AnalyticsService.logFeatureUsage(featureName: 'go_premium_button');
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UpgradeScreen()));
-                  },
+          // Replace individual button paddings with a grouped card
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 500;
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                elevation: 2,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  child: isWide
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _ActionButton(
+                              icon: Icons.star,
+                              label: 'Go Premium',
+                              color: Colors.green[800]!,
+                              onPressed: () async {
+                                await AnalyticsService.logFeatureUsage(featureName: 'go_premium_button');
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UpgradeScreen()));
+                              },
+                            ),
+                            _ActionButton(
+                              icon: Icons.bar_chart,
+                              label: 'Analytics & Reports',
+                              color: Colors.green[700]!,
+                              onPressed: () async {
+                                await AnalyticsService.logFeatureUsage(featureName: 'analytics_button');
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AnalyticsScreen()));
+                              },
+                            ),
+                            _ActionButton(
+                              icon: Icons.shopping_cart_outlined,
+                              label: 'Shop on Amazon',
+                              color: Colors.orange[800]!,
+                              onPressed: () async {
+                                await AnalyticsService.logAdInteraction(adType: 'affiliate', action: 'clicked');
+                                final url = Uri.parse('https://www.amazon.com/dp/B08N5WRWNW?tag=youraffiliateid');
+                                if (await canLaunchUrl(url)) {
+                                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Could not launch affiliate link')),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            _ActionButton(
+                              icon: Icons.star,
+                              label: 'Go Premium',
+                              color: Colors.green[800]!,
+                              onPressed: () async {
+                                await AnalyticsService.logFeatureUsage(featureName: 'go_premium_button');
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UpgradeScreen()));
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            _ActionButton(
+                              icon: Icons.bar_chart,
+                              label: 'Analytics & Reports',
+                              color: Colors.green[700]!,
+                              onPressed: () async {
+                                await AnalyticsService.logFeatureUsage(featureName: 'analytics_button');
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AnalyticsScreen()));
+                              },
+                            ),
+                            SizedBox(height: 8),
+                            _ActionButton(
+                              icon: Icons.shopping_cart_outlined,
+                              label: 'Shop on Amazon',
+                              color: Colors.orange[800]!,
+                              onPressed: () async {
+                                await AnalyticsService.logAdInteraction(adType: 'affiliate', action: 'clicked');
+                                final url = Uri.parse('https://www.amazon.com/dp/B08N5WRWNW?tag=youraffiliateid');
+                                if (await canLaunchUrl(url)) {
+                                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Could not launch affiliate link')),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                 ),
               );
             },
-          ),
-          // Analytics button (only for premium users)
-          FutureBuilder<bool>(
-            future: PremiumService.isPremium(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) return SizedBox.shrink();
-              if (snapshot.data != true) return SizedBox.shrink();
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0), // Reduced from 8.0
-                child: ElevatedButton.icon(
-                  icon: Icon(Icons.bar_chart, color: Colors.white, size: 18), // Reduced icon size
-                  label: Text('Analytics & Reports'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[700],
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8), // Reduced from 24, 12
-                    textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // Reduced from 16
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Reduced from 12
-                  ),
-                  onPressed: () async {
-                    await AnalyticsService.logFeatureUsage(featureName: 'analytics_button');
-                    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AnalyticsScreen()));
-                  },
-                ),
-              );
-            },
-          ),
-          // Affiliate Button (replaces AdMob banner)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0), // Reduced from 8.0
-            child: ElevatedButton.icon(
-              icon: Icon(Icons.shopping_cart_outlined, size: 18), // Reduced icon size
-              label: Text('Shop on Amazon (Affiliate)'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange[800],
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8), // Reduced from 24, 12
-                textStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold), // Reduced from 16
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Reduced from 12
-              ),
-              onPressed: () async {
-                await AnalyticsService.logAdInteraction(adType: 'affiliate', action: 'clicked');
-                final url = Uri.parse('https://www.amazon.com/dp/B08N5WRWNW?tag=youraffiliateid'); // Replace with your affiliate link
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Could not launch affiliate link')),
-                  );
-                }
-              },
-            ),
           ),
           // Analytics Test Button (Debug Mode Only)
           if (kDebugMode)
@@ -370,60 +508,22 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           // Footer
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), // Reduced from 16.0, 24.0
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12), // Reduced from 16
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  const Divider(height: 16, thickness: 1), // Reduced from 24
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.verified, color: Colors.green, size: 16), // Reduced from 18
-                      const SizedBox(width: 4), // Reduced from 6
-                      Text(
-                        'v1.0.0',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 12, fontWeight: FontWeight.w600), // Reduced from 14
-                      ),
-                      const SizedBox(width: 12), // Reduced from 18
-                      Icon(Icons.copyright, color: Colors.grey[600], size: 14), // Reduced from 16
-                      const SizedBox(width: 3), // Reduced from 4
-                      Text(
-                        '2024 BudgetWise',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 12, fontWeight: FontWeight.w600), // Reduced from 14
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4), // Reduced from 6
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Made with',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 12, fontStyle: FontStyle.italic), // Reduced from 14
-                      ),
-                      const SizedBox(width: 3), // Reduced from 4
-                      Icon(Icons.favorite, color: Colors.redAccent, size: 14), // Reduced from 16
-                      const SizedBox(width: 3), // Reduced from 4
-                      Text(
-                        'by Sandrine',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 12, fontStyle: FontStyle.italic, fontWeight: FontWeight.w600), // Reduced from 14
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 3), // Reduced from 4
-                ],
-              ),
+            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8.0), // Very compact padding
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.verified, color: Colors.green, size: 14),
+                const SizedBox(width: 3),
+                Text('v1.0.0', style: TextStyle(color: Colors.grey[700], fontSize: 10, fontWeight: FontWeight.w600)),
+                const SizedBox(width: 8),
+                Icon(Icons.copyright, color: Colors.grey[600], size: 12),
+                const SizedBox(width: 2),
+                Text('2024 BudgetWise', style: TextStyle(color: Colors.grey[700], fontSize: 10, fontWeight: FontWeight.w600)),
+                const SizedBox(width: 8),
+                Icon(Icons.favorite, color: Colors.redAccent, size: 12),
+                const SizedBox(width: 2),
+                Text('by Sandrine', style: TextStyle(color: Colors.grey[700], fontSize: 10, fontStyle: FontStyle.italic, fontWeight: FontWeight.w600)),
+              ],
             ),
           ),
         ],
@@ -695,45 +795,43 @@ class _CategoryProgressCard extends StatelessWidget {
   }
 }
 
-class _WelcomeCard extends StatelessWidget {
-  final String? displayName;
-  final User? currentUser;
+class _ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
 
-  const _WelcomeCard({
-    required this.displayName,
-    required this.currentUser,
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    final userName = displayName != null && displayName!.isNotEmpty
-        ? displayName!
-        : (currentUser?.email ?? 'User');
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4), // Very small padding
-      child: Row(
-        children: [
-          Text(
-            'Welcome, ',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Text(
-            userName,
-            style: TextStyle(
-              color: Colors.grey[800],
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+    return SizedBox(
+      width: 160,
+      height: 44,
+      child: ElevatedButton.icon(
+        icon: Icon(icon, color: Colors.white, size: 20),
+        label: Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 2,
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        ),
+        onPressed: onPressed,
       ),
     );
   }
+}
+
+class _BudgetNotification {
+  final String title;
+  final String body;
+  final DateTime timestamp;
+  _BudgetNotification(this.title, this.body, this.timestamp);
 }
