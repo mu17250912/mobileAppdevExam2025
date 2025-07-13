@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 📚 RwandaRead
 
 A Flutter-based reading application with subscription monetization, offering access to thousands of books with premium features.
@@ -139,3 +140,6 @@ MIT License - see [LICENSE](LICENSE) file.
 ---
 
 **Made with ❤️ for readers everywhere**
+=======
+# mobileAppdevExam2025
+>>>>>>> fdb473796a69b9f688cc2e81ad96fc9c32799a72
