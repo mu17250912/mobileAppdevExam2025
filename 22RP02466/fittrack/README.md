@@ -2,10 +2,10 @@ Student Registration Number : 22RP02466
 
 *I. Idea Generation & Market Fit*
 
-**App Name: FitTrack BMI**
+**App Name: FitTrack **
 
 **Description:**
-FitTrack BMI is a comprehensive Flutter-based mobile application designed to help users track their Body Mass Index (BMI), receive personalized health recommendations, and maintain their wellness journey through an intuitive and feature-rich interface. The app combines modern UI design with robust health tracking capabilities to provide users with a complete health monitoring solution.
+FitTrack  is a comprehensive Flutter-based mobile application designed to help users track their Body Mass Index (BMI), receive personalized health recommendations, and maintain their wellness journey through an intuitive and feature-rich interface. The app combines modern UI design with robust health tracking capabilities to provide users with a complete health monitoring solution.
 
 **1.Identified Real-World Problem or Need:**
 In today's fast-paced world, many individuals struggle to maintain a healthy lifestyle due to lack of awareness, personalized feedback, and tools for consistent monitoring. Overweight and obesity-related health issues are on the rise, often linked to sedentary habits and poor nutritional awareness. While BMI is a key indicator of one's health status, most people do not regularly calculate or understand what their BMI means in practical terms.
