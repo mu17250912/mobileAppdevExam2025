@@ -46,7 +46,7 @@ Behavior: May not be tech experts, but motivated to improve health with simple t
 4. Residents in Low-Resource or Rural Areas
 Demographic: Users in regions with limited access to professional healthcare tools or consultations.
 
-Need: Offline-capable, data-light, easy-to-use app for basic health tracking.
+Need: data-light, easy-to-use app for basic health tracking.
 
 Behavior: Relies on mobile phones for information; values affordability and simplicity.
 
