@@ -4,35 +4,6 @@
 **App Name:** CeremoCar  
 **Platform:** Flutter (Android)
 
----
-
-##  Table of Contents
-- [CeremoCar -Car Booking App](#ceremocar--car-booking-app)
-  - [Table of Contents](#table-of-contents)
-  - [App Description](#app-description)
-  - [Problem \& Market Fit](#problem--market-fit)
-  - [Target Audience](#target-audience)
-  - [Unique Selling Proposition (USP)](#unique-selling-proposition-usp)
-  - [Monetization Strategy](#monetization-strategy)
-  - [Key Features](#key-features)
-    - [User](#user)
-    - [Admin](#admin)
-    - [Technical](#technical)
-  - [Analytics \& Tracking](#analytics--tracking)
-  - [Scalability \& Performance](#scalability--performance)
-  - [Sustainability Plan](#sustainability-plan)
-  - [Security \& Reliability](#security--reliability)
-  - [Installation \& Submission](#installation--submission)
-    - [Prerequisites](#prerequisites)
-    - [Steps](#steps)
-    - [APK \& AAB Submission](#apk--aab-submission)
-  - [Testing](#testing)
-  - [Business Model Viability](#business-model-viability)
-  - [Future Roadmap](#future-roadmap)
-  - [Support \& Contact](#support--contact)
-
----
-
 ##  App Description
 
 CeremoCar is a premium car booking app for special events, connecting users with luxury vehicles for weddings, corporate events, and celebrations. It features both user and admin interfaces, a robust booking system, and advanced monetization.
@@ -100,6 +71,7 @@ Tiered plans and in-app purchases maximize revenue while remaining accessible.
 - Profile management
 - Subscription management
 - Premium car unlocks
+- Notifications
 - **Accessibility:** Color schemes, large touch targets, readable fonts
 
 ### Admin
@@ -115,7 +87,6 @@ Tiered plans and in-app purchases maximize revenue while remaining accessible.
 - Real-time sync
 - Image caching
 - Offline support
-- Push notifications
 - Analytics tracking
 
 ---
@@ -215,8 +186,7 @@ Tiered plans and in-app purchases maximize revenue while remaining accessible.
 
 ##  Support & Contact
 
-- **Email:** support@ceremocar.com
-- **GitHub Issues:** [https://github.com/your-username/ceremocar/issues]
+- **Email:** isniyomukiza@gmail.com 
 
 ---
 
