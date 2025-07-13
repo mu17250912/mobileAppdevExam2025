@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "616444734280",
+    "project_id": "vetmed-4a1a5",
+    "storage_bucket": "vetmed-4a1a5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:616444734280:android:4bff8f839d71cf7d6be17d",
+        "android_client_info": {
+          "package_name": "com.example.vetmed"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbPxIPYTJL12kLhAG1ypxRxMQ24SH4dy8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
