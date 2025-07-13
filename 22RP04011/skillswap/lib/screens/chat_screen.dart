@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/session_model.dart';
-import '../services/app_service.dart';
+import '../models/message_model.dart';
+import '../services/messaging_service.dart';
 import 'schedule_session_screen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -23,12 +23,13 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final ScrollController _scrollController = ScrollController();
+  final MessagingService _messagingService = MessagingService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool _isTyping = false;
   String? _typingUser;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -42,117 +43,65 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Future<void> _markMessagesAsRead() async {
     try {
-      // Mark all messages from this user as read
-      final querySnapshot = await _firestore
-          .collection('messages')
-          .where('senderId', isEqualTo: widget.receiverId)
-          .where('receiverId', isEqualTo: _auth.currentUser!.uid)
-          .where('isRead', isEqualTo: false)
-          .get();
-
-      final batch = _firestore.batch();
-      for (final doc in querySnapshot.docs) {
-        batch.update(doc.reference, {'isRead': true});
-      }
-      await batch.commit();
+      await _messagingService.markMessagesAsRead(widget.receiverId);
     } catch (e) {
       debugPrint('Error marking messages as read: $e');
     }
   }
 
   void _setupTypingListener() {
-    // Listen for typing indicators
-    _firestore
-        .collection('typing')
-        .doc('${widget.receiverId}_${_auth.currentUser!.uid}')
-        .snapshots()
-        .listen((snapshot) {
-      if (snapshot.exists && mounted) {
-        final data = snapshot.data();
-        if (data != null && data['isTyping'] == true) {
-          setState(() {
-            _isTyping = true;
-            _typingUser = data['userName'];
-          });
-        } else {
-          setState(() {
-            _isTyping = false;
-            _typingUser = null;
-          });
-        }
+    _messagingService.getTypingStatus(widget.receiverId).listen((isTyping) {
+      if (mounted) {
+        setState(() {
+          _isTyping = isTyping;
+          _typingUser = isTyping ? widget.receiverName : null;
+        });
       }
-    });
-  }
-
-  void _updateTypingStatus(bool isTyping) {
-    _firestore
-        .collection('typing')
-        .doc('${_auth.currentUser!.uid}_${widget.receiverId}')
-        .set({
-      'isTyping': isTyping,
-      'userId': _auth.currentUser!.uid,
-      'userName': _auth.currentUser!.displayName ?? 'User',
-      'timestamp': FieldValue.serverTimestamp(),
     });
   }
 
   Future<void> _sendMessage() async {
     if (_messageController.text.trim().isEmpty) return;
 
-    final message = _messageController.text.trim();
-    _messageController.clear();
-    _updateTypingStatus(false);
+    setState(() => _isLoading = true);
 
     try {
-      await _firestore.collection('messages').add({
-        'senderId': _auth.currentUser!.uid,
-        'receiverId': widget.receiverId,
-        'content': message,
-        'timestamp': FieldValue.serverTimestamp(),
-        'isRead': false,
-        'type': 'text',
-      });
-
-      // Send notification to receiver
-      await _sendNotification(message);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to send message: $e'),
-          backgroundColor: Colors.red,
-        ),
+      await _messagingService.sendMessage(
+        receiverId: widget.receiverId,
+        content: _messageController.text.trim(),
       );
-    }
-  }
 
-  Future<void> _sendNotification(String message) async {
-    try {
-      final currentUser = _auth.currentUser;
-      if (currentUser == null) return;
+      _messageController.clear();
+      await _messagingService.updateTypingStatus(widget.receiverId, false);
 
-      await _firestore.collection('notifications').add({
-        'userId': widget.receiverId,
-        'title': 'New Message',
-        'message': '${currentUser.displayName ?? 'Someone'} sent you a message',
-        'type': 'message',
-        'senderId': currentUser.uid,
-        'senderName': currentUser.displayName ?? 'User',
-        'senderPhotoUrl': currentUser.photoURL,
-        'isRead': false,
-        'createdAt': FieldValue.serverTimestamp(),
-        'data': {
-          'chatId': '${currentUser.uid}_${widget.receiverId}',
-          'message': message,
-        },
+      // Auto-scroll to bottom
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
       });
     } catch (e) {
-      debugPrint('Failed to send notification: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send message: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
   Future<void> _requestSession() async {
     try {
-      // Navigate to schedule session screen
       final result = await Navigator.push(
         context,
         MaterialPageRoute(
@@ -160,7 +109,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       );
 
-      if (result == true) {
+      if (result == true && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Session request sent successfully!'),
@@ -169,12 +118,14 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to request session: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to request session: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -210,56 +161,83 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _firestore
-                  .collection('messages')
-                  .where('senderId',
-                      whereIn: [_auth.currentUser!.uid, widget.receiverId])
-                  .where('receiverId',
-                      whereIn: [_auth.currentUser!.uid, widget.receiverId])
-                  .orderBy('timestamp', descending: false)
-                  .snapshots(),
+            child: StreamBuilder<List<Message>>(
+              stream: _messagingService.getMessages(widget.receiverId),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                final messages = snapshot.data!.docs;
-                List<Widget> messageWidgets = [];
-
-                for (var message in messages) {
-                  final messageData = message.data() as Map<String, dynamic>;
-                  final messageText = messageData['content'] ?? '';
-                  final messageSender = messageData['senderId'] ?? '';
-                  final timestamp = messageData['timestamp'] as Timestamp?;
-                  final isRead = messageData['isRead'] ?? false;
-                  final isMe = messageSender == _auth.currentUser!.uid;
-
-                  final messageWidget = MessageBubble(
-                    text: messageText,
-                    isMe: isMe,
-                    timestamp: timestamp?.toDate(),
-                    isRead: isRead,
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline,
+                            size: 64, color: Colors.grey[400]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Failed to load messages',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton(
+                          onPressed: () => setState(() {}),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
                   );
-                  messageWidgets.add(messageWidget);
                 }
 
-                // Auto-scroll to bottom when new messages arrive
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (_scrollController.hasClients) {
-                    _scrollController.animateTo(
-                      _scrollController.position.maxScrollExtent,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                    );
-                  }
-                });
+                final messages = snapshot.data ?? [];
 
-                return ListView(
+                if (messages.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.chat_bubble_outline,
+                            size: 64, color: Colors.grey[400]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No messages yet',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Start a conversation with ${widget.receiverName}',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[500],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.builder(
                   controller: _scrollController,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  children: messageWidgets,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    final isMe = message.senderId == _auth.currentUser?.uid;
+
+                    return MessageBubble(
+                      message: message,
+                      isMe: isMe,
+                    );
+                  },
                 );
               },
             ),
@@ -289,8 +267,9 @@ class _ChatScreenState extends State<ChatScreen> {
           Expanded(
             child: TextField(
               controller: _messageController,
+              enabled: !_isLoading,
               decoration: InputDecoration(
-                hintText: 'Type your message...',
+                hintText: _isLoading ? 'Sending...' : 'Type your message...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
                   borderSide: BorderSide.none,
@@ -303,7 +282,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
               onChanged: (value) {
-                _updateTypingStatus(value.isNotEmpty);
+                _messagingService.updateTypingStatus(
+                    widget.receiverId, value.isNotEmpty);
               },
               onSubmitted: (value) => _sendMessage(),
             ),
@@ -311,12 +291,21 @@ class _ChatScreenState extends State<ChatScreen> {
           const SizedBox(width: 8),
           Container(
             decoration: BoxDecoration(
-              color: Colors.blue[600],
+              color: _isLoading ? Colors.grey[400] : Colors.blue[600],
               shape: BoxShape.circle,
             ),
             child: IconButton(
-              icon: const Icon(Icons.send, color: Colors.white),
-              onPressed: _sendMessage,
+              icon: _isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : const Icon(Icons.send, color: Colors.white),
+              onPressed: _isLoading ? null : _sendMessage,
             ),
           ),
         ],
@@ -328,23 +317,19 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
-    _updateTypingStatus(false);
+    _messagingService.updateTypingStatus(widget.receiverId, false);
     super.dispose();
   }
 }
 
 class MessageBubble extends StatelessWidget {
-  final String text;
+  final Message message;
   final bool isMe;
-  final DateTime? timestamp;
-  final bool isRead;
 
   const MessageBubble({
     super.key,
-    required this.text,
+    required this.message,
     required this.isMe,
-    this.timestamp,
-    this.isRead = false,
   });
 
   @override
@@ -371,7 +356,7 @@ class MessageBubble extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                text,
+                message.content,
                 style: TextStyle(
                   color: isMe ? Colors.white : Colors.black87,
                   fontSize: 16,
@@ -381,20 +366,19 @@ class MessageBubble extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (timestamp != null)
-                    Text(
-                      _formatTime(timestamp!),
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: isMe ? Colors.white70 : Colors.grey[600],
-                      ),
+                  Text(
+                    _formatTime(message.timestamp),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isMe ? Colors.white70 : Colors.grey[600],
                     ),
+                  ),
                   if (isMe) ...[
                     const SizedBox(width: 4),
                     Icon(
-                      isRead ? Icons.done_all : Icons.done,
+                      _getStatusIcon(message.status),
                       size: 14,
-                      color: isRead ? Colors.blue[200] : Colors.white70,
+                      color: _getStatusColor(message.status, isMe),
                     ),
                   ],
                 ],
@@ -404,6 +388,34 @@ class MessageBubble extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  IconData _getStatusIcon(MessageStatus status) {
+    switch (status) {
+      case MessageStatus.sent:
+        return Icons.done;
+      case MessageStatus.delivered:
+        return Icons.done_all;
+      case MessageStatus.read:
+        return Icons.done_all;
+      case MessageStatus.failed:
+        return Icons.error;
+    }
+  }
+
+  Color _getStatusColor(MessageStatus status, bool isMe) {
+    if (!isMe) return Colors.transparent;
+
+    switch (status) {
+      case MessageStatus.sent:
+        return Colors.white70;
+      case MessageStatus.delivered:
+        return Colors.white70;
+      case MessageStatus.read:
+        return Colors.blue[200]!;
+      case MessageStatus.failed:
+        return Colors.red[200]!;
+    }
   }
 
   String _formatTime(DateTime time) {

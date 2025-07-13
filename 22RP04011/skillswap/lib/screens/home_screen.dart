@@ -6,6 +6,7 @@ import '../models/notification_model.dart';
 import '../models/session_model.dart';
 import '../services/app_service.dart';
 import '../services/navigation_service.dart';
+import '../services/messaging_service.dart';
 import 'login_screen.dart';
 import 'find_partner_screen.dart';
 import 'chat_list_screen.dart';
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final NavigationService _navigationService = NavigationService();
+  final MessagingService _messagingService = MessagingService();
   User? _user;
   Map<String, dynamic>? _userData;
   bool _isLoading = false;
@@ -507,15 +509,22 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
-        _featureButton(
-          icon: Icons.chat_bubble_outline,
-          label: 'Messenger',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ChatListScreen(),
-              ),
+        StreamBuilder<int>(
+          stream: _messagingService.getUnreadMessageCount(),
+          builder: (context, snapshot) {
+            final unreadCount = snapshot.data ?? 0;
+            return _featureButton(
+              icon: Icons.chat_bubble_outline,
+              label: 'Messenger',
+              badge: unreadCount > 0 ? unreadCount.toString() : null,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ChatListScreen(),
+                  ),
+                );
+              },
             );
           },
         ),
@@ -937,6 +946,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
+    String? badge,
   }) {
     return Semantics(
       button: true,
@@ -951,18 +961,48 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: Colors.grey[300]!),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Stack(
               children: [
-                Icon(icon, size: 36, color: Colors.blue[700]),
-                const SizedBox(height: 10),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, size: 36, color: Colors.blue[700]),
+                    const SizedBox(height: 10),
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
                 ),
+                if (badge != null)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        badge,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
