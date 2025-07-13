@@ -13,10 +13,10 @@
 **📆 Semester:** Year 3, Semester 1
 
 
-FOR ACCESS IT USING THIS CREDENTIAL 
+FOR ACCESS APPLICATION USE THIS CREDENTIAL 
 ================================================================
 🔐 Credential of admin: us@gmail.com  password: 1234567890
-                     user: patient@gmail.com  password: 123456
+                                   user: patient@gmail.com  password: 123456
 =================================================================
 
 ## 🔍 Project Overview
