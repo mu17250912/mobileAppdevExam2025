@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "580966042001",
+    "project_id": "genz-4ac33",
+    "storage_bucket": "genz-4ac33.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:580966042001:android:4f477fd4d908c1c726b230",
+        "android_client_info": {
+          "package_name": "com.example.exam_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmCmKZUb4Hnw_eiiIOSCQzbRONCTBEl7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:580966042001:android:4d5c404996db321026b230",
+        "android_client_info": {
+          "package_name": "com.example.genz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmCmKZUb4Hnw_eiiIOSCQzbRONCTBEl7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
