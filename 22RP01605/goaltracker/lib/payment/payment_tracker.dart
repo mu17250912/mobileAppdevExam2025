@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'lnpay_service.dart';
 import 'dart:async';
-import 'dart:convert';
 
 class PaymentTracker {
   static final PaymentTracker _instance = PaymentTracker._internal();

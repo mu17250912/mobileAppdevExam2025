@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'profile_service.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../payment/lnpay_service.dart';
 import '../payment/payment_tracker.dart';
-import '../payment/api_test.dart';
-import '../shared/app_theme.dart';
 import '../settings/theme_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -672,8 +663,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             final emailRegex = RegExp(
                               r'^[^@\s]+@[^@\s]+\.[^@\s]+ *',
                             );
-                            if (!emailRegex.hasMatch(v))
+                            if (!emailRegex.hasMatch(v)) {
                               return 'Enter a valid email address';
+                            }
                             return null;
                           },
                         ),
@@ -750,8 +742,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                           validator: (v) {
-                            if (v == null || v.isEmpty)
+                            if (v == null || v.isEmpty) {
                               return 'Enter phone number';
+                            }
                             return null;
                           },
                         ),
@@ -791,8 +784,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           validator: (v) {
                             if (v == null || v.isEmpty) return 'Enter XP';
-                            if (int.tryParse(v) == null)
+                            if (int.tryParse(v) == null) {
                               return 'XP must be a number';
+                            }
                             return null;
                           },
                         ),

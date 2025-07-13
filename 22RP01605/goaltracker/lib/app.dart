@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'auth/auth_service.dart';
 import 'auth/auth_screen.dart';
 import 'motivation/notification_service.dart';
 import 'motivation/quote_widget.dart';
@@ -11,7 +10,6 @@ import 'profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'splash_screen.dart';
-import 'shared/app_theme.dart';
 import 'settings/settings_screen.dart';
 import 'settings/theme_service.dart';
 
@@ -89,10 +87,14 @@ class _GoalTrackerAppState extends State<GoalTrackerApp> {
       },
       builder: (context, child) {
         if (!_showSplash) {
-          NotificationService.initialize(context!);
-          // Show a motivational notification on app launch
-          final quote = (List.of(QuoteWidget.quotes)..shuffle()).first;
-          NotificationService.showMotivationNotification(quote);
+          try {
+            NotificationService.initialize(context);
+            // Show a motivational notification on app launch
+            final quote = (List.of(QuoteWidget.quotes)..shuffle()).first;
+            NotificationService.showMotivationNotification(quote);
+          } catch (e) {
+            print('Notification service error: $e');
+          }
         }
         return child!;
       },
@@ -112,21 +114,29 @@ class _RootScreenState extends State<RootScreen> {
   void initState() {
     super.initState();
     _handleAppLaunchAd();
-    NotificationService.initialize(context);
-    // Show a motivational notification on app launch
-    final quote = (List.of(QuoteWidget.quotes)..shuffle()).first;
-    NotificationService.showMotivationNotification(quote);
+    try {
+      NotificationService.initialize(context);
+      // Show a motivational notification on app launch
+      final quote = (List.of(QuoteWidget.quotes)..shuffle()).first;
+      NotificationService.showMotivationNotification(quote);
+    } catch (e) {
+      print('RootScreen notification error: $e');
+    }
   }
 
   Future<void> _handleAppLaunchAd() async {
-    final prefs = await SharedPreferences.getInstance();
-    int launches = prefs.getInt('launches') ?? 0;
-    launches++;
-    await prefs.setInt('launches', launches);
-    if (launches % 10 == 0) {
-      AdService.loadInterstitialAd(() {
-        AdService.showInterstitialAd();
-      });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      int launches = prefs.getInt('launches') ?? 0;
+      launches++;
+      await prefs.setInt('launches', launches);
+      if (launches % 10 == 0) {
+        AdService.loadInterstitialAd(() {
+          AdService.showInterstitialAd();
+        });
+      }
+    } catch (e) {
+      print('Ad service error: $e');
     }
   }
 
@@ -251,18 +261,29 @@ class _MainNavScreenState extends State<MainNavScreen> {
   }
 
   Future<void> _fetchUsernameInitial() async {
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid != null) {
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
-          .get();
-      final username = doc.data()?['username'] ?? '';
-      setState(() {
-        _usernameInitial = username.isNotEmpty
-            ? username[0].toUpperCase()
-            : '?';
-      });
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .get();
+        final username = doc.data()?['username'] ?? '';
+        if (mounted) {
+          setState(() {
+            _usernameInitial = username.isNotEmpty
+                ? username[0].toUpperCase()
+                : '?';
+          });
+        }
+      }
+    } catch (e) {
+      print('Firestore fetch error: $e');
+      if (mounted) {
+        setState(() {
+          _usernameInitial = '?';
+        });
+      }
     }
   }
 

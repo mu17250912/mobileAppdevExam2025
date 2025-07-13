@@ -116,173 +116,356 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isSmallScreen = AppTheme.isMobile(context);
+    final screenSize = MediaQuery.of(context).size;
+
     return AppTheme.scaffoldWithBackground(
       context: context,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32),
-          child: AppTheme.createCard(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      _isLogin ? 'Sign In' : 'Sign Up',
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+      body: SafeArea(
+        child: AppTheme.createResponsiveCenteredContainer(
+          context: context,
+          child: AppTheme.createResponsiveCard(
+            context: context,
+            margin: EdgeInsets.zero,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Responsive title
+                  Text(
+                    _isLogin ? 'Sign In' : 'Sign Up',
+                    style: AppTheme.responsiveTitleStyle(context),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: AppTheme.getResponsiveSpacing(context)),
+
+                  // Email field
+                  TextFormField(
+                    controller: _emailController,
+                    style: AppTheme.responsiveInputStyle(context),
+                    decoration: AppTheme.responsiveInputDecoration(
+                      context: context,
+                      labelText: 'Email Address',
+                      hintText: 'Enter your email',
+                      prefixIcon: Icons.email,
                     ),
-                    const SizedBox(height: 24),
-                    TextFormField(
-                      controller: _emailController,
-                      style: const TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        labelText: 'Email Address',
-                        labelStyle: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                        hintText: 'Enter your email',
-                        hintStyle: const TextStyle(color: Colors.black54),
-                        prefixIcon: const Icon(
-                          Icons.email,
-                          color: Colors.black,
-                        ),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (v) => v != null && v.contains('@')
-                          ? null
-                          : 'Enter a valid email',
-                      enabled: !_loading,
-                    ),
-                    if (!_isLogin) ...[
-                      const SizedBox(height: 18),
-                      TextFormField(
-                        controller: _referralController,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          labelText: 'Referral Code (Optional)',
-                          labelStyle: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                          hintText: 'Enter referral code',
-                          hintStyle: const TextStyle(color: Colors.black54),
-                          prefixIcon: const Icon(
-                            Icons.card_giftcard,
-                            color: Colors.black,
-                          ),
-                        ),
-                        enabled: !_loading,
-                      ),
-                    ],
-                    const SizedBox(height: 18),
-                    TextFormField(
-                      controller: _passwordController,
-                      style: const TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                        hintText: 'Enter your password',
-                        hintStyle: const TextStyle(color: Colors.black54),
-                        prefixIcon: const Icon(Icons.lock, color: Colors.black),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Colors.black,
-                          ),
-                          onPressed: _loading
-                              ? null
-                              : () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                        ),
-                      ),
-                      obscureText: _obscurePassword,
-                      validator: (v) => v != null && v.length >= 6
-                          ? null
-                          : 'Password must be at least 6 characters',
-                      enabled: !_loading,
-                    ),
-                    if (_error != null) ...[
-                      const SizedBox(height: 16),
-                      Text(_error!, style: const TextStyle(color: Colors.red)),
-                    ],
-                    if (_success != null) ...[
-                      const SizedBox(height: 16),
-                      Text(
-                        _success!,
-                        style: const TextStyle(color: Colors.green),
-                      ),
-                    ],
-                    if (_pendingVerificationEmail != null) ...[
-                      const SizedBox(height: 16),
-                      Card(
-                        color: Colors.orange[50],
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            children: [
-                              Text(
-                                'A verification email has been sent to $_pendingVerificationEmail. Please check your inbox and verify your email to continue.',
-                                style: const TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 12),
-                              ElevatedButton.icon(
-                                onPressed: _openGmailOrBrowser,
-                                icon: const Icon(Icons.open_in_new),
-                                label: const Text('Open Gmail'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 24),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (v) => v != null && v.contains('@')
+                        ? null
+                        : 'Enter a valid email',
+                    enabled: !_loading,
+                  ),
+
+                  // Referral field (only for sign up)
+                  if (!_isLogin) ...[
                     SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _loading ? null : _submit,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: _loading
-                            ? const CircularProgressIndicator(
-                                color: Colors.white,
-                              )
-                            : Text(_isLogin ? 'Sign In' : 'Sign Up'),
+                      height: AppTheme.getResponsiveSpacing(
+                        context,
+                        mobile: 16,
+                        tablet: 18,
+                        desktop: 20,
                       ),
                     ),
-                    TextButton(
-                      onPressed: _loading ? null : _toggleMode,
+                    TextFormField(
+                      controller: _referralController,
+                      style: AppTheme.responsiveInputStyle(context),
+                      decoration: AppTheme.responsiveInputDecoration(
+                        context: context,
+                        labelText: 'Referral Code (Optional)',
+                        hintText: 'Enter referral code',
+                        prefixIcon: Icons.card_giftcard,
+                      ),
+                      enabled: !_loading,
+                    ),
+                  ],
+
+                  SizedBox(
+                    height: AppTheme.getResponsiveSpacing(
+                      context,
+                      mobile: 16,
+                      tablet: 18,
+                      desktop: 20,
+                    ),
+                  ),
+
+                  // Password field
+                  TextFormField(
+                    controller: _passwordController,
+                    style: AppTheme.responsiveInputStyle(context),
+                    decoration: AppTheme.responsiveInputDecoration(
+                      context: context,
+                      labelText: 'Password',
+                      hintText: 'Enter your password',
+                      prefixIcon: Icons.lock,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.black,
+                          size: AppTheme.getResponsiveIconSize(context),
+                        ),
+                        onPressed: _loading
+                            ? null
+                            : () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                      ),
+                    ),
+                    obscureText: _obscurePassword,
+                    validator: (v) => v != null && v.length >= 6
+                        ? null
+                        : 'Password must be at least 6 characters',
+                    enabled: !_loading,
+                  ),
+
+                  // Error message
+                  if (_error != null) ...[
+                    SizedBox(
+                      height: AppTheme.getResponsiveSpacing(
+                        context,
+                        mobile: 12,
+                        tablet: 16,
+                        desktop: 20,
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(
+                        AppTheme.getResponsivePadding(
+                          context,
+                          mobile: 8,
+                          tablet: 12,
+                          desktop: 16,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.red[200]!),
+                      ),
                       child: Text(
-                        _isLogin
-                            ? "Don't have an account? Sign Up"
-                            : 'Already have an account? Sign In',
+                        _error!,
+                        style: TextStyle(
+                          color: Colors.red[700],
+                          fontSize: AppTheme.getResponsiveFontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 16,
+                            desktop: 18,
+                          ),
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],
-                ),
+
+                  // Success message
+                  if (_success != null) ...[
+                    SizedBox(
+                      height: AppTheme.getResponsiveSpacing(
+                        context,
+                        mobile: 12,
+                        tablet: 16,
+                        desktop: 20,
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(
+                        AppTheme.getResponsivePadding(
+                          context,
+                          mobile: 8,
+                          tablet: 12,
+                          desktop: 16,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green[50],
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.green[200]!),
+                      ),
+                      child: Text(
+                        _success!,
+                        style: TextStyle(
+                          color: Colors.green[700],
+                          fontSize: AppTheme.getResponsiveFontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 16,
+                            desktop: 18,
+                          ),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+
+                  // Email verification card
+                  if (_pendingVerificationEmail != null) ...[
+                    SizedBox(
+                      height: AppTheme.getResponsiveSpacing(
+                        context,
+                        mobile: 12,
+                        tablet: 16,
+                        desktop: 20,
+                      ),
+                    ),
+                    Card(
+                      color: Colors.orange[50],
+                      margin: EdgeInsets.symmetric(
+                        vertical: AppTheme.getResponsiveSpacing(
+                          context,
+                          mobile: 4,
+                          tablet: 8,
+                          desktop: 12,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(
+                          AppTheme.getResponsivePadding(
+                            context,
+                            mobile: 12,
+                            tablet: 16,
+                            desktop: 20,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              'A verification email has been sent to $_pendingVerificationEmail. Please check your inbox and verify your email to continue.',
+                              style: TextStyle(
+                                color: Colors.orange[700],
+                                fontWeight: FontWeight.bold,
+                                fontSize: AppTheme.getResponsiveFontSize(
+                                  context,
+                                  mobile: 14,
+                                  tablet: 16,
+                                  desktop: 18,
+                                ),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: AppTheme.getResponsiveSpacing(
+                                context,
+                                mobile: 8,
+                                tablet: 12,
+                                desktop: 16,
+                              ),
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: _openGmailOrBrowser,
+                                icon: Icon(
+                                  Icons.open_in_new,
+                                  size: AppTheme.getResponsiveIconSize(
+                                    context,
+                                    mobile: 16,
+                                    tablet: 20,
+                                    desktop: 24,
+                                  ),
+                                ),
+                                label: Text(
+                                  'Open Gmail',
+                                  style: TextStyle(
+                                    fontSize: AppTheme.getResponsiveFontSize(
+                                      context,
+                                      mobile: 14,
+                                      tablet: 16,
+                                      desktop: 18,
+                                    ),
+                                  ),
+                                ),
+                                style: AppTheme.responsiveButtonStyle(
+                                  context,
+                                  backgroundColor: Colors.orange,
+                                  foregroundColor: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+
+                  SizedBox(height: AppTheme.getResponsiveSpacing(context)),
+
+                  // Submit button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _loading ? null : _submit,
+                      style: AppTheme.responsiveButtonStyle(context),
+                      child: _loading
+                          ? SizedBox(
+                              height: AppTheme.getResponsiveIconSize(context),
+                              width: AppTheme.getResponsiveIconSize(context),
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              _isLogin ? 'Sign In' : 'Sign Up',
+                              style: TextStyle(
+                                fontSize: AppTheme.getResponsiveFontSize(
+                                  context,
+                                  mobile: 16,
+                                  tablet: 18,
+                                  desktop: 20,
+                                ),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: AppTheme.getResponsiveSpacing(
+                      context,
+                      mobile: 16,
+                      tablet: 20,
+                      desktop: 24,
+                    ),
+                  ),
+
+                  // Toggle mode button
+                  TextButton(
+                    onPressed: _loading ? null : _toggleMode,
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        vertical: AppTheme.getResponsivePadding(
+                          context,
+                          mobile: 8,
+                          tablet: 12,
+                          desktop: 16,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      _isLogin
+                          ? "Don't have an account? Sign Up"
+                          : 'Already have an account? Sign In',
+                      style: TextStyle(
+                        fontSize: AppTheme.getResponsiveFontSize(
+                          context,
+                          mobile: 14,
+                          tablet: 16,
+                          desktop: 18,
+                        ),
+                        color: Colors.deepPurple,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

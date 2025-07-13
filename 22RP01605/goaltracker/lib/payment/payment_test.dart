@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'payment_tracker.dart';
 import 'lnpay_service.dart';
 
 void main() {

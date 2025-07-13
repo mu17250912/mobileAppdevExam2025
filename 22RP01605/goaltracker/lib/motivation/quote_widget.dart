@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class QuoteWidget extends StatelessWidget {
-  QuoteWidget({super.key});
+  const QuoteWidget({super.key});
 
   static const List<String> quotes = [
     'Success is the sum of small efforts, repeated day in and day out.',

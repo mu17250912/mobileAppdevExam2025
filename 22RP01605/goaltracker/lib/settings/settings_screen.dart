@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'theme_service.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -35,7 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final templateData = ThemeService.getTemplateData(template);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Theme "${template}" applied successfully!'),
+        content: Text('Theme "$template" applied successfully!'),
         backgroundColor: templateData['primaryColor'],
       ),
     );

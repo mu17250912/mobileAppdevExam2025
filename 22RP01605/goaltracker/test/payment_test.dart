@@ -1,8 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../lib/payment/payment_tracker.dart';
-import '../lib/payment/lnpay_service.dart';
+import 'package:goaltracker/payment/lnpay_service.dart';
 
 void main() {
   group('Payment System Tests', () {

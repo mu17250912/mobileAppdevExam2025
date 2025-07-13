@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../ads/ad_service.dart';
-import '../shared/app_theme.dart';
 import '../settings/theme_service.dart';
 
 class AnalyticsScreen extends StatelessWidget {

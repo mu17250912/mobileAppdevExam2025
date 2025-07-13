@@ -2,12 +2,8 @@ import 'package:flutter/material.dart';
 import 'goal_service.dart';
 import '../ads/ad_service.dart';
 import '../profile/profile_service.dart';
-import '../analytics/analytics_screen.dart';
-import '../profile/profile_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:url_launcher/url_launcher.dart';
-import '../shared/app_theme.dart';
 import '../settings/theme_service.dart';
 
 class GoalScreen extends StatefulWidget {
@@ -19,7 +15,7 @@ class GoalScreen extends StatefulWidget {
 
 class _GoalScreenState extends State<GoalScreen> {
   final GoalService _goalService = GoalService();
-  ProfileService _profileService = ProfileService();
+  final ProfileService _profileService = ProfileService();
   bool _isPremium = false;
   String _currentTemplate = 'Elegant Purple';
 
@@ -291,19 +287,15 @@ class _GoalScreenState extends State<GoalScreen> {
                             children: [
                               ElevatedButton.icon(
                                 onPressed: () async {
-                                  if (user != null) {
-                                    await user.sendEmailVerification();
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                            'Verification email resent!',
-                                          ),
+                                  await user.sendEmailVerification();
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          'Verification email resent!',
                                         ),
-                                      );
-                                    }
+                                      ),
+                                    );
                                   }
                                 },
                                 icon: const Icon(Icons.email),
@@ -312,12 +304,10 @@ class _GoalScreenState extends State<GoalScreen> {
                               const SizedBox(height: 8),
                               ElevatedButton.icon(
                                 onPressed: () async {
-                                  if (user != null) {
-                                    await user.reload();
-                                    if (context.mounted) {
-                                      // Triggers StreamBuilder to rebuild
-                                      (context as Element).markNeedsBuild();
-                                    }
+                                  await user.reload();
+                                  if (context.mounted) {
+                                    // Triggers StreamBuilder to rebuild
+                                    (context as Element).markNeedsBuild();
                                   }
                                 },
                                 icon: const Icon(Icons.refresh),
@@ -365,7 +355,7 @@ class _GoalScreenState extends State<GoalScreen> {
                             final diff = toDate.difference(now).inHours;
                             if (diff > 0 && diff <= 24) {
                               _goalService.sendGoalEmailWithEmailJS(
-                                userEmail: user?.email ?? '',
+                                userEmail: user.email ?? '',
                                 subject: 'Goal Deadline Approaching',
                                 message:
                                     'Your goal "${goal['title']}" deadline is in less than 24 hours! Don\'t forget to complete it.',
@@ -421,7 +411,7 @@ class _GoalScreenState extends State<GoalScreen> {
                                             status: value,
                                           );
                                           _goalService.sendGoalEmailWithEmailJS(
-                                            userEmail: user?.email ?? '',
+                                            userEmail: user.email ?? '',
                                             subject: 'Goal Status Updated',
                                             message:
                                                 'Your goal "${goal['title']}" status is now: $value.',
@@ -458,7 +448,7 @@ class _GoalScreenState extends State<GoalScreen> {
                                         bottom: 2,
                                       ),
                                       child: Text(
-                                        'From: ${(goal['fromDate'] as Timestamp?)?.toDate()?.toLocal()?.toString().split(' ')[0] ?? ''}',
+                                        'From: ${(goal['fromDate'] as Timestamp?)?.toDate().toLocal().toString().split(' ')[0] ?? ''}',
                                       ),
                                     ),
                                   if (goal['toDate'] != null)
@@ -469,7 +459,7 @@ class _GoalScreenState extends State<GoalScreen> {
                                         bottom: 8,
                                       ),
                                       child: Text(
-                                        'To: ${(goal['toDate'] as Timestamp?)?.toDate()?.toLocal()?.toString().split(' ')[0] ?? ''}',
+                                        'To: ${(goal['toDate'] as Timestamp?)?.toDate().toLocal().toString().split(' ')[0] ?? ''}',
                                       ),
                                     ),
                                   ...subgoals.map<Widget>(
@@ -498,11 +488,11 @@ class _GoalScreenState extends State<GoalScreen> {
                                         children: [
                                           if (sg['fromDate'] != null)
                                             Text(
-                                              'From: ${((sg['fromDate'] as Timestamp?)?.toDate()?.toLocal()?.toString().split(' ')[0]) ?? ''}',
+                                              'From: ${((sg['fromDate'] as Timestamp?)?.toDate().toLocal().toString().split(' ')[0]) ?? ''}',
                                             ),
                                           if (sg['toDate'] != null)
                                             Text(
-                                              'To: ${((sg['toDate'] as Timestamp?)?.toDate()?.toLocal()?.toString().split(' ')[0]) ?? ''}',
+                                              'To: ${((sg['toDate'] as Timestamp?)?.toDate().toLocal().toString().split(' ')[0]) ?? ''}',
                                             ),
                                         ],
                                       ),
@@ -585,12 +575,13 @@ class _GoalScreenState extends State<GoalScreen> {
                                                                       2100,
                                                                     ),
                                                               );
-                                                          if (picked != null)
+                                                          if (picked != null) {
                                                             setState(
                                                               () =>
                                                                   subFromDate =
                                                                       picked,
                                                             );
+                                                          }
                                                         },
                                                         child: const Text(
                                                           'Select',
@@ -625,11 +616,12 @@ class _GoalScreenState extends State<GoalScreen> {
                                                                       2100,
                                                                     ),
                                                               );
-                                                          if (picked != null)
+                                                          if (picked != null) {
                                                             setState(
                                                               () => subToDate =
                                                                   picked,
                                                             );
+                                                          }
                                                         },
                                                         child: const Text(
                                                           'Select',
