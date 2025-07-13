@@ -40,8 +40,8 @@ Many people struggle to find time for grocery shopping. Grocery Delivery App sol
 ## Installation & Running
 1. **Clone the repo and navigate to your student directory:**
    ```
-   git clone https://github.com/[your-username]/mobileAppdevExam2025.git
-   cd mobileAppdevExam2025/[YOUR_REG_NO]
+   git clone https://github.com/Mbabazi12/mobileAppdevExam2025.git
+   cd mobileAppdevExam2025/22RP01731
    ```
 2. **Install dependencies:**
    ```
