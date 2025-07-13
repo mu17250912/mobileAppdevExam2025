@@ -78,7 +78,6 @@ Seamless multi-device access
 📁 1. Repository Structure
 ✅ Forked from: https://github.com/mu17250912/mobileAppdevExam2025.git
 
-📂 Directory: 22RP02034/
 
 🧩 2. Core Features
 🧑‍💻 i. User-Centric Design
