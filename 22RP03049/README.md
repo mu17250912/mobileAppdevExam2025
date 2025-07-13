@@ -4,7 +4,7 @@ A smart bus ticket booking app for inter-district public transport in Rwanda. Bu
 
 ## firstly for login as admin use john@gmail.com with password : 123456789 ##
 
-## 🌟 Features
+## 🌟 Feature
 
 ### For Passengers
 - **User Authentication**: Secure login and registration with Firebase Auth
