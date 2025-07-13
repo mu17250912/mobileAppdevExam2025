@@ -1,3 +1,8 @@
+MANZI BAHIZI Bertin
+
+22RP08209
+
+
 # mobileAppdevExam2025# FarmPay - Agricultural E-commerce Mobile App
 
 ## Overview
