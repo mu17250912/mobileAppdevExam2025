@@ -26,7 +26,7 @@ Managing student records, attendance, grades, and courses is time-consuming and 
 
 # Security & Reliability
 
-## 1. Security Measures (5 Marks)
+## 1. Security Measures 
 
 ### Authentication & Authorization
 
@@ -95,7 +95,7 @@ Managing student records, attendance, grades, and courses is time-consuming and 
 
 ---
 
-## 2. Reliability (5 Marks)
+## 2. Reliability 
 
 ### Error Handling & Recovery
 
@@ -268,7 +268,7 @@ Managing student records, attendance, grades, and courses is time-consuming and 
 
 ---
 
-## 📊 Analytics & Tracking
+##  Analytics & Tracking
 
 > **Note:**
 > Firebase Analytics integration is currently **disabled** in this project to ensure maximum stability and avoid build/runtime issues during development and testing.
