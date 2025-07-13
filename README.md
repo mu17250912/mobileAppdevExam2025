@@ -1,4 +1,4 @@
-💼 Bank Account Management App
+<img width="515" height="236" alt="image" src="https://github.com/user-attachments/assets/bbdb9719-8cb9-42aa-9128-1cb7b4e6f74c" />💼 Bank Account Management App
 Student Registration Number: 22RP02034
 
 A centralized mobile application to manage multiple bank accounts, track transactions, visualize spending, and improve financial literacy for tech-savvy users.
@@ -71,6 +71,7 @@ Interactive data visualization
 Goal-setting & budget tracking
 
 Seamless multi-device access
+
 
 ⚙️ App Development & Implementation
 📁 1. Repository Structure
@@ -154,7 +155,9 @@ GDPR-aware data policies
 
 Account lockouts & session timeouts
 
+
 🛠️ 2. Reliability & Testing
+
 Unit + Widget + Integration testing
 
 Tested on API 21-33, phones & tablets
@@ -165,7 +168,9 @@ Flutter lints & CI pipeline
 
 Error recovery, retry logic
 
+
 🏗️ Technical Implementation
+
 🧱 Stack
 Frontend: Flutter 3.8.1 + Dart
 
@@ -183,9 +188,8 @@ firebase_core, cloud_firestore, provider
 pdf, printing, path_provider
 
 🗂️ Project Structure
-bash
-Copy
-Edit
+
+ 
 lib/
 ├── main.dart              # App entry point
 ├── firebase_options.dart  # Firebase setup
@@ -201,6 +205,8 @@ lib/
     ├── subscription.dart
     ├── settings.dart
     └── custom_top_bar.dart
+
+    
 🚀 Getting Started
 ✅ Prerequisites
 Flutter SDK 3.8.1+
@@ -215,7 +221,7 @@ Firebase account setup
 bash
 Copy
 Edit
-git clone https://github.com/your-forked-repo.git
+git clone https://github.com/Fredereric-Nzamurambaho/mobileAppdevExam2025
 cd 22RP02034
 flutter pub get
 # Add google-services.json to android/app
