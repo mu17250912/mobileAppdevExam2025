@@ -270,7 +270,6 @@ These features ensure secure access, account recovery, and a smooth onboarding e
 - **Backend**: Firebase (Authentication, Firestore, Storage)
 - **State Management**: Provider pattern with ValueNotifier
 - **Notifications**: Flutter Local Notifications with scheduling
-- **Data Visualization**: FL Chart for BMI history and trends
 
 ### **Key Services:**
 - **BMI Usage Service**: Tracks daily calculation limits and premium status
