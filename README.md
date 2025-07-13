@@ -1,4 +1,5 @@
-<img width="515" height="236" alt="image" src="https://github.com/user-attachments/assets/bbdb9719-8cb9-42aa-9128-1cb7b4e6f74c" />💼 Bank Account Management App
+💼 Bank Account Management App
+
 Student Registration Number: 22RP02034
 
 A centralized mobile application to manage multiple bank accounts, track transactions, visualize spending, and improve financial literacy for tech-savvy users.
