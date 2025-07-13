@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "943855848485",
+    "project_id": "rp03060-c430a",
+    "storage_bucket": "rp03060-c430a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:943855848485:android:7e6f0efeaedab4e5ce83cc",
+        "android_client_info": {
+          "package_name": "com.example.u_22rp03060"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRZfCW9YrxIh-te0tn4MXhQ3hzLGVJfvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
