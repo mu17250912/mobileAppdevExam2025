@@ -473,7 +473,6 @@ End
 ### D.3 Interactive Prototype (Max 4 Marks)
 
 #### Interactive Prototype Created
-**Prototype Link:** [Figma Prototype - GoalTracker](https://figma.com/proto/goaltracker)
 **Accessibility:** Prototype is publicly accessible and functional
 
 #### Prototype Demonstrates User Flow
