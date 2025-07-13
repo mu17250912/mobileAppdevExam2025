@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "838101042348",
+    "project_id": "umusare-1c1be",
+    "storage_bucket": "umusare-1c1be.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:838101042348:android:3e602b509f91e3ad4d0b09",
+        "android_client_info": {
+          "package_name": "com.example.umusare"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDujad5KVMoZPvVyhf1IYyTCtuhQhdVO3w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
