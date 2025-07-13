@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1028972990348",
+    "project_id": "my-budgetwise-app-sandrine",
+    "storage_bucket": "my-budgetwise-app-sandrine.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028972990348:android:06250f2bc069d57e3890a9",
+        "android_client_info": {
+          "package_name": "com.example.budgetwise"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdQsYP3z7rW3vmv4SU7Wn5ZCrO5EnoQkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
