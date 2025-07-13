@@ -281,7 +281,7 @@ These features ensure secure access, account recovery, and a smooth onboarding e
 ### **Scalability & Security:**
 - Cloud-based infrastructure using Firebase for automatic scaling
 - Modular service architecture for easy feature additions
-- Efficient data caching and offline capabilities
+- Efficient data caching 
 - Cross-platform compatibility for future expansion
 - Comprehensive error handling and crash prevention
 - GDPR-compliant data handling with user control
