@@ -1,6 +1,0 @@
-flutter_native_splash:
-  color: "#ffffff"
-  image: assets/phonestorelogo.jpg
-  android: true
-  ios: true
-  web: false
