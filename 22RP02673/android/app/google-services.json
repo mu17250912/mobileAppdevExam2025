@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "381789807172",
+    "project_id": "ride-e61a7",
+    "storage_bucket": "ride-e61a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381789807172:android:9a2ac608a2603ec1775211",
+        "android_client_info": {
+          "package_name": "com.example.ride"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrVvQJyznshY_1yI49tQJbnBdKwgB3QI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
