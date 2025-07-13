@@ -25,10 +25,10 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
       await PremiumService.setPremium(true);
       if (mounted) {
         // Show push notification
-        EnhancedNotificationService.showLocalNotification(
-          title: 'Premium Unlocked!',
-          body: 'Congratulations! You now have access to premium features.',
-        );
+        // EnhancedNotificationService.showLocalNotification(
+        //   title: 'Premium Unlocked!',
+        //   body: 'Congratulations! You now have access to premium features.',
+        // );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Premium unlocked! Enjoy your new features.'),
@@ -36,7 +36,7 @@ class _UpgradeScreenState extends State<UpgradeScreen> {
             duration: Duration(seconds: 3),
           ),
         );
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(true); // Return true so home screen can refresh
       }
     }
   }

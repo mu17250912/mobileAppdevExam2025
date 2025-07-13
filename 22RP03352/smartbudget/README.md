@@ -7,7 +7,7 @@
 
 ## 📱 App Overview
 
-BudgetWise is a budget management mobile application built with Flutter that helps users track their expenses, manage budgets by category, and visualize their spending with simple analytics and progress indicators.
+BudgetWise is a budget management mobile application built with Flutter that helps users track their expenses, manage budgets by category, and visualize their spending with comprehensive analytics and progress indicators.
 
 ## 🎯 Problem Statement
 
@@ -19,7 +19,7 @@ BudgetWise is a budget management mobile application built with Flutter that hel
 **Our Solution:** BudgetWise provides an intuitive, user-friendly platform that:
 - Simplifies expense tracking and categorization
 - Provides real-time budget monitoring with visual progress indicators
-- Offers a basic analytics screen for premium users (advanced analytics planned)
+- Offers comprehensive analytics with charts, trends, and insights for premium users
 
 ## 👥 Target Audience
 
@@ -32,6 +32,7 @@ BudgetWise is a budget management mobile application built with Flutter that hel
 - **Visual Progress:** Progress bars and circular indicators for budget utilization
 - **Firebase-Powered:** Secure, scalable cloud-based data storage
 - **Gamification:** Monthly badges and confetti for first expense and first budget each month
+- **Advanced Analytics:** Comprehensive charts, trends, and insights for premium users
 
 ## 💰 Monetization Strategy
 
@@ -42,8 +43,9 @@ BudgetWise uses a **freemium monetization strategy**:
   - See banner ads (Google AdMob) in the app
 - **Premium (Simulated Payment):**
   - Removes ads
-  - Unlocks access to the Analytics screen (currently a placeholder)
-  - Access to advanced analytics and premium features
+  - Unlocks access to comprehensive Analytics and Enhanced Analytics screens
+  - Access to advanced analytics, charts, trends, and insights
+  - Data export functionality (CSV, TXT formats)
   - **Upgrade is done through a realistic payment simulation (no real money is collected)**
 
 ### **Commission-Based Monetization (Affiliate Link)**
@@ -70,15 +72,37 @@ BudgetWise uses a **freemium monetization strategy**:
 
 ### **Premium Features (Simulated Payment):**
 - **Realistic payment simulation for premium upgrades:**
-  - Multiple payment methods (Credit Card, Debit Card, PayPal, Apple Pay)
+  - Multiple payment methods (Credit Card, Debit Card, PayPal, Apple Pay, MTN Mobile Money, Airtel Money, M-Pesa, Orange Money)
   - Card number validation and card type detection
+  - Mobile money phone number validation
   - Simulated payment errors (declined, insufficient funds, etc.)
-  - Professional payment form UI
+  - Professional payment form UI with mobile money support
   - Payment summary and confirmation dialogs
-  - Payment history screen with transaction details
-  - **Push notification sent after successful upgrade**
-  - No real money is collected; all payments are simulated for demo purposes
-- Analytics screen (currently a placeholder, no real charts)
+  - **Transaction History with Firestore Integration:**
+  - Real-time transaction data stored in Firestore
+  - Clean empty state for new users (no sample data)
+  - Clear transaction history functionality
+  - Detailed transaction information with payment methods
+  - Sorted by date (newest first)
+- **Push notification sent after successful upgrade**
+- **Downgrade to Freemium functionality** - Premium users can downgrade back to freemium
+- **Synchronous UI Updates** - Home screen refreshes immediately after upgrade/downgrade
+- No real money is collected; all payments are simulated for demo purposes
+- **Comprehensive Analytics Screen:**
+  - Pie charts for spending by category
+  - Bar charts for monthly spending trends
+  - Budget vs actual spending comparisons
+  - Interactive charts with real data
+- **Enhanced Analytics Screen:**
+  - Advanced insights and recommendations
+  - Comprehensive spending analysis
+  - AI-powered financial insights
+  - Detailed trend analysis
+- **Data Export Functionality:**
+  - Export expenses to CSV format
+  - Export budget reports to CSV
+  - Export monthly summaries to TXT
+  - Share functionality for exported files
 - Ad removal (UI only, no real payment logic)
 
 ### **Gamification & Engagement:**
@@ -97,6 +121,11 @@ BudgetWise uses a **freemium monetization strategy**:
 
 - **Firebase Analytics** integration for user actions (budget creation, expense addition, feature usage, etc.)
 - Analytics events can be viewed in Firebase DebugView and Events tab
+- **Comprehensive Analytics Implementation:**
+  - Real-time spending analysis by category
+  - Monthly trend analysis with interactive charts
+  - Budget vs actual spending comparisons
+  - Enhanced analytics with AI insights and recommendations
 
 ### **How to View Analytics Data:**
 1. Go to [Firebase Console](https://console.firebase.google.com/), select your project.
@@ -120,8 +149,18 @@ BudgetWise uses a **freemium monetization strategy**:
 
 ## ♿ Accessibility
 
-- Accessibility features (such as screen reader support and high-contrast mode) are **planned for future updates**.
-- Current version does not include explicit accessibility enhancements.
+- **Accessibility Service Implementation:**
+  - Screen reader support with semantic labels
+  - Navigation guidance for different screens
+  - Accessibility hints for interactive elements
+  - High contrast mode support
+  - Large text support
+  - Focus management for keyboard navigation
+- **Current Features:**
+  - Semantic labels for all major UI elements
+  - Screen reader announcements
+  - Accessibility hints for user interactions
+  - Voice guidance for navigation
 
 ## 🚀 Scalability & Performance
 
@@ -164,18 +203,17 @@ BudgetWise uses a **freemium monetization strategy**:
 - **Ads:** Google AdMob
 - **State Management:** Flutter StatefulWidget
 - **UI Framework:** Material Design
+- **Charts:** fl_chart for data visualization
+- **Export:** share_plus for file sharing
 - **Version Control:** Git
 
 ## 📈 Future Roadmap (Planned/Not Yet Implemented)
-- Advanced analytics dashboard (charts, trends, export)
-- Real payment/subscription for premium
-- Export to PDF/CSV
-- **More advanced push notifications (beyond upgrade event)**
-- More gamification (additional badges, challenges, etc.)
+- Real payment/subscription for premium (currently simulated)
 - Community features (forums, support)
 - Bill reminders, investment tracking, financial goals
 - AI-powered insights, banking API, multi-currency
-- Accessibility enhancements
+- More advanced push notifications (beyond upgrade event)
+- More gamification (additional badges, challenges, etc.)
 
 ## 📞 Support & Contact
 
@@ -184,4 +222,4 @@ BudgetWise uses a **freemium monetization strategy**:
 
 ---
 
-**Note:** This project is developed as part of the Mobile Application Development module assessment. Some features are planned for future updates and are not yet implemented.
+**Note:** This project is developed as part of the Mobile Application Development module assessment. Most features are fully implemented and functional, with payment processing simulated for educational purposes.

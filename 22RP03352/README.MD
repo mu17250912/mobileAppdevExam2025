@@ -72,14 +72,22 @@ BudgetWise uses a **freemium monetization strategy**:
 
 ### **Premium Features (Simulated Payment):**
 - **Realistic payment simulation for premium upgrades:**
-  - Multiple payment methods (Credit Card, Debit Card, PayPal, Apple Pay)
+  - Multiple payment methods (Credit Card, Debit Card, PayPal, Apple Pay, MTN Mobile Money, Airtel Money, M-Pesa, Orange Money)
   - Card number validation and card type detection
+  - Mobile money phone number validation
   - Simulated payment errors (declined, insufficient funds, etc.)
-  - Professional payment form UI
+  - Professional payment form UI with mobile money support
   - Payment summary and confirmation dialogs
-  - Payment history screen with transaction details
-  - **Push notification sent after successful upgrade**
-  - No real money is collected; all payments are simulated for demo purposes
+  - **Transaction History with Firestore Integration:**
+  - Real-time transaction data stored in Firestore
+  - Clean empty state for new users (no sample data)
+  - Clear transaction history functionality
+  - Detailed transaction information with payment methods
+  - Sorted by date (newest first)
+- **Push notification sent after successful upgrade**
+- **Downgrade to Freemium functionality** - Premium users can downgrade back to freemium
+- **Synchronous UI Updates** - Home screen refreshes immediately after upgrade/downgrade
+- No real money is collected; all payments are simulated for demo purposes
 - **Comprehensive Analytics Screen:**
   - Pie charts for spending by category
   - Bar charts for monthly spending trends

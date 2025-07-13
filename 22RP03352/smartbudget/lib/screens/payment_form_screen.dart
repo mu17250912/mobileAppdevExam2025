@@ -197,6 +197,22 @@ class _PaymentFormScreenState extends State<PaymentFormScreen> {
         iconData = Icons.apple;
         color = Colors.black;
         break;
+      case 'MTN Mobile Money':
+        iconData = Icons.phone_android;
+        color = Colors.yellow[700]!;
+        break;
+      case 'Airtel Money':
+        iconData = Icons.phone_android;
+        color = Colors.red;
+        break;
+      case 'M-Pesa':
+        iconData = Icons.phone_android;
+        color = Colors.green;
+        break;
+      case 'Orange Money':
+        iconData = Icons.phone_android;
+        color = Colors.orange;
+        break;
       default:
         iconData = Icons.payment;
         color = Colors.grey;
@@ -316,6 +332,48 @@ class _PaymentFormScreenState extends State<PaymentFormScreen> {
     );
   }
 
+  Widget _buildMobileMoneyForm() {
+    if (!_selectedPaymentMethod.contains('Money') && !_selectedPaymentMethod.contains('M-Pesa')) {
+      return SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Mobile Money Details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        SizedBox(height: 12),
+        TextFormField(
+          controller: _nameController,
+          decoration: InputDecoration(
+            labelText: 'Phone Number',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.phone),
+            hintText: 'e.g., 0781234567',
+          ),
+          keyboardType: TextInputType.phone,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter phone number';
+            }
+            if (value.length < 9) {
+              return 'Invalid phone number';
+            }
+            return null;
+          },
+        ),
+        SizedBox(height: 12),
+        Text(
+          'You will receive a USSD prompt or SMS to confirm the payment',
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[600],
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -368,6 +426,10 @@ class _PaymentFormScreenState extends State<PaymentFormScreen> {
               
               // Card Form (if card payment selected)
               _buildCardForm(),
+              SizedBox(height: 24),
+              
+              // Mobile Money Form (if mobile money selected)
+              _buildMobileMoneyForm(),
               SizedBox(height: 32),
               
               // Process Payment Button

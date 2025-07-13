@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../main.dart';
 
 class GamificationService {
@@ -177,7 +177,8 @@ class GamificationService {
         'lastUpdated': FieldValue.serverTimestamp(),
       });
 
-      // Show notification for new achievements
+      // Show notification for new achievements (temporarily disabled)
+      /*
       for (final achievementId in newAchievements) {
         final achievement = achievements[achievementId];
         if (achievement != null) {
@@ -187,6 +188,7 @@ class GamificationService {
           );
         }
       }
+      */
     }
 
     return newAchievements;

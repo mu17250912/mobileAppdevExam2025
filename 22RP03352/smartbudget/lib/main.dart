@@ -8,22 +8,27 @@ import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:io' show Platform;
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'services/enhanced_notification_service.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 Future<void> initializeNotifications() async {
+  // Temporarily disabled due to compilation issues
+  /*
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('@mipmap/ic_launcher');
   final InitializationSettings initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  */
 }
 
 class NotificationHelper {
   static Future<void> showNotification({required String title, required String body}) async {
+    // Temporarily disabled due to compilation issues
+    /*
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'budgetwise_channel',
       'Budget Alerts',
@@ -41,6 +46,7 @@ class NotificationHelper {
       body,
       platformChannelSpecifics,
     );
+    */
   }
 }
 
@@ -87,7 +93,7 @@ void main() async {
     await MobileAds.instance.initialize();
   }
   await initializeNotifications();
-  await EnhancedNotificationService.initialize();
+  // await EnhancedNotificationService.initialize(); // Temporarily disabled
   runApp(const MyApp());
 }
 

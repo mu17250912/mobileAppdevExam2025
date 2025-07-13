@@ -11,6 +11,7 @@ import 'premium_service.dart'; // Added import for PremiumService
 import 'upgrade_screen.dart'; // Added import for UpgradeScreen
 import 'analytics_screen.dart'; // Added import for AnalyticsScreen
 import 'enhanced_analytics_screen.dart'; // Added import for EnhancedAnalyticsScreen
+import 'downgrade_screen.dart'; // Added import for DowngradeScreen
 import 'package:flutter/foundation.dart';
 import '../services/analytics_service.dart'; // Added import for AnalyticsService
 import '../main.dart'; // For selectedMonthYear
@@ -33,6 +34,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final Set<String> _notified100 = {};
   final List<_BudgetNotification> _notifications = [];
   int _unreadNotifications = 0;
+  Key _premiumStatusKeyAd = UniqueKey();
+  Key _premiumStatusKeyActions = UniqueKey();
 
   @override
   void initState() {
@@ -48,6 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
         context,
         AccessibilityService.getNavigationGuidance('home'),
       );
+    });
+  }
+
+  void _refreshPremiumStatus() {
+    setState(() {
+      _premiumStatusKeyAd = UniqueKey();
+      _premiumStatusKeyActions = UniqueKey();
     });
   }
 
@@ -456,6 +466,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               // Show Ad only if not premium
               FutureBuilder<bool>(
+                key: _premiumStatusKeyAd,
                 future: PremiumService.isPremium(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) return SizedBox.shrink();
@@ -478,6 +489,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               // Replace individual button paddings with a grouped card
               FutureBuilder<bool>(
+                key: _premiumStatusKeyActions,
                 future: PremiumService.isPremium(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) return SizedBox.shrink();
@@ -496,7 +508,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
-                                    // Only show "Go Premium" button if not premium
+                                    // Show "Go Premium" button if not premium, or "Downgrade" if premium
                                     if (!isPremium)
                                       _ActionButton(
                                         icon: Icons.star,
@@ -504,7 +516,29 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Colors.green[800]!,
                                         onPressed: () async {
                                           await AnalyticsService.logFeatureUsage(featureName: 'go_premium_button');
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UpgradeScreen()));
+                                          final result = await Navigator.of(context).push<bool>(
+                                            MaterialPageRoute(builder: (_) => const UpgradeScreen())
+                                          );
+                                          if (result == true) {
+                                            // Refresh the UI after upgrade
+                                            _refreshPremiumStatus();
+                                          }
+                                        },
+                                      )
+                                    else
+                                      _ActionButton(
+                                        icon: Icons.info_outline,
+                                        label: 'Downgrade',
+                                        color: Colors.orange[700]!,
+                                        onPressed: () async {
+                                          await AnalyticsService.logFeatureUsage(featureName: 'downgrade_button');
+                                          final result = await Navigator.of(context).push<bool>(
+                                            MaterialPageRoute(builder: (_) => const DowngradeScreen())
+                                          );
+                                          if (result == true) {
+                                            // Refresh the UI after downgrade
+                                            _refreshPremiumStatus();
+                                          }
                                         },
                                       ),
                                     _ActionButton(
@@ -538,7 +572,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 )
                               : Column(
                                   children: [
-                                    // Only show "Go Premium" button if not premium
+                                    // Show "Go Premium" button if not premium, or "Downgrade" if premium
                                     if (!isPremium) ...[
                                       _ActionButton(
                                         icon: Icons.star,
@@ -546,7 +580,30 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Colors.green[800]!,
                                         onPressed: () async {
                                           await AnalyticsService.logFeatureUsage(featureName: 'go_premium_button');
-                                          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const UpgradeScreen()));
+                                          final result = await Navigator.of(context).push<bool>(
+                                            MaterialPageRoute(builder: (_) => const UpgradeScreen())
+                                          );
+                                          if (result == true) {
+                                            // Refresh the UI after upgrade
+                                            _refreshPremiumStatus();
+                                          }
+                                        },
+                                      ),
+                                      SizedBox(height: 8),
+                                    ] else ...[
+                                      _ActionButton(
+                                        icon: Icons.info_outline,
+                                        label: 'Downgrade',
+                                        color: Colors.orange[700]!,
+                                        onPressed: () async {
+                                          await AnalyticsService.logFeatureUsage(featureName: 'downgrade_button');
+                                          final result = await Navigator.of(context).push<bool>(
+                                            MaterialPageRoute(builder: (_) => const DowngradeScreen())
+                                          );
+                                          if (result == true) {
+                                            // Refresh the UI after downgrade
+                                            _refreshPremiumStatus();
+                                          }
                                         },
                                       ),
                                       SizedBox(height: 8),

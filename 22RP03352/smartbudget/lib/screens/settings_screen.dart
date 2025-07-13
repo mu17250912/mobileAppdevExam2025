@@ -7,6 +7,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../main.dart'; // For highContrastMode
 import 'payment_history_screen.dart';
+import 'premium_service.dart';
+import 'downgrade_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -313,6 +315,87 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 32),
+          // Premium Status Section
+          const Text(
+            'Premium Status',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.green),
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder<bool>(
+            future: PremiumService.isPremium(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Card(
+                  margin: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    leading: CircularProgressIndicator(),
+                    title: Text('Loading...'),
+                  ),
+                );
+              }
+              
+              final isPremium = snapshot.data ?? false;
+              
+              return Card(
+                margin: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        isPremium ? Icons.star : Icons.star_border,
+                        color: isPremium ? Colors.amber : Colors.grey,
+                      ),
+                      title: Text(isPremium ? 'Premium User' : 'Freemium User'),
+                      subtitle: Text(
+                        isPremium 
+                          ? 'You have access to all premium features'
+                          : 'Upgrade to unlock premium features'
+                      ),
+                      trailing: isPremium 
+                        ? Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.amber.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              'PREMIUM',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.amber[800],
+                              ),
+                            ),
+                          )
+                        : null,
+                    ),
+                    if (isPremium) ...[
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.info_outline, color: Colors.orange),
+                        title: const Text('Downgrade to Freemium'),
+                        subtitle: const Text('Remove premium features'),
+                        onTap: () async {
+                          final result = await Navigator.of(context).push<bool>(
+                            MaterialPageRoute(
+                              builder: (context) => const DowngradeScreen(),
+                            ),
+                          );
+                          if (result == true) {
+                            // Refresh the UI after downgrade
+                            setState(() {});
+                          }
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 32),
           // Payment Section
           const Text(
             'Payment',
@@ -326,8 +409,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 ListTile(
                   leading: const Icon(Icons.receipt_long, color: Colors.green),
-                  title: const Text('Payment History'),
-                  subtitle: const Text('View your transaction history'),
+                  title: const Text('Transaction History'),
+                  subtitle: const Text('View your payment transactions'),
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
