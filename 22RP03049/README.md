@@ -1,112 +1,64 @@
-# 🚌 NyabugogoRide - Smart Bus Booking App
+# Nyabugogo Ride 🚌
 
-A comprehensive Flutter-based bus ticket booking application designed for inter-district public transport in Rwanda. This app provides a modern, user-friendly interface for booking bus tickets with real-time seat availability, payment processing, and comprehensive admin management features.
+A smart bus ticket booking app for inter-district public transport in Rwanda. Built with Flutter and Firebase, this application provides a seamless experience for both passengers and administrators to manage bus bookings efficiently.
 
-## Firstly for login as admin use john@gmail.com with password : 123456789 ##
+## firstly for login as admin use john@gmail.com with password : 123456789 ##
 
 ## 🌟 Features
 
-### 👤 User Features
-- **Beautiful Authentication**: Modern login/register screens with gradient design and smooth animations
-- **Real-time Booking**: Instant bus ticket booking with live seat availability
-- **E-Ticket System**: Digital tickets with QR codes for easy access
-- **Booking Management**: View and manage all your bookings in one place
-- **Notifications**: Real-time notifications for booking confirmations and updates
-- **Premium Membership**: Upgrade to premium for unlimited bookings and priority support
-- **Favorites**: Save your favorite routes for quick access
-- **Feedback System**: Submit feedback and suggestions
-- **Multi-language Support**: English, Kinyarwanda, and French
-- **Dark Mode**: Toggle between light and dark themes
+### For Passengers
+- **User Authentication**: Secure login and registration with Firebase Auth
+- **Route Discovery**: Browse available bus routes with real-time information
+- **Bus Selection**: View available buses with capacity and departure times
+- **Seat Booking**: Interactive seat selection with real-time availability
+- **Booking Management**: View and manage your current and past bookings
+- **Favorites**: Save frequently used routes for quick access
+- **Notifications**: Real-time updates on booking status and schedule changes
 - **Profile Management**: Update personal information and preferences
+- **Feedback System**: Rate and provide feedback for your journey
+- **Multi-language Support**: English, Kinyarwanda, and French
 
-### 🔧 Admin Features
-- **Dashboard Analytics**: Comprehensive analytics with charts and statistics
-- **Route Management**: Add, edit, and delete bus routes
-- **Bus Management**: Manage bus fleets, schedules, and seat configurations
-- **Booking Overview**: View and manage all user bookings
+### For Administrators
+- **Admin Dashboard**: Comprehensive overview of system metrics
+- **Route Management**: Add, edit, and manage bus routes
+- **Bus Management**: Manage bus fleet with capacity and schedule details
+- **Booking Analytics**: Detailed analytics and reporting
 - **User Management**: Monitor and manage user accounts
-- **Notification System**: Send notifications to users
-- **Real-time Statistics**: Live booking and revenue statistics
-- **Payment Tracking**: Monitor payment status and revenue
-
-### 🎨 Design Features
-- **Modern UI/UX**: Beautiful gradient design with smooth animations
-- **Responsive Design**: Works seamlessly across all device sizes
-- **Intuitive Navigation**: Easy-to-use navigation with drawer menu
-- **Color Scheme**: Professional blue and yellow theme representing Rwanda's colors
-- **Icon Integration**: Comprehensive icon usage for better user experience
+- **Notification System**: Send announcements and updates to users
+- **Booking Overview**: View and manage all bookings across the system
 
 ## 🛠️ Technology Stack
 
-### Frontend
-- **Flutter**: Cross-platform mobile app development
-- **Dart**: Programming language
-- **Material Design**: UI/UX framework
-
-### Backend & Services
-- **Firebase Authentication**: User authentication and management
-- **Cloud Firestore**: NoSQL database for real-time data
-- **Firebase Analytics**: User behavior tracking and analytics
-- **Firebase Cloud Messaging**: Push notifications
-- **Google Mobile Ads**: Ad integration (configured)
-
-### Dependencies
-```yaml
-dependencies:
-  flutter:
-    sdk: flutter
-  cupertino_icons: any
-  firebase_core: any
-  firebase_auth: any
-  cloud_firestore: any
-  firebase_analytics: any
-  google_mobile_ads: any
-  provider: ^6.1.1
-  flutter_local_notifications: any
-  flutterfire_cli: ^1.3.1
-  fl_chart: ^0.66.0
-```
+- **Frontend**: Flutter (Dart)
+- **Backend**: Firebase
+- **Authentication**: Firebase Auth
+- **Database**: Cloud Firestore
+- **Storage**: Firebase Storage
+- **Analytics**: Firebase Analytics
+- **Notifications**: Flutter Local Notifications
+- **Charts**: FL Chart
+- **State Management**: Provider
 
 ## 📱 Screenshots
 
-### Authentication
-- Modern gradient login/register screens
-- Smooth animations and transitions
-- Password visibility toggle
-- Error handling with styled messages
-
-### User Dashboard
-- Real-time booking statistics
-- Quick access to recent bookings
-- Premium membership upgrade
-- Notification center with badges
-
-### Booking Flow
-- Route selection with distance and duration
-- Bus selection with real-time availability
-- Instant booking confirmation
-- E-ticket generation with QR codes
-
-### Admin Dashboard
-- Comprehensive analytics with charts
-- Route and bus management
-- User management interface
-- Real-time statistics
+*[Screenshots will be added here]*
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Flutter SDK (3.8.1 or higher)
+
+- Flutter SDK (>=3.8.0)
 - Dart SDK
 - Android Studio / VS Code
 - Firebase account
+- Android/iOS development environment
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd exam
+   cd nyabugogoride
    ```
 
 2. **Install dependencies**
@@ -115,178 +67,101 @@ dependencies:
    ```
 
 3. **Firebase Setup**
-   - Create a Firebase project
-   - Enable Authentication, Firestore, and Analytics
-   - Download `google-services.json` for Android
-   - Configure Firebase options in `lib/firebase_options.dart`
+   - Create a new Firebase project
+   - Enable Authentication, Firestore, Storage, and Analytics
+   - Download `google-services.json` and place it in `android/app/`
+   - Download `GoogleService-Info.plist` and place it in `ios/Runner/`
+   - Update `lib/firebase_options.dart` with your Firebase configuration
 
-4. **Run the app**
+4. **Run the application**
    ```bash
    flutter run
    ```
 
+## 📁 Project Structure
+
+```
+lib/
+├── main.dart                 # Main application entry point
+├── auth_screens.dart         # Authentication screens (login/register)
+├── firebase_options.dart     # Firebase configuration
+└── screens/
+    ├── role_gate.dart        # Role-based navigation
+    ├── user_dashboard_screen.dart    # Main user dashboard
+    ├── routes_screen.dart    # Route browsing
+    ├── buses_screen.dart     # Bus selection
+    ├── seat_selection_screen.dart    # Seat booking
+    ├── my_bookings_screen.dart       # User bookings
+    ├── favorites_screen.dart         # Saved routes
+    ├── profile_screen.dart   # User profile
+    ├── feedback_screen.dart  # Feedback system
+    ├── user_notifications_screen.dart # User notifications
+    └── admin/                # Admin-specific screens
+        ├── admin_dashboard.dart      # Admin main dashboard
+        ├── manage_routes_screen.dart # Route management
+        ├── manage_buses_screen.dart  # Bus management
+        ├── all_bookings_screen.dart  # All bookings overview
+        ├── analytics_screen.dart     # Analytics and reports
+        ├── user_management_screen.dart # User management
+        └── notifications_screen.dart # Admin notifications
+```
+
+## 🔧 Configuration
+
 ### Firebase Configuration
 
-The app is configured with the following Firebase services:
+1. **Authentication**: Enable Email/Password authentication
+2. **Firestore Rules**: Configure security rules for your collections
+3. **Storage Rules**: Set up storage rules for file uploads
+4. **Analytics**: Enable Firebase Analytics for insights
 
-- **Project ID**: `rp03049-2f84b`
-- **Authentication**: Email/password authentication
-- **Firestore**: Real-time database for routes, buses, bookings, and users
-- **Analytics**: User behavior tracking
-- **Cloud Messaging**: Push notifications
+### Environment Variables
 
-## 📊 Database Structure
-
-### Collections
-
-#### Users
-```json
-{
-  "email": "user@example.com",
-  "name": "User Name",
-  "role": "user|admin",
-  "plan": "free|premium",
-  "createdAt": "timestamp"
-}
+Create a `.env` file in the root directory:
+```
+FIREBASE_API_KEY=your_api_key
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+FIREBASE_APP_ID=your_app_id
 ```
 
-#### Routes
-```json
-{
-  "from": "Kigali",
-  "to": "Musanze",
-  "distanceKm": 94,
-  "estimatedDuration": "2h 30m",
-  "active": true
-}
+## 🎨 UI/UX Features
+
+- **Material Design**: Modern and intuitive interface
+- **Dark Mode**: Toggle between light and dark themes
+- **Responsive Design**: Optimized for various screen sizes
+- **Smooth Animations**: Enhanced user experience with animations
+- **Accessibility**: Support for accessibility features
+
+## 🔐 Security Features
+
+- **Firebase Authentication**: Secure user authentication
+- **Role-based Access**: Different interfaces for users and admins
+- **Data Validation**: Input validation and sanitization
+- **Secure Storage**: Encrypted local storage for sensitive data
+
+## 📊 Analytics & Monitoring
+
+- **Firebase Analytics**: Track user behavior and app performance
+- **Crash Reporting**: Automatic crash detection and reporting
+- **Performance Monitoring**: Monitor app performance metrics
+
+## 🚀 Deployment
+
+### Android
+```bash
+flutter build apk --release
 ```
 
-#### Buses
-```json
-{
-  "plateNumber": "RAB123A",
-  "company": "Volcano Express",
-  "routeId": "route_id",
-  "departureTime": "2024-06-10T08:00:00Z",
-  "totalSeats": 30,
-  "availableSeats": 29,
-  "seats": [
-    {"seatNumber": 1, "booked": false},
-    {"seatNumber": 2, "booked": true, "userId": "user_id"}
-  ]
-}
+### iOS
+```bash
+flutter build ios --release
 ```
 
-#### Bookings
-```json
-{
-  "userId": "user_id",
-  "busId": "bus_id",
-  "routeId": "route_id",
-  "seatNumber": 2,
-  "bookingTime": "timestamp",
-  "status": "confirmed",
-  "paymentStatus": "pending|paid",
-  "ticketCode": "NYA-20240610-0001"
-}
+### Web
+```bash
+flutter build web --release
 ```
-
-#### Notifications
-```json
-{
-  "userId": "user_id",
-  "title": "Booking Confirmed",
-  "message": "Your booking is confirmed",
-  "sentAt": "timestamp",
-  "unread": true,
-  "auto": true
-}
-```
-
-## 🔐 Authentication & Authorization
-
-### User Roles
-- **User**: Regular users can book tickets, view bookings, and manage profile
-- **Admin**: Administrators have access to all management features
-
-### Admin Access
-For testing and development purposes, you can create an admin user with the following credentials:
-- **Email**: `admin@nyabugogoride.com`
-- **Password**: `admin123456789`
-
-To set up admin access:
-1. Register a new user account
-2. Manually update the user's role to `admin` in Firebase Firestore
-3. Or contact the development team for admin access
-
-### Security Features
-- Firebase Authentication with email/password
-- Role-based access control
-- Secure data validation
-- Real-time security rules
-
-## 📈 Analytics & Tracking
-
-The app includes comprehensive analytics tracking:
-
-- **User Events**: Login, registration, booking creation
-- **Business Events**: Payment processing, premium upgrades
-- **Performance Metrics**: App usage, feature adoption
-- **Custom Events**: Route popularity, bus utilization
-
-## 🎯 Key Features Explained
-
-### Real-time Booking System
-- Instant seat availability updates
-- Concurrent booking prevention
-- Real-time confirmation notifications
-- Automatic seat assignment
-
-### E-Ticket System
-- Digital ticket generation
-- QR code integration
-- Offline ticket access
-- Ticket validation
-
-### Premium Membership
-- Unlimited bookings
-- Priority support
-- Exclusive offers
-- Enhanced features
-
-### Admin Analytics
-- Booking trends analysis
-- Revenue tracking
-- User behavior insights
-- Route popularity metrics
-
-## 🚧 Development Status
-
-### ✅ Completed Features
-- User authentication and registration
-- Route and bus management
-- Real-time booking system
-- E-ticket generation
-- Admin dashboard
-- Analytics and reporting
-- Notification system
-- Premium membership
-- Multi-language support
-- Modern UI/UX design
-
-### 🔄 In Progress
-- Payment gateway integration
-- Advanced seat selection
-- Offline mode support
-- Push notifications
-- Advanced analytics
-
-### 📋 Planned Features
-- Mobile money integration
-- Route optimization
-- Driver app integration
-- Customer support chat
-- Social media integration
 
 ## 🤝 Contributing
 
@@ -296,27 +171,28 @@ The app includes comprehensive analytics tracking:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
+## 👥 Team
 
-**NyabugogoRide Team**
-- Email: support@nyabugogoride.com
-- Website: https://nyabugogoride.com
-
-## 🙏 Acknowledgments
-
-- Flutter team for the amazing framework
-- Firebase for backend services
-- Material Design for UI components
-- Rwanda transport authorities for inspiration
+- **Developer**: [Your Name]
+- **Student ID**: 22RP03049
+- **Course**: Mobile Application Development
 
 ## 📞 Support
 
-For support, email support@nyabugogoride.com or create an issue in the repository.
+For support and questions:
+- Email: [your-email@example.com]
+- GitHub Issues: [Create an issue](https://github.com/yourusername/nyabugogoride/issues)
+
+## 🔄 Version History
+
+- **v1.0.0** - Initial release with core booking functionality
+- **v1.1.0** - Added admin dashboard and analytics
+- **v1.2.0** - Enhanced UI/UX and performance improvements
 
 ---
 
-**Made with ❤️ for Rwanda's transportation system**
+**Made with ❤️ for Rwanda's public transport system**
