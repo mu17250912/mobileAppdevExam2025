@@ -2,7 +2,7 @@
 
 A smart bus ticket booking app for inter-district public transport in Rwanda. Built with Flutter and Firebase, this application provides a seamless experience for both passengers and administrators to manage bus bookings efficiently.
 
-## firstly for login as admin use john@gmail.com with password : 123456789 ##
+## FIRSTLY TO LOGIN AS ADMIN USE EMAIL : john@gmail.com WITH PASSWORD : 123456789 ##
 
 ## 🌟 Features
 
