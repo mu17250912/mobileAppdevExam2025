@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "962570414742",
+    "project_id": "rentmate-33596",
+    "storage_bucket": "rentmate-33596.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962570414742:android:2ce27f1a1781a24719f0b7",
+        "android_client_info": {
+          "package_name": "com.example.mobile_exam_22rp03693"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmgu3ApckFswjhQ-MJ5r7myMQtoDWBtV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
