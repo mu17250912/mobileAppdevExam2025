@@ -119,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ),
                 const SizedBox(height: 32),
                 const Text(
-                  'AquTrack',
+                  'AqauTrack',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 42,

@@ -30,7 +30,7 @@ class DashboardPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Welcome to AquTrack Dashboard')),
+            appBar: AppBar(title: const Text('Welcome to AquaTrack Dashboard')),
             body: Center(child: Text('Error: \n${snapshot.error}')),
           );
         }
@@ -85,7 +85,7 @@ class DashboardPage extends StatelessWidget {
         final goalTarget = weekTotal > 0 ? weekTotal * (1 - goalPercent / 100) : 0;
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Welcome to AquTrack Dashboard')),
+          appBar: AppBar(title: const Text('Welcome to AquaTrack Dashboard')),
           drawer: Drawer(
             child: ListView(
               padding: EdgeInsets.zero,
@@ -99,7 +99,7 @@ class DashboardPage extends StatelessWidget {
                       context: context,
                       builder: (context) => AlertDialog(
                         title: const Text('Onboarding Information'),
-                        content: const Text('Welcome to AquTrack! Here you can track your household water usage, set goals, and view your progress. Use the dashboard to log water usage and monitor your achievements.'),
+                        content: const Text('Welcome to AquaTrack! Here you can track your household water usage, set goals, and view your progress. Use the dashboard to log water usage and monitor your achievements.'),
                         actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
                       ),
                     );
@@ -132,7 +132,7 @@ class DashboardPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       const Text(
-                        'AquTrack User',
+                        'AquaTrack User',
                         style: TextStyle(color: Colors.white70, fontSize: 13),
                       ),
                     ],
@@ -640,9 +640,9 @@ class DashboardPage extends StatelessWidget {
                                   const Text('App Version: 1.0.0'),
                                   const SizedBox(height: 8),
                                   const Text('About:'),
-                                  const Text('AquTrack helps you track and reduce your household water usage.'),
+                                  const Text('AquaTrack helps you track and reduce your household water usage.'),
                                   const SizedBox(height: 8),
-                                  const Text('Contact: support@aqutrack.com'),
+                                  const Text('Contact: support@aquatrack.com'),
                                   const SizedBox(height: 8),
                                   GestureDetector(
                                     onTap: () {},
