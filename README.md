@@ -1,6 +1,6 @@
 # AgriConnect - Agricultural Marketplace Mobile Application
 
-## 📱 Project Overview
+##  Project Overview
 
 AgriConnect is a comprehensive Flutter-based mobile application designed to bridge the gap between farmers and buyers in the agricultural marketplace. The app facilitates direct trade between agricultural producers and consumers, promoting sustainable farming practices and local commerce.
 
