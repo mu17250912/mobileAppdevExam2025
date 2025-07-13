@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "192956021233",
+    "project_id": "easyrent2-3a17f",
+    "storage_bucket": "easyrent2-3a17f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:192956021233:android:ac40ddc1a6fe5b2f12ac50",
+        "android_client_info": {
+          "package_name": "com.example.easyrent2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "192956021233-tkp27bfd3l74avoa4rii55dv19lonpgj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.easyrent2",
+            "certificate_hash": "862181a0214f270675b220c5928fc94f74642309"
+          }
+        },
+        {
+          "client_id": "192956021233-j33vvfu9c87ikhughqfsprpuoclcbogj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCE19yjGMSaHYWphLasi-kEWgTMfb_1k0I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "192956021233-7i9ei25drbjf4qov86pfcdm9kc9rj7bq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "192956021233-64rsovqhrpncn56rk253hqho4bbi07u0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.easyrent2"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
