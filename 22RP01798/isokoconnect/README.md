@@ -280,7 +280,6 @@ flutter build appbundle --release
 ### Tested Devices:
 - TECNO KG5j (Android 11)
 - Samsung Galaxy S21 (Android 12)
-- Google Pixel 4 (Android 13)
 - Various Android emulators
 
 ### Test Scenarios:
