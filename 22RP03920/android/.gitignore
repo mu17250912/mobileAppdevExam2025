@@ -1,0 +1,48 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+.pub-cache/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.melos_tool/
+
+# IntelliJ/Android Studio/VSCode
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# macOS
+.DS_Store
+
+# Android specific
+.gradle/
+**/gradle-wrapper.jar
+.gradle/
+local.properties
+**/captures/
+**/outputs/
+**/build/
+.cxx/
+
+# Flutter generated
+GeneratedPluginRegistrant.java
+
+# Executables
+/gradlew
+/gradlew.bat
+
+# Keystore files (security-sensitive)
+key.properties
+**/*.keystore
+**/*.jks
+
+# iOS specific (optional if you're not targeting iOS)
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
