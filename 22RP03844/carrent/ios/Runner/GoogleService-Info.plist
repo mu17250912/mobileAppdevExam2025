@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>695648441245-6d306060nqb4rqq0ppe8jo5oqk4e3ok0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.695648441245-6d306060nqb4rqq0ppe8jo5oqk4e3ok0</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>695648441245-7js5imk6jfg4djcldkegb61obpqj6aa6.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD45g99KH_Y7YGfmghV18DheZJB06DyBwE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>695648441245</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.carrent</string>
+	<key>PROJECT_ID</key>
+	<string>carrentexam</string>
+	<key>STORAGE_BUCKET</key>
+	<string>carrentexam.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:695648441245:ios:6417005fbb78608b511574</string>
+</dict>
+</plist>
