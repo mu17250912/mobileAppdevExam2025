@@ -1,0 +1,60 @@
+stdClass Object
+(
+    [status] => error
+    [message] => Transaction rejected due to :AMOUNT_TOO_SMALL, Amount should not be less than 5
+    [link] => 
+)
+stdClass Object
+(
+    [status] => error
+    [message] => Transaction Reference Already Exist
+    [link] => 
+)
+stdClass Object
+(
+    [status] => error
+    [message] => Transaction Reference Already Exist
+    [link] => 
+)
+stdClass Object
+(
+    [status] => error
+    [message] => Transaction Reference Already Exist
+    [link] => 
+)
+stdClass Object
+(
+    [status] => success
+    [message] => Transaction Accepted by HDEV, Waiting for Telco & user Confirmation
+    [link] => 
+)
+stdClass Object
+(
+    [status] => error
+    [message] => Transaction Reference Already Exist
+    [link] => 
+)
+stdClass Object
+(
+    [status] => error
+    [message] => Transaction Reference Already Exist
+    [link] => 
+)
+stdClass Object
+(
+    [status] => success
+    [message] => Transaction Accepted by HDEV, Waiting for Telco & user Confirmation
+    [link] => 
+)
+stdClass Object
+(
+    [status] => success
+    [message] => Transaction Accepted by HDEV, Waiting for Telco & user Confirmation
+    [link] => 
+)
+stdClass Object
+(
+    [status] => success
+    [message] => Transaction Accepted by HDEV, Waiting for Telco & user Confirmation
+    [link] => 
+)
