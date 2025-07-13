@@ -1,0 +1,41 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+  <group android:scaleX="0.6"
+      android:scaleY="0.6"
+      android:translateX="21.6"
+      android:translateY="21.6">
+    <!-- Book base -->
+    <path
+        android:fillColor="#2C3E50"
+        android:pathData="M20,2H4C2.9,2 2,2.9 2,4V20C2,21.1 2.9,22 4,22H20C21.1,22 22,21.1 22,20V4C22,2.9 21.1,2 20,2Z"/>
+    
+    <!-- Book pages -->
+    <path
+        android:fillColor="#ECF0F1"
+        android:pathData="M4,4H20V18H4V4Z"/>
+    
+    <!-- Book spine -->
+    <path
+        android:fillColor="#34495E"
+        android:pathData="M18,4V18H20V4H18Z"/>
+    
+    <!-- Text lines -->
+    <path
+        android:fillColor="#2C3E50"
+        android:pathData="M6,8H16V9H6V8Z"/>
+    <path
+        android:fillColor="#2C3E50"
+        android:pathData="M6,11H14V12H6V11Z"/>
+    <path
+        android:fillColor="#2C3E50"
+        android:pathData="M6,14H12V15H6V14Z"/>
+    
+    <!-- Accent line -->
+    <path
+        android:fillColor="#3498DB"
+        android:pathData="M6,6H18V7H6V6Z"/>
+  </group>
+</vector> 
