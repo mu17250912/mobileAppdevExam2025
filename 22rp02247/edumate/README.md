@@ -1,4 +1,3 @@
-# mobileAppdevExam2025
 # EduMate
 
 **Student Registration Number:** 22RP02247  
