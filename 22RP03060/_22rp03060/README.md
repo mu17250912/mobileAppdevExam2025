@@ -1,4 +1,5 @@
 # EventEase - Student Event Management App
+Done by FLORA FEZA 22RP03060
 
 A comprehensive Flutter-based event management application designed specifically for students, featuring Firebase integration, freemium model, and modern UI/UX.
 
