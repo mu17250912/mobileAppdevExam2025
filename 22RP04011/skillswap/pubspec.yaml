@@ -30,15 +30,25 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^2.0.0
-  firebase_auth: ^4.0.0
-  cloud_firestore: ^4.0.0
+  firebase_core: ^2.32.0
+  firebase_auth: ^4.17.4
+  cloud_firestore: ^4.15.8
+  firebase_storage: ^11.6.9
+  image_picker: ^1.0.7
   cupertino_icons: ^1.0.2
+  google_sign_in: ^6.1.6
+  firebase_messaging: ^14.7.4
+  intl: ^0.19.0
+  uuid: ^3.0.7
+  http: ^1.2.1
+  flutter_slidable: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/google_logo.jpeg

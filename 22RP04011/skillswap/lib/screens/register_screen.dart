@@ -3,227 +3,454 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController offerSkillsController = TextEditingController();
-  final TextEditingController learnSkillsController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
-  bool isLoading = false;
+  final _formKey = GlobalKey<FormState>();
+  final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
 
-  void _register(BuildContext context) async {
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+  final TextEditingController _skillsOfferedController =
+      TextEditingController();
+  final TextEditingController _skillsToLearnController =
+      TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+
+  String _availability = 'Available';
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
+  String? _errorMessage;
+
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) return;
+
     setState(() {
-      isLoading = true;
+      _isLoading = true;
+      _errorMessage = null;
     });
-    if (nameController.text.isEmpty ||
-        offerSkillsController.text.isEmpty ||
-        learnSkillsController.text.isEmpty ||
-        phoneController.text.isEmpty ||
-        emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        confirmPasswordController.text.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Registration Error'),
-          content: Text('Please fill in all fields.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-      setState(() {
-        isLoading = false;
-      });
-      return;
-    }
-    if (passwordController.text != confirmPasswordController.text) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Passwords do not match.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-      setState(() {
-        isLoading = false;
-      });
-      return;
-    }
+
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
       );
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set({
-        'fullName': nameController.text.trim(),
-        'skillsOffered': offerSkillsController.text.trim(),
-        'skillsToLearn': learnSkillsController.text.trim(),
-        'phone': phoneController.text.trim(),
-        'email': emailController.text.trim(),
+
+      final user = userCredential.user;
+      if (user == null) throw Exception("Registration failed.");
+
+      final now = DateTime.now();
+      await _firestore.collection('users').doc(user.uid).set({
+        'uid': user.uid,
+        'fullName': _fullNameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'skillsOffered': _skillsOfferedController.text
+            .split(',')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList(),
+        'skillsToLearn': _skillsToLearnController.text
+            .split(',')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList(),
+        'phone': _phoneController.text.trim(),
+        'availability': _availability,
+        'location': _locationController.text.trim(),
+        'isOnline': true,
+        'lastSeen': now,
+        'createdAt': now,
+        'updatedAt': now,
+        'sessions': 0,
+        'ratings': 0.0,
+        'badges': [],
       });
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Success'),
+
+      if (!mounted) return;
+
+      // Show success message and navigate to login screen
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
           content: Text(
-              'Dear ${nameController.text.trim()}, you have been registered successfully!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-              child: Text('OK'),
-            ),
-          ],
+              'Registration successful! Please login with your credentials.'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
         ),
       );
+
+      // Navigate to login screen
+      Navigator.pushReplacementNamed(context, '/login');
     } on FirebaseAuthException catch (e) {
-      String message;
-      switch (e.code) {
-        case 'email-already-in-use':
-          message = 'The email address is already in use by another account.';
-          break;
-        case 'invalid-email':
-          message = 'The email address is not valid.';
-          break;
-        case 'weak-password':
-          message = 'The password is too weak.';
-          break;
-        default:
-          message = 'Registration failed. Please try again.';
-      }
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Registration Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+      setState(() {
+        _isLoading = false;
+        _errorMessage = _getErrorMessage(e.code);
+      });
     } catch (e) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Registration Error'),
-          content: Text('An unexpected error occurred. Please try again.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'Registration failed. Please try again.';
+      });
     }
-    setState(() {
-      isLoading = false;
-    });
+  }
+
+  String _getErrorMessage(String code) {
+    switch (code) {
+      case 'weak-password':
+        return 'The password provided is too weak.';
+      case 'email-already-in-use':
+        return 'An account already exists for this email address.';
+      case 'invalid-email':
+        return 'Please enter a valid email address.';
+      case 'operation-not-allowed':
+        return 'Email/password accounts are not enabled. Please contact support.';
+      default:
+        return 'Registration failed. Please try again.';
+    }
+  }
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _skillsOfferedController.dispose();
+    _skillsToLearnController.dispose();
+    _phoneController.dispose();
+    _locationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600;
+
     return Scaffold(
-      body: Center(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Create Account'),
+        backgroundColor: Colors.blue[800],
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(isTablet ? 32.0 : 16.0),
+          child: Form(
+            key: _formKey,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.school, size: 80, color: Colors.blue),
-                SizedBox(height: 16),
-                Text('SkillSwap',
-                    style:
-                        TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                SizedBox(height: 32),
-                TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(labelText: 'Full Name'),
-                ),
-                SizedBox(height: 12),
-                TextField(
-                  controller: offerSkillsController,
-                  decoration: InputDecoration(labelText: 'Skill(s) Your Offer'),
-                ),
-                SizedBox(height: 12),
-                TextField(
-                  controller: learnSkillsController,
-                  decoration:
-                      InputDecoration(labelText: 'Skill(s) You Want To Learn'),
-                ),
-                SizedBox(height: 12),
-                TextField(
-                  controller: phoneController,
-                  decoration: InputDecoration(labelText: 'Phone Number'),
-                  keyboardType: TextInputType.phone,
-                ),
-                SizedBox(height: 12),
-                TextField(
-                  controller: emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                SizedBox(height: 12),
-                TextField(
-                  controller: passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                ),
-                SizedBox(height: 12),
-                TextField(
-                  controller: confirmPasswordController,
-                  decoration: InputDecoration(labelText: 'Confirm Password'),
-                  obscureText: true,
-                ),
-                SizedBox(height: 24),
-                isLoading
-                    ? CircularProgressIndicator()
-                    : ElevatedButton(
-                        onPressed: () => _register(context),
-                        child: Text('Register'),
+                // Header
+                Center(
+                  child: Column(
+                    children: [
+                      Container(
+                        width: isTablet ? 100 : 80,
+                        height: isTablet ? 100 : 80,
+                        decoration: BoxDecoration(
+                          color: Colors.blue[800],
+                          borderRadius:
+                              BorderRadius.circular(isTablet ? 20 : 16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.blue.withOpacity(0.3),
+                              blurRadius: 15,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.person_add,
+                          size: isTablet ? 50 : 40,
+                          color: Colors.white,
+                        ),
                       ),
-                SizedBox(height: 16),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacementNamed(context, '/login');
-                  },
-                  child: Text(
-                    'Already have an account? Login',
-                    style: TextStyle(color: Colors.blue),
+                      SizedBox(height: isTablet ? 24 : 16),
+                      Text(
+                        'Join SkillSwap',
+                        style: TextStyle(
+                          fontSize: isTablet ? 28 : 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      SizedBox(height: isTablet ? 8 : 4),
+                      Text(
+                        'Start your learning journey today',
+                        style: TextStyle(
+                          fontSize: isTablet ? 16 : 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+                SizedBox(height: isTablet ? 40 : 24),
+
+                // Personal Information Section
+                _buildSectionTitle('Personal Information', isTablet),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                _buildTextField(
+                    _fullNameController, 'Full Name', Icons.person, isTablet),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                _buildTextField(
+                    _emailController, 'Email', Icons.email, isTablet,
+                    keyboardType: TextInputType.emailAddress),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                _buildTextField(
+                    _passwordController, 'Password', Icons.lock, isTablet,
+                    keyboardType: TextInputType.text,
+                    obscureText: _obscurePassword, onSuffixPressed: () {
+                  setState(() => _obscurePassword = !_obscurePassword);
+                }),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                _buildTextField(_confirmPasswordController, 'Confirm Password',
+                    Icons.lock, isTablet,
+                    keyboardType: TextInputType.text,
+                    obscureText: _obscureConfirmPassword, onSuffixPressed: () {
+                  setState(
+                      () => _obscureConfirmPassword = !_obscureConfirmPassword);
+                }),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                _buildTextField(
+                    _phoneController, 'Phone', Icons.phone, isTablet,
+                    keyboardType: TextInputType.phone),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                _buildTextField(_locationController, 'Location',
+                    Icons.location_on, isTablet),
+                SizedBox(height: isTablet ? 24 : 16),
+
+                // Skills Section
+                _buildSectionTitle('Skills & Interests', isTablet),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                _buildTextField(
+                    _skillsOfferedController,
+                    'Skills You Can Teach (comma separated)',
+                    Icons.settings,
+                    isTablet),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                _buildTextField(
+                    _skillsToLearnController,
+                    'Skills You Want to Learn (comma separated)',
+                    Icons.school,
+                    isTablet),
+                SizedBox(height: isTablet ? 16 : 12),
+
+                // Availability Dropdown
+                DropdownButtonFormField<String>(
+                  value: _availability,
+                  items: ['Available', 'Busy', 'Offline'].map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    labelText: 'Availability',
+                    prefixIcon: const Icon(Icons.access_time),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[50],
+                    contentPadding: EdgeInsets.symmetric(
+                        horizontal: isTablet ? 20 : 16,
+                        vertical: isTablet ? 16 : 12),
+                  ),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _availability = newValue!;
+                    });
+                  },
+                ),
+                SizedBox(height: isTablet ? 24 : 16),
+
+                // Error message
+                if (_errorMessage != null)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red[50],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red[200]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.error_outline,
+                            color: Colors.red[600], size: 20),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _errorMessage!,
+                            style: TextStyle(color: Colors.red[700]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (_errorMessage != null) SizedBox(height: isTablet ? 24 : 16),
+
+                // Register button
+                SizedBox(
+                  width: double.infinity,
+                  height: isTablet ? 56 : 48,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _register,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[800],
+                      foregroundColor: Colors.white,
+                      elevation: 2,
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: isTablet ? 18 : 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  ),
+                ),
+                SizedBox(height: isTablet ? 32 : 24),
+
+                // Login Link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Already have an account? ",
+                      style: TextStyle(
+                        fontSize: isTablet ? 16 : 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, '/login'),
+                      child: Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: isTablet ? 16 : 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blue[800],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: isTablet ? 32 : 24),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title, bool isTablet) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: isTablet ? 20 : 18,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey[800],
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+    TextEditingController controller,
+    String label,
+    IconData icon,
+    bool isTablet, {
+    TextInputType keyboardType = TextInputType.text,
+    bool obscureText = false,
+    VoidCallback? onSuffixPressed,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        hintText: 'Enter $label',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: Colors.grey[50],
+        contentPadding: EdgeInsets.symmetric(
+            horizontal: isTablet ? 20 : 16, vertical: isTablet ? 16 : 12),
+        suffixIcon: onSuffixPressed != null
+            ? IconButton(
+                icon: Icon(
+                  obscureText ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: onSuffixPressed,
+              )
+            : null,
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Please enter $label';
+        }
+
+        // Email validation
+        if (label == 'Email') {
+          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+            return 'Please enter a valid email address';
+          }
+        }
+
+        // Password validation
+        if (label == 'Password') {
+          if (value.length < 6) {
+            return 'Password must be at least 6 characters';
+          }
+        }
+
+        // Confirm password validation
+        if (label == 'Confirm Password') {
+          if (value != _passwordController.text) {
+            return 'Passwords do not match';
+          }
+        }
+
+        return null;
+      },
     );
   }
 }
