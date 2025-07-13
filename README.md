@@ -219,18 +219,14 @@ Android Studio / VS Code
 Firebase account setup
 
 ⚙️ Installation
-bash
-Copy
-Edit
+
 git clone https://github.com/Fredereric-Nzamurambaho/mobileAppdevExam2025
-cd 22RP02034
+
 flutter pub get
 # Add google-services.json to android/app
 flutter run
 🧪 Testing
-bash
-Copy
-Edit
+
 flutter test                # Run unit/widget tests
 flutter run --profile       # Performance testing
 🗺️ Future Roadmap
