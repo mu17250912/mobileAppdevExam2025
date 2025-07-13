@@ -131,7 +131,7 @@ Revenue, churn, and CLV metrics
 
 A/B Testing & usage heatmaps
 
-🌱 3. Growth & Retention Strategy
+🌱 3. Growth & Retention Strategy 
 In-app feedback, surveys
 
 Gamified financial goal tracking
