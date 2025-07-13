@@ -136,7 +136,7 @@ Future<void> _login() async {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'AquTrack',
+                      'AquaTrack',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 32,

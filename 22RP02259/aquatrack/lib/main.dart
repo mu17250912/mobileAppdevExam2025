@@ -82,7 +82,7 @@ class _WaterSaverAppState extends State<WaterSaverApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AquTrack',
+      title: 'AquaTrack',
       theme: ThemeData(primarySwatch: Colors.blue),
       debugShowCheckedModeBanner: false,
       home: !_splashDone

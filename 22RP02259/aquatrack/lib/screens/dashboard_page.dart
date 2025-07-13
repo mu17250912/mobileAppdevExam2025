@@ -36,7 +36,7 @@ class DashboardPage extends StatelessWidget {
         }
         if (!snapshot.hasData) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Welcome to AquTrack Dashboard')),
+            appBar: AppBar(title: const Text('Welcome to AquaTrack Dashboard')),
             body: const Center(child: CircularProgressIndicator()),
           );
         }

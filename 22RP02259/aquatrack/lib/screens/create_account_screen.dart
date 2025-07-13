@@ -111,7 +111,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'AquTrack',
+                      'AquaTrack',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 32,
