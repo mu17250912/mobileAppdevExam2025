@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "471589742918",
+    "project_id": "smartbudget-74b65",
+    "storage_bucket": "smartbudget-74b65.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471589742918:android:fe5fd02cf32a130e531d47",
+        "android_client_info": {
+          "package_name": "com.example.smartbudget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "471589742918-si4aqk95p1b3k5j2s1ppa44l4r9nnjrd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartbudget",
+            "certificate_hash": "0d842ab1a88aa054825a6010627c212e92d12fc5"
+          }
+        },
+        {
+          "client_id": "471589742918-ckim9btjmu6njl755hm45lkebqn5jqk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZLq4vKpCi3Rwkw-wCZMlfxjo3rBdYo4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471589742918-ckim9btjmu6njl755hm45lkebqn5jqk5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "471589742918-sc0atu5vhcojhms3gov4lss84icd32ph.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.smartbudget"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
