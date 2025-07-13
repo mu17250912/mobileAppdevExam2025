@@ -1,5 +1,3 @@
-# mobileAppdevExam2025
-
 # Mediremind
 
 ## App Name: Mediremind  

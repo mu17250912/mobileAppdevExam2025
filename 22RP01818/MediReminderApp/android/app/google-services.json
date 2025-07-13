@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "115397993317",
+    "firebase_url": "https://medi-remind-app-default-rtdb.firebaseio.com",
+    "project_id": "medi-remind-app",
+    "storage_bucket": "medi-remind-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:115397993317:android:d2c0baae8682fac172778c",
+        "android_client_info": {
+          "package_name": "com.example.mediremindapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA37eSTPfeZ4Xrr-MJOKpDDfBS_Y7u99hg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:115397993317:android:2e2f53dbd24bc21772778c",
+        "android_client_info": {
+          "package_name": "com.example.medireminderapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA37eSTPfeZ4Xrr-MJOKpDDfBS_Y7u99hg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
