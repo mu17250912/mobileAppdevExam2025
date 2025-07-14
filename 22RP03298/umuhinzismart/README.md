@@ -42,7 +42,7 @@ umuhinzismart/
 ### Setup
 1. **Clone the repository:**
    ```sh
-   git clone 
+   git clone https://github.com/cracker38/mobileAppdevExam2025.git
    cd umuhinzismart
    ```
 2. **Install dependencies:**
