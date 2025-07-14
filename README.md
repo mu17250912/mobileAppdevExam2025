@@ -1,4 +1,4 @@
-# Real Estate Commissioner App
+# UMUKOMISIYONERI App
 
 Student Registration Number:22RP02338
 Academic Year: 2024-2025  
@@ -7,8 +7,14 @@ Date: July 13th, 2025
 
 ##  App Overview
 
-**App Name:** Real Estate Commissioner  
+**App Name:** UMUKOMISIYONERI App  
 **Description:** A comprehensive real estate platform that connects property buyers with sellers through a commissioner system, facilitating secure property transactions with integrated payment processing and advanced user management.
+
+Login Credentials
+-------------------
+
+Email: dusinnocent57@gmail.com
+Password: 123456
 
 ##  Problem Statement
 
