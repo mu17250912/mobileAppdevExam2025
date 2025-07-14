@@ -204,7 +204,6 @@ BudgetWise uses a **freemium monetization strategy**:
 - **State Management:** Flutter StatefulWidget
 - **UI Framework:** Material Design
 - **Charts:** fl_chart for data visualization
-- **Export:** share_plus for file sharing
 - **Version Control:** Git
 
 ## 📈 Future Roadmap (Planned/Not Yet Implemented)
