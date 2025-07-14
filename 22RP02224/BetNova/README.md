@@ -163,8 +163,9 @@ HERE THERE IS BRIEF DESCRIPTION OF MY APP ALL FEATURES AND HOW IT WORKS ARE THE 
 _______________________________________________________________________________________________________________________
 
 
-ADMIN FEATURES & WHAT THEY DO FOR USERS
-_______________________________________
+ADMIN FEATURES & WHAT THEY DO FOR USERS: 
+[I have Admin Cridential Are: EMAIL:admin@gmail.com,PHONE:250 788 975 583,PASSWORD:123456]
+_______________________________________________________________________________________________
 
 
 
@@ -228,11 +229,11 @@ In Summary:
 
 
 
-USER SIDE EXPERINCES (After Admin Setup)
-________________________________________
+USER SIDE EXPERINCES (After Admin Setup):[SOME OF USER I HAVE :EMAIL:daniel@gmail.com,PHONE:250 783 158 697,PASSWORD:123456]
+_____________________________________________________________________________________________________________________________
 
 
-1.	Registration & Login
+1.	Registration & Login: 
 
 •	Users create accounts and log in. Their info is managed securely.
 
