@@ -1,0 +1,704 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.example.skillslinks"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="23"
+9        android:targetSdkVersion="35" />
+10    <!--
+11         Required to query activities that can process text, see:
+12         https://developer.android.com/training/package-visibility and
+13         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+14
+15         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin.
+16    -->
+17    <queries>
+17-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:39:5-44:15
+18        <intent>
+18-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:40:9-43:18
+19            <action android:name="android.intent.action.PROCESS_TEXT" />
+19-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:41:13-72
+19-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:41:21-70
+20
+21            <data android:mimeType="text/plain" />
+21-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:42:13-50
+21-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:42:19-48
+22        </intent>
+23    </queries>
+24
+25    <uses-permission android:name="android.permission.INTERNET" />
+25-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:7:5-67
+25-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:7:22-64
+26    <uses-permission android:name="android.permission.WAKE_LOCK" />
+26-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:5-68
+26-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:22-65
+27    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Permissions options for the `notification` group -->
+27-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:5-79
+27-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:22-76
+28    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+28-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:5-77
+28-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:22-74
+29    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+29-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:26:5-82
+29-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:26:22-79
+30    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+30-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:25:5-79
+30-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:25:22-76
+31    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION" />
+31-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:26:5-88
+31-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:26:22-85
+32    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" />
+32-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:27:5-82
+32-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:27:22-79
+33    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+33-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:26:5-110
+33-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:26:22-107
+34    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+34-->[com.google.android.recaptcha:recaptcha:18.6.1] /home/adele/.gradle/caches/8.9/transforms/ace1e147c94b9b70c527896c1867fda6/transformed/jetified-recaptcha-18.6.1/AndroidManifest.xml:9:5-98
+34-->[com.google.android.recaptcha:recaptcha:18.6.1] /home/adele/.gradle/caches/8.9/transforms/ace1e147c94b9b70c527896c1867fda6/transformed/jetified-recaptcha-18.6.1/AndroidManifest.xml:9:22-95
+35
+36    <permission
+36-->[androidx.core:core:1.13.1] /home/adele/.gradle/caches/8.9/transforms/497c2d375825d25438a9346ca1626466/transformed/core-1.13.1/AndroidManifest.xml:22:5-24:47
+37        android:name="com.example.skillslinks.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+37-->[androidx.core:core:1.13.1] /home/adele/.gradle/caches/8.9/transforms/497c2d375825d25438a9346ca1626466/transformed/core-1.13.1/AndroidManifest.xml:23:9-81
+38        android:protectionLevel="signature" />
+38-->[androidx.core:core:1.13.1] /home/adele/.gradle/caches/8.9/transforms/497c2d375825d25438a9346ca1626466/transformed/core-1.13.1/AndroidManifest.xml:24:9-44
+39
+40    <uses-permission android:name="com.example.skillslinks.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+40-->[androidx.core:core:1.13.1] /home/adele/.gradle/caches/8.9/transforms/497c2d375825d25438a9346ca1626466/transformed/core-1.13.1/AndroidManifest.xml:26:5-97
+40-->[androidx.core:core:1.13.1] /home/adele/.gradle/caches/8.9/transforms/497c2d375825d25438a9346ca1626466/transformed/core-1.13.1/AndroidManifest.xml:26:22-94
+41
+42    <application
+43        android:name="android.app.Application"
+43-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:4:9-42
+44        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+44-->[androidx.core:core:1.13.1] /home/adele/.gradle/caches/8.9/transforms/497c2d375825d25438a9346ca1626466/transformed/core-1.13.1/AndroidManifest.xml:28:18-86
+45        android:extractNativeLibs="false"
+46        android:icon="@mipmap/ic_launcher"
+46-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:5:9-43
+47        android:label="skillslinks" >
+47-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:3:9-36
+48        <activity
+48-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:6:9-27:20
+49            android:name="com.example.skillslinks.MainActivity"
+49-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:7:13-41
+50            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+50-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:12:13-163
+51            android:exported="true"
+51-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:8:13-36
+52            android:hardwareAccelerated="true"
+52-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:13:13-47
+53            android:launchMode="singleTop"
+53-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:9:13-43
+54            android:taskAffinity=""
+54-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:10:13-36
+55            android:theme="@style/LaunchTheme"
+55-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:11:13-47
+56            android:windowSoftInputMode="adjustResize" >
+56-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:14:13-55
+57
+58            <!--
+59                 Specifies an Android theme to apply to this Activity as soon as
+60                 the Android process has started. This theme is visible to the user
+61                 while the Flutter UI initializes. After that, this theme continues
+62                 to determine the Window background behind the Flutter UI.
+63            -->
+64            <meta-data
+64-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:19:13-22:17
+65                android:name="io.flutter.embedding.android.NormalTheme"
+65-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:20:15-70
+66                android:resource="@style/NormalTheme" />
+66-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:21:15-52
+67
+68            <intent-filter>
+68-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:23:13-26:29
+69                <action android:name="android.intent.action.MAIN" />
+69-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:24:17-68
+69-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:24:25-66
+70
+71                <category android:name="android.intent.category.LAUNCHER" />
+71-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:25:17-76
+71-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:25:27-74
+72            </intent-filter>
+73        </activity>
+74        <!--
+75             Don't delete the meta-data below.
+76             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java
+77        -->
+78        <meta-data
+78-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:30:9-32:33
+79            android:name="flutterEmbedding"
+79-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:31:13-44
+80            android:value="2" />
+80-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:32:13-30
+81
+82        <service
+82-->[:cloud_firestore] /home/adele/skillslinks/skillslinks/build/cloud_firestore/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:9-12:19
+83            android:name="com.google.firebase.components.ComponentDiscoveryService"
+83-->[:cloud_firestore] /home/adele/skillslinks/skillslinks/build/cloud_firestore/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:18-89
+84            android:directBootAware="true"
+84-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:32:13-43
+85            android:exported="false" >
+85-->[com.google.firebase:firebase-firestore:25.1.4] /home/adele/.gradle/caches/8.9/transforms/2530825af24649698de77872f74d2128/transformed/jetified-firebase-firestore-25.1.4/AndroidManifest.xml:16:13-37
+86            <meta-data
+86-->[:cloud_firestore] /home/adele/skillslinks/skillslinks/build/cloud_firestore/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:13-11:85
+87                android:name="com.google.firebase.components:io.flutter.plugins.firebase.firestore.FlutterFirebaseFirestoreRegistrar"
+87-->[:cloud_firestore] /home/adele/skillslinks/skillslinks/build/cloud_firestore/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:17-134
+88                android:value="com.google.firebase.components.ComponentRegistrar" />
+88-->[:cloud_firestore] /home/adele/skillslinks/skillslinks/build/cloud_firestore/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:17-82
+89            <meta-data
+89-->[:firebase_auth] /home/adele/skillslinks/skillslinks/build/firebase_auth/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:13-11:85
+90                android:name="com.google.firebase.components:io.flutter.plugins.firebase.auth.FlutterFirebaseAuthRegistrar"
+90-->[:firebase_auth] /home/adele/skillslinks/skillslinks/build/firebase_auth/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:17-124
+91                android:value="com.google.firebase.components.ComponentRegistrar" />
+91-->[:firebase_auth] /home/adele/skillslinks/skillslinks/build/firebase_auth/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:17-82
+92            <meta-data
+92-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:36:13-38:85
+93                android:name="com.google.firebase.components:io.flutter.plugins.firebase.messaging.FlutterFirebaseAppRegistrar"
+93-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:37:17-128
+94                android:value="com.google.firebase.components.ComponentRegistrar" />
+94-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:38:17-82
+95            <meta-data
+95-->[:firebase_storage] /home/adele/skillslinks/skillslinks/build/firebase_storage/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:13-11:85
+96                android:name="com.google.firebase.components:io.flutter.plugins.firebase.storage.FlutterFirebaseAppRegistrar"
+96-->[:firebase_storage] /home/adele/skillslinks/skillslinks/build/firebase_storage/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:17-126
+97                android:value="com.google.firebase.components.ComponentRegistrar" />
+97-->[:firebase_storage] /home/adele/skillslinks/skillslinks/build/firebase_storage/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:17-82
+98            <meta-data
+98-->[:firebase_core] /home/adele/skillslinks/skillslinks/build/firebase_core/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:13-11:85
+99                android:name="com.google.firebase.components:io.flutter.plugins.firebase.core.FlutterFirebaseCoreRegistrar"
+99-->[:firebase_core] /home/adele/skillslinks/skillslinks/build/firebase_core/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:17-124
+100                android:value="com.google.firebase.components.ComponentRegistrar" />
+100-->[:firebase_core] /home/adele/skillslinks/skillslinks/build/firebase_core/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:17-82
+101            <meta-data
+101-->[com.google.firebase:firebase-firestore:25.1.4] /home/adele/.gradle/caches/8.9/transforms/2530825af24649698de77872f74d2128/transformed/jetified-firebase-firestore-25.1.4/AndroidManifest.xml:17:13-19:85
+102                android:name="com.google.firebase.components:com.google.firebase.firestore.FirebaseFirestoreKtxRegistrar"
+102-->[com.google.firebase:firebase-firestore:25.1.4] /home/adele/.gradle/caches/8.9/transforms/2530825af24649698de77872f74d2128/transformed/jetified-firebase-firestore-25.1.4/AndroidManifest.xml:18:17-122
+103                android:value="com.google.firebase.components.ComponentRegistrar" />
+103-->[com.google.firebase:firebase-firestore:25.1.4] /home/adele/.gradle/caches/8.9/transforms/2530825af24649698de77872f74d2128/transformed/jetified-firebase-firestore-25.1.4/AndroidManifest.xml:19:17-82
+104            <meta-data
+104-->[com.google.firebase:firebase-firestore:25.1.4] /home/adele/.gradle/caches/8.9/transforms/2530825af24649698de77872f74d2128/transformed/jetified-firebase-firestore-25.1.4/AndroidManifest.xml:20:13-22:85
+105                android:name="com.google.firebase.components:com.google.firebase.firestore.FirestoreRegistrar"
+105-->[com.google.firebase:firebase-firestore:25.1.4] /home/adele/.gradle/caches/8.9/transforms/2530825af24649698de77872f74d2128/transformed/jetified-firebase-firestore-25.1.4/AndroidManifest.xml:21:17-111
+106                android:value="com.google.firebase.components.ComponentRegistrar" />
+106-->[com.google.firebase:firebase-firestore:25.1.4] /home/adele/.gradle/caches/8.9/transforms/2530825af24649698de77872f74d2128/transformed/jetified-firebase-firestore-25.1.4/AndroidManifest.xml:22:17-82
+107            <meta-data
+107-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:69:13-71:85
+108                android:name="com.google.firebase.components:com.google.firebase.auth.FirebaseAuthRegistrar"
+108-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:70:17-109
+109                android:value="com.google.firebase.components.ComponentRegistrar" />
+109-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:71:17-82
+110            <meta-data
+110-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:57:13-59:85
+111                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
+111-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:58:17-122
+112                android:value="com.google.firebase.components.ComponentRegistrar" />
+112-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:59:17-82
+113            <meta-data
+113-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:60:13-62:85
+114                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+114-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:61:17-119
+115                android:value="com.google.firebase.components.ComponentRegistrar" />
+115-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:62:17-82
+116            <meta-data
+116-->[com.google.firebase:firebase-storage:21.0.2] /home/adele/.gradle/caches/8.9/transforms/8f9c20e6e5f78697b4bea69420d55a87/transformed/jetified-firebase-storage-21.0.2/AndroidManifest.xml:30:13-32:85
+117                android:name="com.google.firebase.components:com.google.firebase.storage.FirebaseStorageKtxRegistrar"
+117-->[com.google.firebase:firebase-storage:21.0.2] /home/adele/.gradle/caches/8.9/transforms/8f9c20e6e5f78697b4bea69420d55a87/transformed/jetified-firebase-storage-21.0.2/AndroidManifest.xml:31:17-118
+118                android:value="com.google.firebase.components.ComponentRegistrar" />
+118-->[com.google.firebase:firebase-storage:21.0.2] /home/adele/.gradle/caches/8.9/transforms/8f9c20e6e5f78697b4bea69420d55a87/transformed/jetified-firebase-storage-21.0.2/AndroidManifest.xml:32:17-82
+119            <meta-data
+119-->[com.google.firebase:firebase-storage:21.0.2] /home/adele/.gradle/caches/8.9/transforms/8f9c20e6e5f78697b4bea69420d55a87/transformed/jetified-firebase-storage-21.0.2/AndroidManifest.xml:33:13-35:85
+120                android:name="com.google.firebase.components:com.google.firebase.storage.StorageRegistrar"
+120-->[com.google.firebase:firebase-storage:21.0.2] /home/adele/.gradle/caches/8.9/transforms/8f9c20e6e5f78697b4bea69420d55a87/transformed/jetified-firebase-storage-21.0.2/AndroidManifest.xml:34:17-107
+121                android:value="com.google.firebase.components.ComponentRegistrar" />
+121-->[com.google.firebase:firebase-storage:21.0.2] /home/adele/.gradle/caches/8.9/transforms/8f9c20e6e5f78697b4bea69420d55a87/transformed/jetified-firebase-storage-21.0.2/AndroidManifest.xml:35:17-82
+122            <meta-data
+122-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:33:13-35:85
+123                android:name="com.google.firebase.components:com.google.firebase.analytics.connector.internal.AnalyticsConnectorRegistrar"
+123-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:34:17-139
+124                android:value="com.google.firebase.components.ComponentRegistrar" />
+124-->[com.google.android.gms:play-services-measurement-api:22.5.0] /home/adele/.gradle/caches/8.9/transforms/0044eaa1a440ebae1af1daa0ffc0d4f7/transformed/jetified-play-services-measurement-api-22.5.0/AndroidManifest.xml:35:17-82
+125            <meta-data
+125-->[com.google.firebase:firebase-installations:18.0.0] /home/adele/.gradle/caches/8.9/transforms/6950bc4cf73bbe86f3e77f8707d712f9/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:15:13-17:85
+126                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
+126-->[com.google.firebase:firebase-installations:18.0.0] /home/adele/.gradle/caches/8.9/transforms/6950bc4cf73bbe86f3e77f8707d712f9/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:16:17-130
+127                android:value="com.google.firebase.components.ComponentRegistrar" />
+127-->[com.google.firebase:firebase-installations:18.0.0] /home/adele/.gradle/caches/8.9/transforms/6950bc4cf73bbe86f3e77f8707d712f9/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:17:17-82
+128            <meta-data
+128-->[com.google.firebase:firebase-installations:18.0.0] /home/adele/.gradle/caches/8.9/transforms/6950bc4cf73bbe86f3e77f8707d712f9/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:18:13-20:85
+129                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+129-->[com.google.firebase:firebase-installations:18.0.0] /home/adele/.gradle/caches/8.9/transforms/6950bc4cf73bbe86f3e77f8707d712f9/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:19:17-127
+130                android:value="com.google.firebase.components.ComponentRegistrar" />
+130-->[com.google.firebase:firebase-installations:18.0.0] /home/adele/.gradle/caches/8.9/transforms/6950bc4cf73bbe86f3e77f8707d712f9/transformed/jetified-firebase-installations-18.0.0/AndroidManifest.xml:20:17-82
+131            <meta-data
+131-->[com.google.firebase:firebase-appcheck:18.0.0] /home/adele/.gradle/caches/8.9/transforms/21156435f3c2eca853d5d0bfd0e8aa3e/transformed/jetified-firebase-appcheck-18.0.0/AndroidManifest.xml:25:13-27:85
+132                android:name="com.google.firebase.components:com.google.firebase.appcheck.FirebaseAppCheckKtxRegistrar"
+132-->[com.google.firebase:firebase-appcheck:18.0.0] /home/adele/.gradle/caches/8.9/transforms/21156435f3c2eca853d5d0bfd0e8aa3e/transformed/jetified-firebase-appcheck-18.0.0/AndroidManifest.xml:26:17-120
+133                android:value="com.google.firebase.components.ComponentRegistrar" />
+133-->[com.google.firebase:firebase-appcheck:18.0.0] /home/adele/.gradle/caches/8.9/transforms/21156435f3c2eca853d5d0bfd0e8aa3e/transformed/jetified-firebase-appcheck-18.0.0/AndroidManifest.xml:27:17-82
+134            <meta-data
+134-->[com.google.firebase:firebase-appcheck:18.0.0] /home/adele/.gradle/caches/8.9/transforms/21156435f3c2eca853d5d0bfd0e8aa3e/transformed/jetified-firebase-appcheck-18.0.0/AndroidManifest.xml:28:13-30:85
+135                android:name="com.google.firebase.components:com.google.firebase.appcheck.FirebaseAppCheckRegistrar"
+135-->[com.google.firebase:firebase-appcheck:18.0.0] /home/adele/.gradle/caches/8.9/transforms/21156435f3c2eca853d5d0bfd0e8aa3e/transformed/jetified-firebase-appcheck-18.0.0/AndroidManifest.xml:29:17-117
+136                android:value="com.google.firebase.components.ComponentRegistrar" />
+136-->[com.google.firebase:firebase-appcheck:18.0.0] /home/adele/.gradle/caches/8.9/transforms/21156435f3c2eca853d5d0bfd0e8aa3e/transformed/jetified-firebase-appcheck-18.0.0/AndroidManifest.xml:30:17-82
+137            <meta-data
+137-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/adele/.gradle/caches/8.9/transforms/2012afccfd802f3480b9247b7a8f5b3f/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:12:13-14:85
+138                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
+138-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/adele/.gradle/caches/8.9/transforms/2012afccfd802f3480b9247b7a8f5b3f/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:13:17-116
+139                android:value="com.google.firebase.components.ComponentRegistrar" />
+139-->[com.google.firebase:firebase-common-ktx:21.0.0] /home/adele/.gradle/caches/8.9/transforms/2012afccfd802f3480b9247b7a8f5b3f/transformed/jetified-firebase-common-ktx-21.0.0/AndroidManifest.xml:14:17-82
+140            <meta-data
+140-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:35:13-37:85
+141                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+141-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:36:17-109
+142                android:value="com.google.firebase.components.ComponentRegistrar" />
+142-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:37:17-82
+143            <meta-data
+143-->[com.google.firebase:firebase-datatransport:18.2.0] /home/adele/.gradle/caches/8.9/transforms/d213df61e3ef5b333d6145a67f330179/transformed/jetified-firebase-datatransport-18.2.0/AndroidManifest.xml:25:13-27:85
+144                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+144-->[com.google.firebase:firebase-datatransport:18.2.0] /home/adele/.gradle/caches/8.9/transforms/d213df61e3ef5b333d6145a67f330179/transformed/jetified-firebase-datatransport-18.2.0/AndroidManifest.xml:26:17-115
+145                android:value="com.google.firebase.components.ComponentRegistrar" />
+145-->[com.google.firebase:firebase-datatransport:18.2.0] /home/adele/.gradle/caches/8.9/transforms/d213df61e3ef5b333d6145a67f330179/transformed/jetified-firebase-datatransport-18.2.0/AndroidManifest.xml:27:17-82
+146        </service>
+147        <service
+147-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:14:9-17:72
+148            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingBackgroundService"
+148-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:15:13-107
+149            android:exported="false"
+149-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:16:13-37
+150            android:permission="android.permission.BIND_JOB_SERVICE" />
+150-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:17:13-69
+151        <service
+151-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:18:9-24:19
+152            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingService"
+152-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:19:13-97
+153            android:exported="false" >
+153-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:20:13-37
+154            <intent-filter>
+154-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:21:13-23:29
+155                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+155-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:22:17-78
+155-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:22:25-75
+156            </intent-filter>
+157        </service>
+158
+159        <receiver
+159-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:26:9-33:20
+160            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingReceiver"
+160-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:27:13-98
+161            android:exported="true"
+161-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:28:13-36
+162            android:permission="com.google.android.c2dm.permission.SEND" >
+162-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:29:13-73
+163            <intent-filter>
+163-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:30:13-32:29
+164                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+164-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:31:17-81
+164-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:31:25-78
+165            </intent-filter>
+166        </receiver>
+167
+168        <provider
+168-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:41:9-45:38
+169            android:name="io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingInitProvider"
+169-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:42:13-102
+170            android:authorities="com.example.skillslinks.flutterfirebasemessaginginitprovider"
+170-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:43:13-88
+171            android:exported="false"
+171-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:44:13-37
+172            android:initOrder="99" />
+172-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:45:13-35
+173
+174        <activity
+174-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:29:9-46:20
+175            android:name="com.google.firebase.auth.internal.GenericIdpActivity"
+175-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:30:13-80
+176            android:excludeFromRecents="true"
+176-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:31:13-46
+177            android:exported="true"
+177-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:32:13-36
+178            android:launchMode="singleTask"
+178-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:33:13-44
+179            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+179-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:34:13-72
+180            <intent-filter>
+180-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:35:13-45:29
+181                <action android:name="android.intent.action.VIEW" />
+181-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:36:17-69
+181-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:36:25-66
+182
+183                <category android:name="android.intent.category.DEFAULT" />
+183-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:38:17-76
+183-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:38:27-73
+184                <category android:name="android.intent.category.BROWSABLE" />
+184-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:39:17-78
+184-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:39:27-75
+185
+186                <data
+186-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:42:13-50
+187                    android:host="firebase.auth"
+188                    android:path="/"
+189                    android:scheme="genericidp" />
+190            </intent-filter>
+191        </activity>
+192        <activity
+192-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:47:9-64:20
+193            android:name="com.google.firebase.auth.internal.RecaptchaActivity"
+193-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:48:13-79
+194            android:excludeFromRecents="true"
+194-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:49:13-46
+195            android:exported="true"
+195-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:50:13-36
+196            android:launchMode="singleTask"
+196-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:51:13-44
+197            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+197-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:52:13-72
+198            <intent-filter>
+198-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:53:13-63:29
+199                <action android:name="android.intent.action.VIEW" />
+199-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:36:17-69
+199-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:36:25-66
+200
+201                <category android:name="android.intent.category.DEFAULT" />
+201-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:38:17-76
+201-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:38:27-73
+202                <category android:name="android.intent.category.BROWSABLE" />
+202-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:39:17-78
+202-->[com.google.firebase:firebase-auth:23.2.1] /home/adele/.gradle/caches/8.9/transforms/93845ce0f14738f59e39ef05f182d970/transformed/jetified-firebase-auth-23.2.1/AndroidManifest.xml:39:27-75
+203
+204                <data
+204-->/home/adele/skillslinks/skillslinks/android/app/src/main/AndroidManifest.xml:42:13-50
+205                    android:host="firebase.auth"
+206                    android:path="/"
+207                    android:scheme="recaptcha" />
+208            </intent-filter>
+209        </activity>
+210
+211        <receiver
+211-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:29:9-40:20
+212            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+212-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:30:13-78
+213            android:exported="true"
+213-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:31:13-36
+214            android:permission="com.google.android.c2dm.permission.SEND" >
+214-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:32:13-73
+215            <intent-filter>
+215-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:30:13-32:29
+216                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+216-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:31:17-81
+216-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:31:25-78
+217            </intent-filter>
+218
+219            <meta-data
+219-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:37:13-39:40
+220                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
+220-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:38:17-92
+221                android:value="true" />
+221-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:39:17-37
+222        </receiver>
+223        <!--
+224             FirebaseMessagingService performs security checks at runtime,
+225             but set to not exported to explicitly avoid allowing another app to call it.
+226        -->
+227        <service
+227-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:46:9-53:19
+228            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+228-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:47:13-82
+229            android:directBootAware="true"
+229-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:48:13-43
+230            android:exported="false" >
+230-->[com.google.firebase:firebase-messaging:24.1.2] /home/adele/.gradle/caches/8.9/transforms/f53fe14bf3b9886abd8a1cc1672b6eb8/transformed/jetified-firebase-messaging-24.1.2/AndroidManifest.xml:49:13-37
+231            <intent-filter android:priority="-500" >
+231-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:21:13-23:29
+232                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+232-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:22:17-78
+232-->[:firebase_messaging] /home/adele/skillslinks/skillslinks/build/firebase_messaging/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:22:25-75
+233            </intent-filter>
+234        </service>
+235
+236        <provider
+236-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:23:9-28:39
+237            android:name="com.google.firebase.provider.FirebaseInitProvider"
+237-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:24:13-77
+238            android:authorities="com.example.skillslinks.firebaseinitprovider"
+238-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:25:13-72
+239            android:directBootAware="true"
+239-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:26:13-43
+240            android:exported="false"
+240-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:27:13-37
+241            android:initOrder="100" />
+241-->[com.google.firebase:firebase-common:21.0.0] /home/adele/.gradle/caches/8.9/transforms/642adf153614841fa1695ccb0adbb229/transformed/jetified-firebase-common-21.0.0/AndroidManifest.xml:28:13-36
+242        <provider
+242-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:9-17:20
+243            android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
+243-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:13-82
+244            android:authorities="com.example.skillslinks.flutter.image_provider"
+244-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:13-74
+245            android:exported="false"
+245-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:12:13-37
+246            android:grantUriPermissions="true" >
+246-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:13:13-47
+247            <meta-data
+247-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:14:13-16:75
+248                android:name="android.support.FILE_PROVIDER_PATHS"
+248-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:15:17-67
+249                android:resource="@xml/flutter_image_picker_file_paths" />
+249-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:16:17-72
+250        </provider> <!-- Trigger Google Play services to install the backported photo picker module. -->
+251        <service
+251-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:19:9-31:19
+252            android:name="com.google.android.gms.metadata.ModuleDependencies"
+252-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:20:13-78
+253            android:enabled="false"
+253-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:21:13-36
+254            android:exported="false" >
+254-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:22:13-37
+255            <intent-filter>
+255-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:24:13-26:29
+256                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+256-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:25:17-94
+256-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:25:25-91
+257            </intent-filter>
+258
+259            <meta-data
+259-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:28:13-30:36
+260                android:name="photopicker_activity:0:required"
+260-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:29:17-63
+261                android:value="" />
+261-->[:image_picker_android] /home/adele/skillslinks/skillslinks/build/image_picker_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:30:17-33
+262        </service>
+263
+264        <activity
+264-->[:url_launcher_android] /home/adele/skillslinks/skillslinks/build/url_launcher_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:8:9-11:74
+265            android:name="io.flutter.plugins.urllauncher.WebViewActivity"
+265-->[:url_launcher_android] /home/adele/skillslinks/skillslinks/build/url_launcher_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:9:13-74
+266            android:exported="false"
+266-->[:url_launcher_android] /home/adele/skillslinks/skillslinks/build/url_launcher_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:10:13-37
+267            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+267-->[:url_launcher_android] /home/adele/skillslinks/skillslinks/build/url_launcher_android/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml:11:13-71
+268
+269        <service
+269-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:24:9-32:19
+270            android:name="androidx.credentials.playservices.CredentialProviderMetadataHolder"
+270-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:25:13-94
+271            android:enabled="true"
+271-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:26:13-35
+272            android:exported="false" >
+272-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:27:13-37
+273            <meta-data
+273-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:29:13-31:104
+274                android:name="androidx.credentials.CREDENTIAL_PROVIDER_KEY"
+274-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:30:17-76
+275                android:value="androidx.credentials.playservices.CredentialProviderPlayServicesImpl" />
+275-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:31:17-101
+276        </service>
+277
+278        <activity
+278-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:34:9-41:20
+279            android:name="androidx.credentials.playservices.HiddenActivity"
+279-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:35:13-76
+280            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+280-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:36:13-87
+281            android:enabled="true"
+281-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:37:13-35
+282            android:exported="false"
+282-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:38:13-37
+283            android:fitsSystemWindows="true"
+283-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:39:13-45
+284            android:theme="@style/Theme.Hidden" >
+284-->[androidx.credentials:credentials-play-services-auth:1.2.0-rc01] /home/adele/.gradle/caches/8.9/transforms/0e6f8c537edfca9dd5b5d5e5d31548f0/transformed/jetified-credentials-play-services-auth-1.2.0-rc01/AndroidManifest.xml:40:13-48
+285        </activity>
+286        <activity
+286-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:23:9-27:75
+287            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+287-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:24:13-93
+288            android:excludeFromRecents="true"
+288-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:25:13-46
+289            android:exported="false"
+289-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:26:13-37
+290            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+290-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:27:13-72
+291        <!--
+292            Service handling Google Sign-In user revocation. For apps that do not integrate with
+293            Google Sign-In, this service will never be started.
+294        -->
+295        <service
+295-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:33:9-37:51
+296            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
+296-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:34:13-89
+297            android:exported="true"
+297-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:35:13-36
+298            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
+298-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:36:13-107
+299            android:visibleToInstantApps="true" />
+299-->[com.google.android.gms:play-services-auth:21.0.0] /home/adele/.gradle/caches/8.9/transforms/5f3a4be2bb7564e4b0ec5f34921d8da9/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:37:13-48
+300
+301        <receiver
+301-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:29:9-33:20
+302            android:name="com.google.android.gms.measurement.AppMeasurementReceiver"
+302-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:30:13-85
+303            android:enabled="true"
+303-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:31:13-35
+304            android:exported="false" >
+304-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:32:13-37
+305        </receiver>
+306
+307        <service
+307-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:35:9-38:40
+308            android:name="com.google.android.gms.measurement.AppMeasurementService"
+308-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:36:13-84
+309            android:enabled="true"
+309-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:37:13-35
+310            android:exported="false" />
+310-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:38:13-37
+311        <service
+311-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:39:9-43:72
+312            android:name="com.google.android.gms.measurement.AppMeasurementJobService"
+312-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:40:13-87
+313            android:enabled="true"
+313-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:41:13-35
+314            android:exported="false"
+314-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:42:13-37
+315            android:permission="android.permission.BIND_JOB_SERVICE" />
+315-->[com.google.android.gms:play-services-measurement:22.5.0] /home/adele/.gradle/caches/8.9/transforms/63fd3afdb74370306d16b046f62c1876/transformed/jetified-play-services-measurement-22.5.0/AndroidManifest.xml:43:13-69
+316
+317        <provider
+317-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/adele/.gradle/caches/8.9/transforms/4491a4cf56040084264609dbf4665e62/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:24:9-32:20
+318            android:name="androidx.startup.InitializationProvider"
+318-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/adele/.gradle/caches/8.9/transforms/4491a4cf56040084264609dbf4665e62/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:25:13-67
+319            android:authorities="com.example.skillslinks.androidx-startup"
+319-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/adele/.gradle/caches/8.9/transforms/4491a4cf56040084264609dbf4665e62/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:26:13-68
+320            android:exported="false" >
+320-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/adele/.gradle/caches/8.9/transforms/4491a4cf56040084264609dbf4665e62/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:27:13-37
+321            <meta-data
+321-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/adele/.gradle/caches/8.9/transforms/4491a4cf56040084264609dbf4665e62/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:29:13-31:52
+322                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+322-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/adele/.gradle/caches/8.9/transforms/4491a4cf56040084264609dbf4665e62/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:30:17-78
+323                android:value="androidx.startup" />
+323-->[androidx.lifecycle:lifecycle-process:2.7.0] /home/adele/.gradle/caches/8.9/transforms/4491a4cf56040084264609dbf4665e62/transformed/jetified-lifecycle-process-2.7.0/AndroidManifest.xml:31:17-49
+324            <meta-data
+324-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+325                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+325-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+326                android:value="androidx.startup" />
+326-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+327        </provider>
+328
+329        <uses-library
+329-->[androidx.window:window:1.2.0] /home/adele/.gradle/caches/8.9/transforms/21e0589aeff59a910487570af896043b/transformed/jetified-window-1.2.0/AndroidManifest.xml:23:9-25:40
+330            android:name="androidx.window.extensions"
+330-->[androidx.window:window:1.2.0] /home/adele/.gradle/caches/8.9/transforms/21e0589aeff59a910487570af896043b/transformed/jetified-window-1.2.0/AndroidManifest.xml:24:13-54
+331            android:required="false" />
+331-->[androidx.window:window:1.2.0] /home/adele/.gradle/caches/8.9/transforms/21e0589aeff59a910487570af896043b/transformed/jetified-window-1.2.0/AndroidManifest.xml:25:13-37
+332        <uses-library
+332-->[androidx.window:window:1.2.0] /home/adele/.gradle/caches/8.9/transforms/21e0589aeff59a910487570af896043b/transformed/jetified-window-1.2.0/AndroidManifest.xml:26:9-28:40
+333            android:name="androidx.window.sidecar"
+333-->[androidx.window:window:1.2.0] /home/adele/.gradle/caches/8.9/transforms/21e0589aeff59a910487570af896043b/transformed/jetified-window-1.2.0/AndroidManifest.xml:27:13-51
+334            android:required="false" />
+334-->[androidx.window:window:1.2.0] /home/adele/.gradle/caches/8.9/transforms/21e0589aeff59a910487570af896043b/transformed/jetified-window-1.2.0/AndroidManifest.xml:28:13-37
+335        <uses-library
+335-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] /home/adele/.gradle/caches/8.9/transforms/8daa706f575522c178ab770f2e78ed48/transformed/jetified-ads-adservices-1.1.0-beta11/AndroidManifest.xml:23:9-25:40
+336            android:name="android.ext.adservices"
+336-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] /home/adele/.gradle/caches/8.9/transforms/8daa706f575522c178ab770f2e78ed48/transformed/jetified-ads-adservices-1.1.0-beta11/AndroidManifest.xml:24:13-50
+337            android:required="false" />
+337-->[androidx.privacysandbox.ads:ads-adservices:1.1.0-beta11] /home/adele/.gradle/caches/8.9/transforms/8daa706f575522c178ab770f2e78ed48/transformed/jetified-ads-adservices-1.1.0-beta11/AndroidManifest.xml:25:13-37
+338
+339        <activity
+339-->[com.google.android.gms:play-services-base:18.5.0] /home/adele/.gradle/caches/8.9/transforms/16619657d04574bfaf576e804937bc00/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:9-173
+340            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+340-->[com.google.android.gms:play-services-base:18.5.0] /home/adele/.gradle/caches/8.9/transforms/16619657d04574bfaf576e804937bc00/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:19-85
+341            android:exported="false"
+341-->[com.google.android.gms:play-services-base:18.5.0] /home/adele/.gradle/caches/8.9/transforms/16619657d04574bfaf576e804937bc00/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:146-170
+342            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+342-->[com.google.android.gms:play-services-base:18.5.0] /home/adele/.gradle/caches/8.9/transforms/16619657d04574bfaf576e804937bc00/transformed/jetified-play-services-base-18.5.0/AndroidManifest.xml:5:86-145
+343
+344        <meta-data
+344-->[com.google.android.gms:play-services-basement:18.5.0] /home/adele/.gradle/caches/8.9/transforms/c0d6267af5404f42a56b3d6f8be4883b/transformed/jetified-play-services-basement-18.5.0/AndroidManifest.xml:21:9-23:69
+345            android:name="com.google.android.gms.version"
+345-->[com.google.android.gms:play-services-basement:18.5.0] /home/adele/.gradle/caches/8.9/transforms/c0d6267af5404f42a56b3d6f8be4883b/transformed/jetified-play-services-basement-18.5.0/AndroidManifest.xml:22:13-58
+346            android:value="@integer/google_play_services_version" />
+346-->[com.google.android.gms:play-services-basement:18.5.0] /home/adele/.gradle/caches/8.9/transforms/c0d6267af5404f42a56b3d6f8be4883b/transformed/jetified-play-services-basement-18.5.0/AndroidManifest.xml:23:13-66
+347
+348        <receiver
+348-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+349            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+349-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+350            android:directBootAware="false"
+350-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+351            android:enabled="true"
+351-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+352            android:exported="true"
+352-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+353            android:permission="android.permission.DUMP" >
+353-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
+354            <intent-filter>
+354-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+355                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+355-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+355-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
+356            </intent-filter>
+357            <intent-filter>
+357-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+358                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+358-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+358-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
+359            </intent-filter>
+360            <intent-filter>
+360-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+361                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+361-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+361-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+362            </intent-filter>
+363            <intent-filter>
+363-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+364                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+364-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+364-->[androidx.profileinstaller:profileinstaller:1.3.1] /home/adele/.gradle/caches/8.9/transforms/d347f573daabf318edcac0b066cfb44b/transformed/jetified-profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+365            </intent-filter>
+366        </receiver>
+367
+368        <service
+368-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /home/adele/.gradle/caches/8.9/transforms/d205ec819cd57cd9825550d0dc951694/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:28:9-34:19
+369            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+369-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /home/adele/.gradle/caches/8.9/transforms/d205ec819cd57cd9825550d0dc951694/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:29:13-103
+370            android:exported="false" >
+370-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /home/adele/.gradle/caches/8.9/transforms/d205ec819cd57cd9825550d0dc951694/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:30:13-37
+371            <meta-data
+371-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /home/adele/.gradle/caches/8.9/transforms/d205ec819cd57cd9825550d0dc951694/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:31:13-33:39
+372                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+372-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /home/adele/.gradle/caches/8.9/transforms/d205ec819cd57cd9825550d0dc951694/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:32:17-94
+373                android:value="cct" />
+373-->[com.google.android.datatransport:transport-backend-cct:3.1.9] /home/adele/.gradle/caches/8.9/transforms/d205ec819cd57cd9825550d0dc951694/transformed/jetified-transport-backend-cct-3.1.9/AndroidManifest.xml:33:17-36
+374        </service>
+375        <service
+375-->[com.google.android.datatransport:transport-runtime:3.1.9] /home/adele/.gradle/caches/8.9/transforms/79b9d696856102cb93e7de42e16502b3/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:26:9-30:19
+376            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+376-->[com.google.android.datatransport:transport-runtime:3.1.9] /home/adele/.gradle/caches/8.9/transforms/79b9d696856102cb93e7de42e16502b3/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:27:13-117
+377            android:exported="false"
+377-->[com.google.android.datatransport:transport-runtime:3.1.9] /home/adele/.gradle/caches/8.9/transforms/79b9d696856102cb93e7de42e16502b3/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:28:13-37
+378            android:permission="android.permission.BIND_JOB_SERVICE" >
+378-->[com.google.android.datatransport:transport-runtime:3.1.9] /home/adele/.gradle/caches/8.9/transforms/79b9d696856102cb93e7de42e16502b3/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:29:13-69
+379        </service>
+380
+381        <receiver
+381-->[com.google.android.datatransport:transport-runtime:3.1.9] /home/adele/.gradle/caches/8.9/transforms/79b9d696856102cb93e7de42e16502b3/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:32:9-34:40
+382            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+382-->[com.google.android.datatransport:transport-runtime:3.1.9] /home/adele/.gradle/caches/8.9/transforms/79b9d696856102cb93e7de42e16502b3/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:33:13-132
+383            android:exported="false" /> <!-- The activities will be merged into the manifest of the hosting app. -->
+383-->[com.google.android.datatransport:transport-runtime:3.1.9] /home/adele/.gradle/caches/8.9/transforms/79b9d696856102cb93e7de42e16502b3/transformed/jetified-transport-runtime-3.1.9/AndroidManifest.xml:34:13-37
+384        <activity
+384-->[com.google.android.play:core-common:2.0.3] /home/adele/.gradle/caches/8.9/transforms/e85d80f6b48989dc56ad84220a3bae69/transformed/jetified-core-common-2.0.3/AndroidManifest.xml:14:9-18:65
+385            android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity"
+385-->[com.google.android.play:core-common:2.0.3] /home/adele/.gradle/caches/8.9/transforms/e85d80f6b48989dc56ad84220a3bae69/transformed/jetified-core-common-2.0.3/AndroidManifest.xml:15:13-93
+386            android:exported="false"
+386-->[com.google.android.play:core-common:2.0.3] /home/adele/.gradle/caches/8.9/transforms/e85d80f6b48989dc56ad84220a3bae69/transformed/jetified-core-common-2.0.3/AndroidManifest.xml:16:13-37
+387            android:stateNotNeeded="true"
+387-->[com.google.android.play:core-common:2.0.3] /home/adele/.gradle/caches/8.9/transforms/e85d80f6b48989dc56ad84220a3bae69/transformed/jetified-core-common-2.0.3/AndroidManifest.xml:17:13-42
+388            android:theme="@style/Theme.PlayCore.Transparent" />
+388-->[com.google.android.play:core-common:2.0.3] /home/adele/.gradle/caches/8.9/transforms/e85d80f6b48989dc56ad84220a3bae69/transformed/jetified-core-common-2.0.3/AndroidManifest.xml:18:13-62
+389    </application>
+390
+391</manifest>

@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/home/adele/.pub-cache/hosted/pub.dev/flutter_native_splash-2.4.6/android"
+    name=":flutter_native_splash"
+    type="LIBRARY"
+    maven="net.jonhanson.flutter_native_splash:flutter_native_splash:1.0"
+    agpVersion="8.7.0"
+    buildFolder="/home/adele/skillslinks/skillslinks/build/flutter_native_splash"
+    bootClassPath="/home/adele/Android/Sdk/platforms/android-35/android.jar:/home/adele/Android/Sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="11"
+    compileTarget="android-35"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

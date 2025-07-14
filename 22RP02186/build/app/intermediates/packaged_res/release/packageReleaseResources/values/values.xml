@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">267926257288-evutrbllkfn1pqfgg4fkv0nedvf7thg7.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">267926257288</string>
+    <string name="google_api_key" translatable="false">AIzaSyBYMktw1MnZj1rff9n92B4bFe6gJARw4l0</string>
+    <string name="google_app_id" translatable="false">1:267926257288:android:018e3f0846fdc2dc56a93d</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBYMktw1MnZj1rff9n92B4bFe6gJARw4l0</string>
+    <string name="google_storage_bucket" translatable="false">skillslinks-17b63.firebasestorage.app</string>
+    <string name="project_id" translatable="false">skillslinks-17b63</string>
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        
+        <item name="android:windowBackground">@drawable/launch_background</item>
+    </style>
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">?android:colorBackground</item>
+    </style>
+</resources>
