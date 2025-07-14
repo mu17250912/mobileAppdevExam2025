@@ -1,13 +1,15 @@
-📌 I. Idea Generation & Market Fit (15 Marks)
-1. Identify a real-world problem or need that your mobile app will address
+📱 QUICK REQUEST – Mobile Requisition Management System
+RegNo: 22RP03034
+Class: L7ITB
+
+🧠 Problem Statement
 Many organizations struggle with manual, delayed, or mismanaged material/tool requisition processes. Employees often face long waiting times for approvals, lack visibility into request status, and suffer from miscommunication during delivery. Additionally, there's often no clear audit trail, leading to accountability issues and inefficiencies.
 
-Problem Identified:
+🚨 Problem Identified:
+A lack of real-time, structured, and auditable workflows for material requisitions within organizations.
 
-A lack of real-time, structured, and auditable workflows for material requisitions within organizations, resulting in inefficiencies, delays, and miscommunication.
-
-2. Clearly define your target audience
-Primary Target Users: Mid-to-large organizations with internal procurement processes such as:
+🎯 Target Audience
+Primary Users:
 
 Government departments
 
@@ -19,98 +21,113 @@ Educational institutions
 
 NGOs and international agencies
 
-User Roles:
+USER ROLES 
 
-Employees (staff or department heads requesting items)
+👤 EMPLOYEES – Staff or department heads requesting materials
 
-Logistics Officers (storekeepers, delivery staff)
+🚚 LOGISTICS OFFICERS – Storekeepers or delivery staff
 
-Approvers (managers, finance officers, or administrators)
+✅ APPROVERS – Managers, finance officers, or administrators
 
-3. Research existing solutions and define USP and competitive advantage
-🔍 Existing Solutions:
+🔍 EXISTING SOLUTIONS & COMPETITIVE ADVANTAGE
+Existing Tools:
+
 SAP Ariba
 
 Zoho Inventory
 
 ProcurementExpress.com
 
-Google Forms/Manual Emails (in local/regional settings)
 
-⚡ Unique Selling Proposition (USP):
-A lightweight, role-based mobile app built for real-time requisition workflows, subscription control, and easy deployment in low-resource settings—unlike complex enterprise tools.
 
-🏆 Competitive Advantages:
-Simpler UI tailored for mobile use in developing regions
+⚡ UNIQUENESS PREPOSITION (USP)
+A lightweight, role-based mobile app designed for real-time requisition workflows, optimized for developing regions and low-resource environments.
 
-Offline-friendly features and lightweight deployment
 
-Role-specific dashboards and clear workflow visibility
+🏆 COMPETITIVE ADVANTAGES:
+Minimal setup, mobile-first UI
+Role-based dashboards for clarity
 
-Subscription-based access to enable monetization and sustainability
+Subscription-based access for sustainability
 
-PDF reporting and full activity audit trails for compliance
+Full audit trails & PDF export support
 
-4. Justify how your app solves the identified problem
-The app introduces a structured workflow that improves accountability, visibility, and speed:
+✅ How the App Solves the Problem
+✅ Employees can submit and track requests in real time
 
-Employees can easily request tools and view status updates.
+✅ Logistics officers manage deliveries and print reports
 
-Logistics officers manage and document deliveries in real-time.
+✅ Approvers review and authorize material requisitions
 
-Approvers ensure requests are legitimate before purchases.
+✅ The system tracks all actions and ensures accountability
 
-Every action is tracked, reported, and notified in real-time to relevant users.
+✅ Subscription model supports sustainability
 
-Subscription enforcement ensures only active, paying users access the system, promoting sustainability for both the business and the organization.
-
-Requisition Management System
-
-👨‍🎓 Student Registration Number:
-22RP03034
-
-📱 App Name:
-Requisition Management System
+📲 App Overview
+🏷️ Name: QUICK REQUEST
 
 📄 Description:
-A real-time, role-based mobile app that simplifies and secures the process of requesting, approving, and delivering materials within an organization. The system ensures full traceability, accountability, and transparency from request to delivery.
+A real-time, role-based mobile app for requesting, approving, and delivering materials in an organization. Ensures traceability, transparency, and speed.
 
-🧩 Problem Solved:
-Traditional requisition processes are slow, paper-based, and lack transparency. This app digitalizes the entire workflow, enabling better communication, approval traceability, and delivery confirmation.
+💡KEY FEATURES
 
-💵 Monetization Strategy:
-Subscription-Based Access: Only users with active subscriptions can use the system. After login, the app checks subscription status and redirects to the payment page if necessary.
+Feature	Description
+👨‍💼 Employee Panel	Submit/edit/delete requests, view request status, confirm receipt, receive notifications
+🚛 Logistics Officer Panel	Accept/forward requests, deliver items, view history, print delivery PDF reports
+✅ Approver Panel	Review/approve/reject requests, manage approval logs
+🔔 Notifications	Real-time push notifications for all users
+🧾 PDF Reports	Export requisition and delivery reports as PDFs
+💵 Subscription Enforcement	System checks active subscriptions before granting access
 
-🔑 Key Features:
 
-Employee Panel: Create/edit/delete requests, confirm receipt, view notifications.
 
-Logistics Officer Panel: Accept/forward requests, manage deliveries, print PDF reports.
+🛠️ INSTALLATION & USAGE
+Follow these steps to download and use the app:
 
-Approver Panel: Approve/reject requests, view history.
+✅ 1. DOWNLOAD &INSTALL APP
+Download the .apk file from the official repo or deployment source
 
-Subscription Enforcement and Redirection
+On your Android device, enable Install from Unknown Sources
 
-Real-time Notification System
+Tap the APK file to install
 
-PDF Export & Audit Trail for Compliance
+✅ 2. REGISTER A NEW ACCOUNT
+Open the app after installation
 
-🛠️ Installation Instructions:
+Choose your role (Employee, Logistics, Approver)
 
-Download the APK file from the repository or deployment link.
+Fill in registration details and submit
 
-Install it on any Android device (Allow Unknown Sources).
+✅ 3. LOGIN AND ACCESS FEATURES
+Use your registered email/password to log in
 
-Register with a role (Employee, Logistics, Approver).
+You will be redirected to your role-specific dashboard
 
-Use the login page to access role-specific features.
+✅ 4. PAY SUBSCRIPTION
+If your subscription is inactive, the app redirects you to the payment page
 
-Pay for a subscription to unlock full access.
+Complete the payment to unlock full access then
 
-🌱 Scalability, Sustainability & Security:
+👨‍💼 Employee Panel	Submit/edit/delete requests, view request status, confirm receipt, receive notifications
+🚛 Logistics Officer Panel	Accept/forward requests, deliver items, view history, print delivery PDF reports
+✅ Approver Panel	Review/approve/reject requests, manage approval logs
+🔔 Notifications	Real-time push notifications for all users
+🧾 PDF Reports	Export requisition and delivery reports as PDFs
+💵 Subscription Enforcement	System checks active subscriptions before granting access
 
-Scalability: Backend designed with Firebase to support thousands of concurrent users.
+💵MONETIZATION STRATEGY
+The app uses a subscription-based access system:
 
-Sustainability: Monetization through subscription supports ongoing updates and infrastructure.
+Only active, paying users can access app features
 
-Security: Firebase Authentication and Firestore security rules are enforced. Data access is role-based and encrypted.
+Payments are checked via backend before granting access
+
+Supports long-term sustainability and infrastructure costs
+
+🔐 SECURITY, SUSTAINABILITY & SCALABILITY
+
+Security: Firebase Authentication + Firestore Rules
+
+Sustainability: Monetization via subscriptions
+
+Scalability: Firebase backend supports thousands of concurrent users
