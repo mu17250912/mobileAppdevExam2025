@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "72923527486",
+    "project_id": "requesition-management--system",
+    "storage_bucket": "requesition-management--system.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:72923527486:android:3bb8fb8ce66fdd33f2546f",
+        "android_client_info": {
+          "package_name": "com.example.requesition_management_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRTsiGki56q_l3i_KZnIAUg42Ho8CfxqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+} 
