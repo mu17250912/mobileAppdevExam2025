@@ -82,23 +82,15 @@ Finding reliable work or skilled workers is a challenge for many people. KaziLin
 ---
 
 ## Installation & Usage
-1. **Clone the repo:**
-   ```
-   git clone <your-fork-url>
-   ```
-2. **Navigate to your directory:**
-   ```
-   cd 22RP02625
-   ```
-3. **Install dependencies:**
-   ```
+1. **Install dependencies:**
+  ```
    flutter pub get
    ```
-4. **Run the app:**
+2. **Run the app:**
    ```
    flutter run
    ```
-5. **Install APK:**
+3. **Install APK:**
    - Locate the generated APK in `build/app/outputs/flutter-apk/`
    - Transfer to your device and install
 
@@ -109,9 +101,6 @@ Finding reliable work or skilled workers is a challenge for many people. KaziLin
 
 ---
 
-## Submission Details
-- **Student Registration Number:** 22RP02625
-- **GitHub Repo:** [Your forked repo link here]
 - **Special Instructions:**
   - All code and assets are in the `22RP02625/` directory.
   - Premium and payment flows are simulated for demo purposes.
@@ -119,4 +108,4 @@ Finding reliable work or skilled workers is a challenge for many people. KaziLin
 ---
 
 ## Contact
-For any questions, please contact [your email here].
+For any questions, please contact ndayishimiyepascal@gmail.com.
