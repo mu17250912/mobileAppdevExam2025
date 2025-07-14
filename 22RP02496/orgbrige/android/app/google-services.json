@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1028776391569",
+    "project_id": "org-brige-sys",
+    "storage_bucket": "org-brige-sys.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1028776391569:android:0f05ffbf1ce0a5411fa030",
+        "android_client_info": {
+          "package_name": "com.example.orgbrige"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnGpTDWcciZLaiuIM0sl7Flj_LtAPlJcA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
