@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:html' as html;
 import 'dart:typed_data';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -616,13 +615,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               icon: Icon(Icons.download),
                               onPressed: () async {
                                 if (kIsWeb) {
-                                  html.AnchorElement anchor = html.AnchorElement(href: entry.value)
-                                    ..setAttribute('download', '')
-                                    ..target = 'blank';
-                                  html.document.body!.append(anchor);
-                                  anchor.click();
-                                  anchor.remove();
-                                } else {
+                                  // Removed for Android build: html.AnchorElement anchor = html.AnchorElement(href: entry.value)
+                                  // Removed for Android build:   ..setAttribute('download', '')
+                                  // Removed for Android build:   ..target = 'blank';
+                                  // Removed for Android build: html.document.body!.append(anchor);
+                                  // Removed for Android build: anchor.click();
+                                  // Removed for Android build: anchor.remove();
                                   if (await canLaunchUrl(Uri.parse(entry.value))) {
                                     await launchUrl(Uri.parse(entry.value), mode: LaunchMode.externalApplication);
                                   }
@@ -897,13 +895,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             icon: Icon(Icons.download),
                             onPressed: () async {
                               if (kIsWeb) {
-                                html.AnchorElement anchor = html.AnchorElement(href: url)
-                                  ..setAttribute('download', '')
-                                  ..target = 'blank';
-                                html.document.body!.append(anchor);
-                                anchor.click();
-                                anchor.remove();
-                              } else {
+                                // Removed for Android build: html.AnchorElement anchor = html.AnchorElement(href: url)
+                                // Removed for Android build:   ..setAttribute('download', '')
+                                // Removed for Android build:   ..target = 'blank';
+                                // Removed for Android build: html.document.body!.append(anchor);
+                                // Removed for Android build: anchor.click();
+                                // Removed for Android build: anchor.remove();
                                 if (await canLaunchUrl(Uri.parse(url))) {
                                   await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
                                 }
@@ -961,13 +958,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         icon: Icon(Icons.download),
                         onPressed: () async {
                           if (kIsWeb) {
-                            html.AnchorElement anchor = html.AnchorElement(href: url)
-                              ..setAttribute('download', '')
-                              ..target = 'blank';
-                            html.document.body!.append(anchor);
-                            anchor.click();
-                            anchor.remove();
-                          } else {
+                            // Removed for Android build: html.AnchorElement anchor = html.AnchorElement(href: url)
+                            // Removed for Android build:   ..setAttribute('download', '')
+                            // Removed for Android build:   ..target = 'blank';
+                            // Removed for Android build: html.document.body!.append(anchor);
+                            // Removed for Android build: anchor.click();
+                            // Removed for Android build: anchor.remove();
                             if (await canLaunchUrl(Uri.parse(url))) {
                               await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
                             }

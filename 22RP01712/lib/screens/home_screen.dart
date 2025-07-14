@@ -375,186 +375,196 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppStyles.primaryColor.withOpacity(0.1),
-              AppStyles.backgroundPrimary,
-            ],
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/me.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(AppStyles.primaryColor),
-                    ),
-                    AppStyles.verticalSpaceM,
-                    Text(
-                      'Loading jobs...',
-                      style: AppStyles.bodyMedium.copyWith(
-                        color: AppStyles.textTertiary,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            
-            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return Center(
-                child: AppStyles.primaryContainer(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.work_outline,
-                        size: 64,
-                        color: AppStyles.textMuted,
-                      ),
-                      AppStyles.verticalSpaceM,
-                      Text(
-                        'No Jobs Available',
-                        style: AppStyles.heading4.copyWith(
-                          color: AppStyles.textTertiary,
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppStyles.primaryColor.withOpacity(0.1),
+                  AppStyles.backgroundPrimary,
+                ],
+              ),
+            ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('jobs').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(AppStyles.primaryColor),
                         ),
-                      ),
-                      AppStyles.verticalSpaceS,
-                      Text(
-                        'Check back later for new opportunities',
-                        style: AppStyles.bodyMedium.copyWith(
-                          color: AppStyles.textMuted,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-            
-            final jobs = snapshot.data!.docs.map((doc) {
-              final data = doc.data() as Map<String, dynamic>;
-              return Job(
-                id: doc.id,
-                title: data['title'] ?? '',
-                company: data['company'] ?? '',
-                location: data['location'] ?? '',
-                description: data['description'] ?? '',
-                requirements: List<String>.from(data['requirements'] ?? []),
-                salary: data['salary'] ?? '',
-                jobType: data['jobType'] ?? '',
-                experienceLevel: data['experienceLevel'] ?? '',
-                deadline: data['deadline'] ?? '',
-                applicants: [], // You can load applicants if needed
-              );
-            }).toList();
-            
-            return ListView.builder(
-              padding: const EdgeInsets.all(AppStyles.spacingM),
-              itemCount: jobs.length,
-              itemBuilder: (context, index) {
-                return AppStyles.primaryContainer(
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/jobDetail',
-                            arguments: {
-                              'job': jobs[index],
-                              'isLoggedIn': isLoggedIn,
-                              'userEmail': userEmail,
-                              'user': user,
-                              'isAdmin': isAdmin,
-                            },
-                          );
-                        },
-                        child: JobCard(job: jobs[index]),
-                      ),
-                      if (isAdmin) ...[
-                        AppStyles.divider,
-                        Padding(
-                          padding: const EdgeInsets.all(AppStyles.spacingM),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/applicants',
-                                      arguments: jobs[index],
-                                    );
-                                  },
-                                  icon: Icon(Icons.people_outline, size: 18),
-                                  label: Text('View Applicants'),
-                                  style: AppStyles.secondaryButton,
-                                ),
-                              ),
-                              AppStyles.horizontalSpaceM,
-                              IconButton(
-                                icon: Icon(Icons.delete_outline, color: AppStyles.errorColor),
-                                tooltip: 'Delete Job',
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text(
-                                        'Delete Job',
-                                        style: AppStyles.heading5,
-                                      ),
-                                      content: Text(
-                                        'Are you sure you want to delete "${jobs[index].title}"? This action cannot be undone.',
-                                        style: AppStyles.bodyMedium,
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.pop(context, false),
-                                          child: Text('Cancel'),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () => Navigator.pop(context, true),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: AppStyles.errorColor,
-                                          ),
-                                          child: Text('Delete'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  if (confirm == true) {
-                                    await FirebaseFirestore.instance.collection('jobs').doc(jobs[index].id).delete();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Job deleted successfully'),
-                                        backgroundColor: AppStyles.successColor,
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
+                        AppStyles.verticalSpaceM,
+                        Text(
+                          'Loading jobs...',
+                          style: AppStyles.bodyMedium.copyWith(
+                            color: AppStyles.textTertiary,
                           ),
                         ),
                       ],
-                    ],
-                  ),
+                    ),
+                  );
+                }
+                
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(
+                    child: AppStyles.primaryContainer(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.work_outline,
+                            size: 64,
+                            color: AppStyles.textMuted,
+                          ),
+                          AppStyles.verticalSpaceM,
+                          Text(
+                            'No Jobs Available',
+                            style: AppStyles.heading4.copyWith(
+                              color: AppStyles.textTertiary,
+                            ),
+                          ),
+                          AppStyles.verticalSpaceS,
+                          Text(
+                            'Check back later for new opportunities',
+                            style: AppStyles.bodyMedium.copyWith(
+                              color: AppStyles.textMuted,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                
+                final jobs = snapshot.data!.docs.map((doc) {
+                  final data = doc.data() as Map<String, dynamic>;
+                  return Job(
+                    id: doc.id,
+                    title: data['title'] ?? '',
+                    company: data['company'] ?? '',
+                    location: data['location'] ?? '',
+                    description: data['description'] ?? '',
+                    requirements: List<String>.from(data['requirements'] ?? []),
+                    salary: data['salary'] ?? '',
+                    jobType: data['jobType'] ?? '',
+                    experienceLevel: data['experienceLevel'] ?? '',
+                    deadline: data['deadline'] ?? '',
+                    applicants: [], // You can load applicants if needed
+                  );
+                }).toList();
+                
+                return ListView.builder(
+                  padding: const EdgeInsets.all(AppStyles.spacingM),
+                  itemCount: jobs.length,
+                  itemBuilder: (context, index) {
+                    return AppStyles.primaryContainer(
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/jobDetail',
+                                arguments: {
+                                  'job': jobs[index],
+                                  'isLoggedIn': isLoggedIn,
+                                  'userEmail': userEmail,
+                                  'user': user,
+                                  'isAdmin': isAdmin,
+                                },
+                              );
+                            },
+                            child: JobCard(job: jobs[index]),
+                          ),
+                          if (isAdmin) ...[
+                            AppStyles.divider,
+                            Padding(
+                              padding: const EdgeInsets.all(AppStyles.spacingM),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton.icon(
+                                      onPressed: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/applicants',
+                                          arguments: jobs[index],
+                                        );
+                                      },
+                                      icon: Icon(Icons.people_outline, size: 18),
+                                      label: Text('View Applicants'),
+                                      style: AppStyles.secondaryButton,
+                                    ),
+                                  ),
+                                  AppStyles.horizontalSpaceM,
+                                  IconButton(
+                                    icon: Icon(Icons.delete_outline, color: AppStyles.errorColor),
+                                    tooltip: 'Delete Job',
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            'Delete Job',
+                                            style: AppStyles.heading5,
+                                          ),
+                                          content: Text(
+                                            'Are you sure you want to delete "${jobs[index].title}"? This action cannot be undone.',
+                                            style: AppStyles.bodyMedium,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.pop(context, false),
+                                              child: Text('Cancel'),
+                                            ),
+                                            ElevatedButton(
+                                              onPressed: () => Navigator.pop(context, true),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: AppStyles.errorColor,
+                                              ),
+                                              child: Text('Delete'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      if (confirm == true) {
+                                        await FirebaseFirestore.instance.collection('jobs').doc(jobs[index].id).delete();
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text('Job deleted successfully'),
+                                            backgroundColor: AppStyles.successColor,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: isAdmin
           ? FloatingActionButton.extended(

@@ -12,6 +12,8 @@ import 'screens/add_job_screen.dart';
 import 'screens/admin_users_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/applicants_screen.dart';
+import 'screens/my_applications_screen.dart'; // Added import for MyApplicationsScreen
+import 'models/user.dart'; // Use the correct AppUser model
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -268,9 +270,17 @@ class MyApp extends StatelessWidget {
         '/jobDetail': (context) => JobDetailScreen(),
         '/profile': (context) => ProfileScreen(),
         '/addJob': (context) => AddJobScreen(),
-        '/adminUsers': (context) => AdminUsersScreen(),
-        '/dashboard': (context) => DashboardScreen(),
-        '/applicants': (context) => ApplicantsScreen(),
+        '/adminUsers': (context) => AdminUsersScreen(), // Now visible to all
+        '/dashboard': (context) => DashboardScreen(), // Now visible to all
+        '/applicants': (context) => ApplicantsScreen(), // Now visible to all
+        '/my_applications': (context) => MyApplicationsScreen(user: AppUser(
+          id: 'dummy',
+          idNumber: '000000',
+          fullName: 'Dummy User',
+          telephone: '0000000000',
+          email: 'dummy@example.com',
+          password: 'dummy',
+        )), // TODO: Replace with real user
       },
     );
   }

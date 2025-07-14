@@ -25,6 +25,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? certificateUrl;
   String? certificateError;
 
+  Future<bool> isIdNumberUnique(String idNumber) async {
+    final query = await FirebaseFirestore.instance
+        .collection('users')
+        .where('idNumber', isEqualTo: idNumber)
+        .get();
+    return query.docs.isEmpty;
+  }
+
+  Future<bool> isTelephoneUnique(String telephone) async {
+    final query = await FirebaseFirestore.instance
+        .collection('users')
+        .where('telephone', isEqualTo: telephone)
+        .get();
+    return query.docs.isEmpty;
+  }
+
   Future<void> registerUser({
     required String idNumber,
     required String fullName,
@@ -33,10 +49,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String password,
   }) async {
     try {
+      // Uniqueness checks
+      bool idUnique = await isIdNumberUnique(idNumber);
+      bool telUnique = await isTelephoneUnique(telephone);
+      if (!idUnique) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('ID Number already exists.')),
+        );
+        return;
+      }
+      if (!telUnique) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Telephone number already exists.')),
+        );
+        return;
+      }
       // Step 1: Register the user using Firebase Authentication
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-
       // Step 2: Save extra user data to Firestore
       await FirebaseFirestore.instance
           .collection('users')
@@ -49,7 +79,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         'createdAt': FieldValue.serverTimestamp(),
         'documents': [],
       });
-
       print("✅ User registered and saved in Firestore.");
       Navigator.pushReplacementNamed(
         context,
@@ -105,70 +134,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Register')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: idController,
-                decoration: InputDecoration(labelText: 'ID Number'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter ID number';
-                  }
-                  if (!RegExp(r'^\d{16}?$').hasMatch(value)) {
-                    return 'ID must be exactly 16 digits';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: 'Full Name'),
-                validator: (value) => value!.isEmpty ? 'Enter full name' : null,
-              ),
-              TextFormField(
-                controller: phoneController,
-                decoration: InputDecoration(labelText: 'Telephone'),
-                validator: (value) => value!.isEmpty ? 'Enter telephone' : null,
-              ),
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-                validator: (value) => value!.isEmpty ? 'Enter email' : null,
-              ),
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) => value!.isEmpty ? 'Enter password' : null,
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    await registerUser(
-                      idNumber: idController.text.trim(),
-                      fullName: nameController.text.trim(),
-                      telephone: phoneController.text.trim(),
-                      email: emailController.text.trim(),
-                      password: passwordController.text.trim(),
-                    );
-                  }
-                },
-                child: Text('Register'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/login');
-                },
-                child: Text('Already have an account? Login'),
-              ),
-            ],
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/me.jpg',
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  TextFormField(
+                    controller: idController,
+                    decoration: InputDecoration(labelText: 'ID Number'),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Enter ID number';
+                      }
+                      if (!RegExp(r'^\d{16}?$').hasMatch(value)) {
+                        return 'ID must be exactly 16 digits';
+                      }
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    controller: nameController,
+                    decoration: InputDecoration(labelText: 'Full Name'),
+                    validator: (value) => value!.isEmpty ? 'Enter full name' : null,
+                  ),
+                  TextFormField(
+                    controller: phoneController,
+                    decoration: InputDecoration(labelText: 'Telephone'),
+                    validator: (value) => value!.isEmpty ? 'Enter telephone' : null,
+                  ),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(labelText: 'Email'),
+                    validator: (value) => value!.isEmpty ? 'Enter email' : null,
+                  ),
+                  TextFormField(
+                    controller: passwordController,
+                    decoration: InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                    validator: (value) => value!.isEmpty ? 'Enter password' : null,
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await registerUser(
+                          idNumber: idController.text.trim(),
+                          fullName: nameController.text.trim(),
+                          telephone: phoneController.text.trim(),
+                          email: emailController.text.trim(),
+                          password: passwordController.text.trim(),
+                        );
+                      }
+                    },
+                    child: Text('Register'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/login');
+                    },
+                    child: Text('Already have an account? Login'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
