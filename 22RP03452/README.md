@@ -1,10 +1,10 @@
-# 📱 SchoolMessenger
+SchoolMessenger
 
 A comprehensive mobile app for facilitating communication between teachers and parents in educational institutions. Built with Flutter and Firebase.
 
 ---
 
-## 👩‍🎓 Student Information
+Student Information
 
 - **Student Name**: Nancy Ishimwe  
 - **Student Registration Number**: 22RP03452  
@@ -12,7 +12,7 @@ A comprehensive mobile app for facilitating communication between teachers and p
 
 ---
 
-## 📝 App Name and Description
+App Name and Description
 
 **App Name**: SchoolMessenger
 
@@ -21,7 +21,7 @@ SchoolMessenger is a cross-platform mobile app that enhances communication betwe
 
 ---
 
-## 📘 App Overview
+App Overview
 
 SchoolMessenger is designed to foster collaboration between schools and families. The app supports two main user roles: **teachers** and **parents**, each with a personalized dashboard and feature set.
 
@@ -32,7 +32,7 @@ With intuitive navigation and real-time data, the app bridges the communication 
 
 ---
 
-## ❗ Problem the App Solves
+Problem the App Solves
 
 In many schools, communication between parents and teachers is inconsistent, relying on outdated methods like printed notes or sporadic meetings. This limits parental involvement and awareness of student progress.
 
@@ -43,7 +43,7 @@ SchoolMessenger solves this problem by:
 
 ---
 
-## 💰 Monetization Strategy
+Monetization Strategy
 
 1. **Freemium Model**:  
    Basic features are free. Premium features like analytics, video conferencing, and event calendars are accessible via subscription.
@@ -55,17 +55,16 @@ SchoolMessenger solves this problem by:
    Schools can subscribe to a pro version with administrative dashboards and customization options.
 
 ---
+Key Features Implemented
 
-## ✨ Key Features Implemented
-
-### 🧑‍🏫 For Teachers
+### For Teachers
 - **Dashboard**: Overview of students, activities, and messages  
 - **Homework Management**: Assign and review homework  
 - **Attendance Tracking**: Record and view attendance  
 - **Announcements**: Post important updates  
 - **Direct Messaging**: Chat with parents securely  
 
-### 👩‍👧 For Parents
+## For Parents
 - **Student Progress**: View homework, grades, and attendance  
 - **Notifications**: Receive real-time alerts and updates  
 - **Homework Tracking**: Monitor due dates and submissions  
@@ -73,9 +72,9 @@ SchoolMessenger solves this problem by:
 
 ---
 
-## 📥 How to Install and Run the APK File
+## How to Install and Run the APK File
 
-1. Download the `schoolmessenger.apk` file from the GitHub **Releases** section.
+1. Download the `app-release.apk` file from the GitHub **Releases** section.
 2. On your Android device:
    - Go to **Settings > Security > Install Unknown Apps**
    - Allow the browser or file manager to install APKs
@@ -84,7 +83,7 @@ SchoolMessenger solves this problem by:
 
 ---
 
-## 🔧 Development Setup (For Developers)
+## Development Setup (For Developers)
 
 ### Prerequisites
 - Flutter SDK (>=3.8.1)
@@ -95,9 +94,9 @@ SchoolMessenger solves this problem by:
 ### Installation Steps
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/schoolmessenger.git
-cd schoolmessenger
+# Clone the github repository 
+https://github.com/ishimwenancy/mobileAppdevExam2025
+cd /22RP03452/schoolmessenge
 
 # Install dependencies
 flutter pub get
