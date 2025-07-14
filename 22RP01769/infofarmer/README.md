@@ -1,3 +1,6 @@
+manes: UWIMPUHWE Ezebie
+REG.NO:22RP01769
+
 # InfoFarmer
 
 InfoFarmer is a mobile application built with Flutter to assist farmers with weather forecasts, market prices, agricultural tips, disease information, and more. integrates with various services to provide a comprehensive farming assistant.
