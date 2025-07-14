@@ -163,7 +163,7 @@ HERE THERE IS BRIEF DESCRIPTION OF MY APP ALL FEATURES AND HOW IT WORKS ARE THE 
 _______________________________________________________________________________________________________________________
 
 
-ADMIN FEATURES & WHST THEY DO FOR USERS
+ADMIN FEATURES & WHAT THEY DO FOR USERS
 _______________________________________
 
 
