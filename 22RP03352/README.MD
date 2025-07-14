@@ -61,7 +61,7 @@ BudgetWise uses a **freemium monetization strategy**:
 ## 🔧 Key Features Implemented
 
 ### **Core Features:**
-- User authentication (Firebase Auth),ans sign in using google
+- User authentication (Firebase Auth),and sign in using google
 - Create and manage budgets by category
 - Add and categorize expenses
 - Visual progress indicators (circular and linear)
