@@ -1,3 +1,15 @@
+IF YOU WANT TO NAVIGATE THROUGH IT YOU CAN USE:
+--------------------------------------------
+for blood donor account 
+---------------------
+Email:niyomwungeri@gmail.com 
+Password:12345678
+
+for blood collector account 
+------------------------
+Email:jean@gmail.com 
+Password:12345678
+
 
 
 ## 👤 Student Information
@@ -78,9 +90,16 @@ We use **Google AdMob Ads** integrated into the collector dashboard for revenue 
 3. Go to **Settings > Security > Enable Unknown Sources**
 4. Tap the APK file to install.
 
-### 🔹 Play Store (Coming Soon)
-You can upload the `.aab` to the Play Store in the future.
+IF YOU WANT TO NAVIGATE THROUGH IT YOU CAN USE:
+--------------------------------------------
+for blood donor account 
+---------------------
+Email:niyomwungeri@gmail.com 
+Password:12345678
 
----
+for blood collector account 
+------------------------
+Email:jean@gmail.com 
+Password:12345678
 
-## 📁 Project Folder Structure
+
