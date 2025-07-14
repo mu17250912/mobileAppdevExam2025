@@ -7,9 +7,12 @@ import '../widgets/search_suggestions.dart';
 import '../utils/string_extensions.dart';
 import '../widgets/map_search_widget.dart';
 import 'property_detail_screen.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import '../services/ad_service.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  final bool showSavedSearches;
+  const SearchScreen({super.key, this.showSavedSearches = false});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -37,6 +40,8 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _isLoading = false;
   bool _showSuggestions = false;
   bool _showMapView = false;
+  BannerAd? _bannerAd;
+  bool _isAdLoaded = false;
 
   @override
   void initState() {
@@ -46,11 +51,26 @@ class _SearchScreenState extends State<SearchScreen> {
       final propertyProvider = context.read<PropertyProvider>();
       propertyProvider.loadProperties();
       propertyProvider.loadSavedSearches();
+      if (widget.showSavedSearches) {
+        _showSavedSearches();
+      }
     });
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() async {
+    final ad = await AdService().createBannerAd();
+    if (ad != null) {
+      setState(() {
+        _bannerAd = ad;
+        _isAdLoaded = true;
+      });
+    }
   }
 
   @override
   void dispose() {
+    _bannerAd?.dispose();
     _searchController.dispose();
     _locationController.dispose();
     super.dispose();
@@ -173,6 +193,13 @@ class _SearchScreenState extends State<SearchScreen> {
               },
             ),
           ),
+          if (_isAdLoaded && _bannerAd != null)
+            Container(
+              alignment: Alignment.center,
+              width: _bannerAd!.size.width.toDouble(),
+              height: _bannerAd!.size.height.toDouble(),
+              child: AdWidget(ad: _bannerAd!),
+            ),
         ],
       ),
     );
@@ -197,26 +224,16 @@ class _SearchScreenState extends State<SearchScreen> {
           // Main search
           TextField(
             controller: _searchController,
-            onChanged: (value) {
-              setState(() {
-                _showSuggestions = value.isNotEmpty;
-              });
-            },
-            onTap: () {
-              setState(() {
-                _showSuggestions = _searchController.text.isNotEmpty;
-              });
-            },
+            onChanged: (value) => setState(() {}),
+            onSubmitted: (value) => setState(() {}),
             decoration: InputDecoration(
-              hintText: 'Search properties, amenities, or keywords...',
+              hintText: 'Search by title, description, address, or amenity...',
               prefixIcon: const Icon(Icons.search),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
                       onPressed: () {
                         _searchController.clear();
-                        setState(() {
-                          _showSuggestions = false;
-                        });
+                        setState(() {});
                       },
                       icon: const Icon(Icons.clear),
                     )

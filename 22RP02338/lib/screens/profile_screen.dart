@@ -9,6 +9,8 @@ import 'commissioner_dashboard_screen.dart';
 import 'notifications_screen.dart';
 import 'admin_setup_screen.dart';
 import '../services/notification_service.dart';
+import 'favorites_screen.dart';
+import 'search_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -379,37 +381,88 @@ class ProfileScreen extends StatelessWidget {
         'icon': Icons.favorite,
         'title': 'My Favorites',
         'subtitle': 'View your saved properties',
-        'onTap': () {},
+        'onTap': () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+          );
+        },
       },
       {
         'icon': Icons.search,
         'title': 'Saved Searches',
         'subtitle': 'Manage your search criteria',
-        'onTap': () {},
+        'onTap': () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const SearchScreen(showSavedSearches: true)),
+          );
+        },
       },
       {
         'icon': Icons.history,
         'title': 'Viewing History',
         'subtitle': 'Recently viewed properties',
-        'onTap': () {},
+        'onTap': () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Coming Soon'),
+              content: const Text('Viewing history feature is coming soon!'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        },
       },
       {
         'icon': Icons.notifications,
         'title': 'Notifications',
         'subtitle': 'Manage your alerts',
-        'onTap': () {},
+        'onTap': () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+          );
+        },
       },
       {
         'icon': Icons.help,
         'title': 'Help & Support',
         'subtitle': 'Get help and contact support',
-        'onTap': () {},
+        'onTap': () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Help & Support'),
+              content: const Text(
+                '''For help, contact:
+Phone: 0788987631
+Email: dusinnocent57@gmail.com''',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        },
       },
       {
         'icon': Icons.info,
         'title': 'About',
         'subtitle': 'App information and version',
-        'onTap': () {},
+        'onTap': () {
+          showAboutDialog(
+            context: context,
+            applicationName: 'UMUKOMISIYONERI',
+            applicationVersion: '1.0.0',
+            applicationLegalese: 'A modern real estate app for Rwanda.\nDeveloped by 22RP02338_Innocent.\n© 2024-2025',
+          );
+        },
       },
     ];
 

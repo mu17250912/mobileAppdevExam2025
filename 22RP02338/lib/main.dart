@@ -137,6 +137,10 @@ class CommissionerApp extends StatelessWidget {
                 ),
               ),
             ),
+            routes: {
+              '/search': (context) => const SearchScreen(),
+              // Add other named routes here if needed
+            },
             home: StreamBuilder<fb_auth.User?>(
               stream: fb_auth.FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {

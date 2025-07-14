@@ -33,53 +33,60 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, snapshot) {
         final isLoggedIn = snapshot.hasData;
         return Scaffold(
-          body: Consumer<PropertyProvider>(
-            builder: (context, propertyProvider, child) {
-              if (propertyProvider.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFF8FAFF), Color(0xFFE3F0FF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Consumer<PropertyProvider>(
+              builder: (context, propertyProvider, child) {
+                if (propertyProvider.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (propertyProvider.error != null) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: AppColors.error,
-                      ),
-                      const SizedBox(height: AppSizes.md),
-                      Text(
-                        'Error loading properties',
-                        style: AppTextStyles.heading4,
-                      ),
-                      const SizedBox(height: AppSizes.sm),
-                      Text(
-                        propertyProvider.error!,
-                        style: AppTextStyles.body2.copyWith(
-                          color: AppColors.textSecondary,
+                if (propertyProvider.error != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: AppColors.error,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: AppSizes.lg),
-                      ElevatedButton(
-                        onPressed: () => propertyProvider.loadProperties(),
-                        child: const Text('Retry'),
-                      ),
-                    ],
-                  ),
-                );
-              }
+                        const SizedBox(height: AppSizes.md),
+                        Text(
+                          'Error loading properties',
+                          style: AppTextStyles.heading4,
+                        ),
+                        const SizedBox(height: AppSizes.sm),
+                        Text(
+                          propertyProvider.error!,
+                          style: AppTextStyles.body2.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: AppSizes.lg),
+                        ElevatedButton(
+                          onPressed: () => propertyProvider.loadProperties(),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-              return Stack(
-                children: [
-                  // Main content
-                  ListView(
-                    padding: const EdgeInsets.all(AppSizes.md),
-                    children: [
-                      // Welcome Section
-                      if (isLoggedIn) ...[
+                return Stack(
+                  children: [
+                    // Main content
+                    ListView(
+                      padding: const EdgeInsets.all(AppSizes.md),
+                      children: [
+                        // Enhanced Welcome Section
                         Container(
                           padding: const EdgeInsets.all(AppSizes.lg),
                           decoration: BoxDecoration(
@@ -89,92 +96,120 @@ class _HomeScreenState extends State<HomeScreen> {
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withOpacity(0.15),
+                                blurRadius: 24,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
                           ),
-                          child: Column(
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Welcome to UMUKOMISIYONERI!',
-                                style: AppTextStyles.heading3.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Welcome to UMUKOMISIYONERI!',
+                                      style: AppTextStyles.heading3.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: AppSizes.xs),
+                                    Text(
+                                      'Find your dream property today',
+                                      style: AppTextStyles.body1.copyWith(
+                                        color: Colors.white.withOpacity(0.9),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: AppSizes.xs),
-                              Text(
-                                'Find your dream property today',
-                                style: AppTextStyles.body1.copyWith(
-                                  color: Colors.white.withOpacity(0.9),
-                                ),
+                              const SizedBox(width: AppSizes.md),
+                              // Illustration/Icon
+                              CircleAvatar(
+                                radius: 32,
+                                backgroundColor: Colors.white,
+                                child: Icon(Icons.home_work, size: 36, color: AppColors.primary),
                               ),
                             ],
                           ),
                         ),
                         const SizedBox(height: AppSizes.lg),
-                      ],
 
-                      // Quick Actions
-                      Container(
-                        padding: const EdgeInsets.all(AppSizes.md),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                          border: Border.all(color: AppColors.textTertiary.withOpacity(0.1)),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Quick Actions',
-                              style: AppTextStyles.heading4.copyWith(
-                                fontWeight: FontWeight.bold,
+                        // Quick Actions
+                        Container(
+                          padding: const EdgeInsets.all(AppSizes.md),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                            border: Border.all(color: AppColors.textTertiary.withOpacity(0.1)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.textTertiary.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
                               ),
-                            ),
-                            const SizedBox(height: AppSizes.md),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: _buildQuickActionCard(
-                                    icon: Icons.payment,
-                                    title: 'Contact Owner',
-                                    subtitle: 'Pay \$50 to connect',
-                                    color: AppColors.primary,
-                                    onTap: () => _showPaymentInfo(context),
-                                  ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Quick Actions',
+                                style: AppTextStyles.heading4.copyWith(
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                const SizedBox(width: AppSizes.sm),
-                                Expanded(
-                                  child: _buildQuickActionCard(
-                                    icon: Icons.search,
-                                    title: 'Search',
-                                    subtitle: 'Find properties',
-                                    color: AppColors.secondary,
-                                    onTap: () => Navigator.pushNamed(context, '/search'),
+                              ),
+                              const SizedBox(height: AppSizes.md),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildQuickActionCard(
+                                      icon: Icons.payment,
+                                      title: 'Contact Owner',
+                                      subtitle: 'Pay \$50 to connect',
+                                      color: AppColors.primary,
+                                      onTap: () => _showPaymentInfo(context),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  const SizedBox(width: AppSizes.sm),
+                                  Expanded(
+                                    child: _buildQuickActionCard(
+                                      icon: Icons.search,
+                                      title: 'Search',
+                                      subtitle: 'Find properties',
+                                      color: AppColors.secondary,
+                                      onTap: () => Navigator.pushNamed(context, '/search'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppSizes.lg),
+                        const SizedBox(height: AppSizes.lg),
 
-                      // Categories Section
-                      _buildCategoriesSection(),
-                      const SizedBox(height: AppSizes.lg),
+                        // Categories Section
+                        _buildCategoriesSection(),
+                        const SizedBox(height: AppSizes.lg),
 
-                      // Featured Properties Section
-                      _buildFeaturedPropertiesSection(propertyProvider),
-                      const SizedBox(height: AppSizes.lg),
+                        // Featured Properties Section
+                        _buildFeaturedPropertiesSection(propertyProvider),
+                        const SizedBox(height: AppSizes.lg),
 
-                      // Recent Properties Section
-                      _buildRecentPropertiesSection(propertyProvider),
-                      const SizedBox(height: AppSizes.xl),
-                    ],
-                  ),
-                ],
-              );
-            },
+                        // Recent Properties Section
+                        _buildRecentPropertiesSection(propertyProvider),
+                        const SizedBox(height: AppSizes.xl),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         );
       },
@@ -347,16 +382,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: SizedBox(
                   width: 280,
-                  child: PropertyCard(
-                    property: property,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PropertyDetailScreen(property: property),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.textTertiary.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
                         ),
-                      );
-                    },
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                      child: Image.network(
+                        property.images.isNotEmpty
+                            ? property.images.first
+                            : 'https://via.placeholder.com/280x200?text=No+Image',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                 ),
               );
@@ -436,6 +481,13 @@ class _HomeScreenState extends State<HomeScreen> {
           color: color.withOpacity(0.1),
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
           border: Border.all(color: color.withOpacity(0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           children: [

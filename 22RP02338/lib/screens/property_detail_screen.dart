@@ -117,31 +117,111 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.contact_phone),
-                label: const Text('Contact Owner (\$50)'),
+                icon: const Icon(Icons.contact_phone, size: 24),
+                label: const Text(
+                  'Contact Owner ( 24 50)',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  elevation: 6,
+                  backgroundColor: null,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: AppSizes.md),
+                ).copyWith(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                    return null;
+                  }),
+                  shadowColor: MaterialStateProperty.all(Colors.blueAccent.withOpacity(0.2)),
                 ),
                 onPressed: () => _showContactOwnerDialog(context),
               ),
             ),
-            
             const SizedBox(height: AppSizes.md),
-            
-            // Buy Property Button
+            // Submit Purchase Request Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                icon: const Icon(Icons.shopping_cart),
-                label: const Text('Submit Purchase Request'),
+                icon: const Icon(Icons.shopping_cart, size: 24),
+                label: const Text(
+                  'Submit Purchase Request',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  elevation: 6,
+                  backgroundColor: null,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: AppSizes.md),
+                ).copyWith(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                    return null;
+                  }),
+                  shadowColor: MaterialStateProperty.all(Colors.green.withOpacity(0.2)),
                 ),
                 onPressed: () => _showBuyPropertyForm(context),
+              ),
+            ),
+            const SizedBox(height: AppSizes.md),
+            // Simulated Payment Button
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.payment, size: 24),
+                label: const Text(
+                  'Simulate Payment',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  elevation: 6,
+                  backgroundColor: null,
+                  foregroundColor: Colors.white,
+                ).copyWith(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color?>((states) {
+                    return null;
+                  }),
+                  shadowColor: MaterialStateProperty.all(Colors.purple.withOpacity(0.2)),
+                ),
+                onPressed: () async {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Simulated Payment'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          CircularProgressIndicator(),
+                          SizedBox(height: 16),
+                          Text('Processing payment...'),
+                        ],
+                      ),
+                    ),
+                  );
+                  await Future.delayed(const Duration(seconds: 2));
+                  Navigator.of(context).pop();
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Payment Successful'),
+                      content: const Text('Your simulated payment was successful!'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ],
