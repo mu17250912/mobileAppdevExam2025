@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "823573373027",
+    "project_id": "store-track-app",
+    "storage_bucket": "store-track-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:823573373027:android:01a31683de55f182261856",
+        "android_client_info": {
+          "package_name": "com.example.storetrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9sVQn5f6fRBzNt4x1yMG3ySoePRzM-hI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
