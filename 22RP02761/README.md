@@ -1,90 +1,86 @@
-# Blood Donor App
-
-A Flutter application for managing blood donations and connecting donors with collectors.
-
-## Features
-
-- **User Authentication**: Secure login and registration with Firebase Authentication
-- **Role-based Access**: Separate dashboards for blood donors and collectors
-- **Registration Validation**: Only registered users can access the application
-- **Google Sign-in**: Support for Google authentication
-- **Real-time Database**: Firestore integration for user data management
-
-## Validation System
-
-The app now includes a comprehensive validation system that prevents unregistered users from accessing the application:
-
-### Login Validation
-- Users must be registered before they can log in
-- Clear error messages for unregistered users
-- Password validation for registered users
-- Google sign-in validation against registered accounts
-
-### Registration Validation
-- Prevents duplicate email registrations
-- Password strength requirements (minimum 6 characters)
-- Role selection (Donor or Collector)
-- Google account registration validation
-
-### Error Messages
-- **Red**: User not registered - "User not registered. Please register first."
-- **Orange**: Invalid password for registered user - "Invalid password. Please try again."
-- **Green**: Successful registration - "Registration successful! Please login."
-
-## Setup Instructions
-
-### 1. Firebase Configuration
-
-1. Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
-2. Enable Authentication with Email/Password and Google Sign-in
-3. Create a Firestore database
-4. Download the configuration files:
-   - `google-services.json` for Android (place in `android/app/`)
-   - `GoogleService-Info.plist` for iOS (place in `ios/Runner/`)
-
-### 2. Dependencies
-
-The app uses the following Firebase packages:
-- `firebase_core`: Core Firebase functionality
-- `firebase_auth`: Authentication services
-- `cloud_firestore`: Database services
-- `google_sign_in`: Google authentication
-
-### 3. Running the App
-
-1. Install dependencies:
-   ```bash
-   flutter pub get
-   ```
-
-2. Run the app:
-   ```bash
-   flutter run
-   ```
-
-## User Flow
-
-1. **New User**: Must register first with email/password or Google account
-2. **Existing User**: Can log in with registered credentials
-3. **Unregistered User**: Will be rejected with clear error message
-4. **Role-based Navigation**: Users are directed to appropriate dashboard based on their role
-
-## Security Features
-
-- Firebase Authentication for secure user management
-- Firestore security rules for data protection
-- Input validation and sanitization
-- Proper error handling and user feedback
-- Session management with secure logout
-
-## Testing the Validation
-
-1. Try to login with an unregistered email - you should see a red error message
-2. Register a new account - you should see a green success message
-3. Login with the registered account - you should be redirected to the appropriate dashboard
-4. Try Google sign-in with an unregistered account - you should be rejected
-5. Logout and verify you're returned to the login screen
 
 
+## 👤 Student Information
+- **Name:NIYOMWUNGERI Jean D'Amour
+- **Registration Number: 22RP02761
 
+## 📱 App Name
+**Blood Donor App**
 
+## 🧩 Problem Statement
+In Rwanda and many parts of the world, blood donation awareness and access are limited. People in urgent need of blood struggle to find suitable donors quickly. This app solves that problem by connecting **donors** and **collectors** (health officials or blood centers) in a real-time, mobile-friendly platform.
+
+## 🎯 Target Audience
+- Individuals willing to donate blood.
+- Health workers and hospitals looking for donors.
+- Organizations planning blood drives.
+
+---
+
+## 🚀 Key Features Implemented
+- 🔐 Firebase Authentication (Email login & registration)
+- 🩸 Donor Dashboard (Donate blood, view donation history)
+- 🏥 Collector Dashboard (Manage donor list, send alerts)
+- 🔄 Push Notifications using Firebase Cloud Messaging
+- 🎨 Clean and user-friendly UI (Responsive)
+- 🌐 Firebase Hosting for web version (optional if web supported)
+
+---
+
+## 💰 Monetization Strategy
+We use **Google AdMob Ads** integrated into the collector dashboard for revenue generation.
+
+- **Why Ads?**
+  - Low barrier to entry
+  - Ideal for health awareness apps where premium features may reduce engagement
+  - Suitable for our large user base (especially donors)
+
+---
+
+## 📊 Analytics & Tracking
+- Integrated **Firebase Analytics** to track:
+  - Number of users
+  - Active donors and collectors
+  - Engagement with push notifications
+
+---
+
+## 🌱 Sustainability & Scalability Plan
+
+### 🔁 Updates & Maintenance
+- Monthly updates to fix bugs and add more regions.
+- Real-time database scaling with Firebase.
+
+### 📈 Growth Strategies
+- Referral system for users who invite others
+- Collaborations with hospitals and blood donation drives
+- Social media integration to allow easy sharing
+
+### 🔁 User Retention
+- Reward system for consistent donors
+- Push reminders to collect blood or donate
+- Badge levels for frequent contributors
+
+---
+
+## 🔐 Security & Reliability
+- Firebase handles secure authentication and user management.
+- Data is stored in Firebase Firestore, with rules for access control.
+- Tested on various Android versions (API 23 and above) and screen sizes.
+
+---
+
+## 📦 APK Installation Guide
+
+### 🔹 Manual Installation
+1. Download the file: [`app-release.apk`](./app-release.apk)
+2. Transfer to your Android phone.
+3. Go to **Settings > Security > Enable Unknown Sources**
+4. Tap the APK file to install.
+
+### 🔹 Play Store (Coming Soon)
+You can upload the `.aab` to the Play Store in the future.
+
+---
+
+## 📁 Project Folder Structure
