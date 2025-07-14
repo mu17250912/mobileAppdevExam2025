@@ -194,6 +194,30 @@
 4. **Make Booking:** Select dates, number of people, and complete payment
 5. **Track Bookings:** Monitor booking status in the Bookings section
 
+## Admin Features & Roles
+
+### Admin Features
+- **Dashboard Overview:** View key metrics such as total bookings, revenue, and active parks.
+- **Park Management:** Add, edit, or remove national parks from the platform.
+- **Booking Management:** View, filter, and manage all user bookings (confirm, complete, or cancel bookings).
+- **User Management:** View all users, promote or demote users to/from admin, and delete user accounts.
+- **Analytics:** Access booking trends and status breakdowns for business insights.
+
+### Admin Roles
+- **Manage Parks:** Create, update, or delete park listings.
+- **Oversee Bookings:** Approve, update, or cancel any booking.
+- **User Control:** Assign or revoke admin privileges, and remove users if necessary.
+- **Platform Moderation:** Ensure the quality and integrity of content and user activity.
+
+### How to Become an Admin
+- By default, all new users are regular users.
+- An existing admin can promote any user to admin status via the **User Management** section in the admin dashboard.
+- Admins can also revoke admin rights from other users at any time.
+- example of admin acccount: paccy@gmail.com password:123456
+
+
+## Monetization Strategy & Sustainability
+
 ## Technical Architecture
 
 ### Scalability Considerations
