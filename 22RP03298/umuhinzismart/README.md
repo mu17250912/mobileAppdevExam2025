@@ -7,7 +7,7 @@ UMUHINZI Smart is a cross-platform Flutter application designed as an agricultur
 - Secure authentication and role-based dashboards (Farmer & Dealer)
 - Real-time product browsing, search, and filtering
 - Shopping cart and order management
-- AI-powered fertilizer recommendations
+- Fertilizer recommendation
 - Educational farming guides
 - Simulated mobile money payment integration
 - Push and local notifications
@@ -42,7 +42,7 @@ umuhinzismart/
 ### Setup
 1. **Clone the repository:**
    ```sh
-   git clone <your-repo-url>
+   git clone 
    cd umuhinzismart
    ```
 2. **Install dependencies:**
@@ -69,5 +69,4 @@ umuhinzismart/
 ## 📝 License
 This project is licensed under the MIT License.
 
-## 📧 Support
-For support, feedback, or questions, please contact: support@yourapp.com
+
