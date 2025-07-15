@@ -4,7 +4,7 @@ ISOKOCONNECT
 
 **Student Registration Number:** 22RP01798  
 **Email:** dusengejeande088@gmail.com
-**Github Link:** https://github.com/Jados088/mobileAppdevExam2025/edit/main/22RP01798/isokoconnect
+**Github Link:** https://github.com/Jados088/mobileAppdevExam2025
 **App Name:** IsokoConnect  
 **Platform:** Android (Flutter)  
 **Version:** 1.0.0
