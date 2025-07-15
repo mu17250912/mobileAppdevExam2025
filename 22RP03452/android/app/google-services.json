@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "67607847313",
+    "project_id": "school-messenger-app",
+    "storage_bucket": "school-messenger-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67607847313:android:0b338e811cdd0c386bba30",
+        "android_client_info": {
+          "package_name": "com.example.schoolmessenge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUyf4WexXdzgGpbk1Zbt5BCW53Nfb_3Wk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
