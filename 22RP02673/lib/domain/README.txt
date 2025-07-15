@@ -1,0 +1,1 @@
+This directory contains domain logic, entities, and use cases. 

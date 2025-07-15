@@ -1,0 +1,1 @@
+This directory contains core utilities, constants, and shared resources. 
