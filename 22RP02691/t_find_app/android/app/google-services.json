@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "180017546500",
+    "project_id": "t-finder-appdb",
+    "storage_bucket": "t-finder-appdb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:180017546500:android:e194b084a7c23415e8bc51",
+        "android_client_info": {
+          "package_name": "com.example.t_find_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXz3Xr-xFa45DdmaDBcArVg2L_kGuWjoE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
