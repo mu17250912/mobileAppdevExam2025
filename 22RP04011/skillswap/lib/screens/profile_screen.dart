@@ -7,6 +7,7 @@ import 'dart:io';
 import './add_skill_screen.dart';
 import '../services/app_service.dart';
 import '../models/skill_model.dart';
+import '../models/user_model.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -40,11 +41,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _checkSubscription();
     _user = _auth.currentUser;
     _loadUserData();
+    _checkPermissions();
+  }
+
+  Future<void> _checkSubscription() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    final data = doc.data();
+    final subscriptionStatus = data?['subscriptionStatus'] as String?;
+    final subscriptionExpiry = data?['subscriptionExpiry'] as Timestamp?;
+    bool hasActiveSubscription = false;
+    if (subscriptionStatus == 'active' && subscriptionExpiry != null) {
+      final expiryDate = subscriptionExpiry.toDate();
+      hasActiveSubscription = expiryDate.isAfter(DateTime.now());
+    }
+    if (!hasActiveSubscription && mounted) {
+      Navigator.pushReplacementNamed(context, '/subscription');
+    }
   }
 
   List<dynamic> get _badges => _userData?['badges'] ?? [];
+
+  Future<void> _checkPermissions() async {
+    if (_user == null) return;
+
+    try {
+      final hasPermissions = await AppService.checkSkillPermissions(_user!.uid);
+      if (!hasPermissions && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Permission issue detected. Please check Firebase security rules deployment.',
+            ),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 5),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error checking permissions: $e');
+    }
+  }
 
   Future<void> _loadUserData() async {
     if (_user == null) return;
@@ -72,12 +116,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (_user == null) return;
     try {
       final skills = await AppService.getUserSkills(_user!.uid);
+      if (!mounted) return;
       setState(() {
         _userSkills = skills;
         _selectedSkillIds.clear(); // Clear selections when reloading
       });
     } catch (e) {
       debugPrint('Error loading user skills: $e');
+      if (!mounted) return;
+      setState(() {
+        _userSkills = [];
+        _selectedSkillIds.clear();
+      });
+      // Show error message to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to load skills: ${e.toString()}'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -122,15 +180,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Failed to update skill. Please try again.'),
+            content: Text(
+                'Failed to update skill. Please check your permissions and try again.'),
             backgroundColor: Colors.red,
           ),
         );
       }
     } catch (e) {
+      print('Error toggling skill activation: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error: $e'),
+          content: Text('Error updating skill: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
@@ -188,7 +248,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Failed to delete some skills. Please try again.'),
+              content: Text(
+                  'Failed to delete some skills. Please check your permissions and try again.'),
               backgroundColor: Colors.red,
             ),
           );
@@ -262,13 +323,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (url != null) photoUrl = url;
     }
     try {
-      await _firestore.collection('users').doc(_user!.uid).update({
-        'uid': _user!.uid,
-        'fullName': _nameController.text.trim(),
-        'phone': _phoneController.text.trim(),
-        'location': _locationController.text.trim(),
-        'photoUrl': photoUrl,
-      });
+      // Read current user data from Firestore
+      final doc = await _firestore.collection('users').doc(_user!.uid).get();
+      final current = doc.exists ? UserDetails.fromFirestore(doc) : null;
+      if (current == null) throw Exception('User not found');
+      final updated = current.copyWith(
+        fullName: _nameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        location: _locationController.text.trim(),
+        photoUrl: photoUrl,
+        updatedAt: DateTime.now(),
+      );
+      await _firestore.collection('users').doc(_user!.uid).set(
+            updated.toFirestore(),
+            SetOptions(merge: true),
+          );
       setState(() {
         _userData?['fullName'] = _nameController.text.trim();
         _userData?['phone'] = _phoneController.text.trim();
@@ -463,26 +532,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final double ratings = (_userData?['ratings'] ?? 0).toDouble();
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: const Text('Profile'),
-        backgroundColor: Colors.blue[800],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const AddSkillScreen()),
-          );
-          if (result == true) {
-            _loadUserData();
-          }
-        },
-        backgroundColor: Colors.blue[600],
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add),
-        label: const Text('Add Skill'),
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Profile'),
+      //   backgroundColor: Colors.blue[800],
+      //   foregroundColor: Colors.white,
+      //   elevation: 0,
+      // ),
+      // Removed FloatingActionButton.extended (Add Skill button)
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
@@ -508,7 +564,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
-    );
+    ); // closes Scaffold
   }
 
   Widget _buildUserInfoCard(String name, String title, String location,
@@ -650,12 +706,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Center(
-              child: Text(
-                'No skills added yet. Add skills from the main menu to get started!',
-                style: TextStyle(color: Colors.grey),
-                textAlign: TextAlign.center,
-              ),
+            child: Column(
+              children: [
+                const Text(
+                  'No skills added yet. Add skills from the main menu to get started!',
+                  style: TextStyle(color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AddSkillScreen()),
+                    );
+                    if (result == true) {
+                      _loadUserData();
+                    }
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add Your First Skill'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[800],
+                    foregroundColor: Colors.white,
+                  ),
+                ),
+              ],
             ),
           )
         else
@@ -940,8 +1016,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content:
-                          Text('Failed to delete skill. Please try again.'),
+                      content: Text(
+                          'Failed to delete skill. Please check your permissions and try again.'),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -950,13 +1026,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           },
           itemBuilder: (context) => [
-            PopupMenuItem(
+            const PopupMenuItem(
               value: 'edit',
               child: Row(
                 children: [
-                  const Icon(Icons.edit, size: 18),
-                  const SizedBox(width: 8),
-                  const Text('Edit'),
+                  Icon(Icons.edit, size: 18),
+                  SizedBox(width: 8),
+                  Text('Edit'),
                 ],
               ),
             ),

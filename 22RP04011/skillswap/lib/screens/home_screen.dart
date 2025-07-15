@@ -6,14 +6,11 @@ import '../models/notification_model.dart';
 import '../models/session_model.dart';
 import '../services/app_service.dart';
 import '../services/navigation_service.dart';
-import '../services/messaging_service.dart';
 import 'login_screen.dart';
 import 'find_partner_screen.dart';
-import 'chat_list_screen.dart';
 import 'schedule_session_screen.dart';
 import 'requested_skills_screen.dart';
-import 'session_requests_screen.dart';
-import 'profile_screen.dart';
+import 'badges_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final Map<String, dynamic>? userData;
@@ -28,12 +25,17 @@ class _HomeScreenState extends State<HomeScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final NavigationService _navigationService = NavigationService();
-  final MessagingService _messagingService = MessagingService();
   User? _user;
   Map<String, dynamic>? _userData;
-  bool _isLoading = false;
 
-  // New model-based data
+  // Loading flags for each section
+  bool _loadingUser = false;
+  bool _loadingSkills = false;
+  bool _loadingSessions = false;
+  bool _loadingNotifications = false;
+  bool _loadingStats = false;
+
+  // Data
   List<Skill> _skillRequests = [];
   List<SessionModel> _recentSessions = [];
   List<NotificationModel> _recentNotifications = [];
@@ -47,10 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _userData = widget.userData;
     _navigationService.addListener(_onNavigationChanged);
 
-    if (_userData == null && _user != null) {
+    if (_user != null &&
+        (_userData == null || _userData?['fullName'] == null)) {
       _loadUserData();
     } else if (_userData != null) {
-      _loadAllData();
+      _startAllLoads();
     }
   }
 
@@ -61,44 +64,44 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onNavigationChanged() {
-    // Update badge counts when navigation changes
     setState(() {});
   }
 
   Future<void> _loadUserData() async {
-    setState(() => _isLoading = true);
+    if (_user == null) return;
+    setState(() => _loadingUser = true);
     try {
       final doc = await _firestore.collection('users').doc(_user!.uid).get();
       if (doc.exists) {
-        setState(() => _userData = doc.data());
-        _loadAllData();
+        setState(() {
+          _userData = doc.data();
+        });
+        _startAllLoads();
       }
     } catch (e) {
-      debugPrint('Error loading user data: $e');
-    } finally {
-      setState(() => _isLoading = false);
+      setState(() => _loadingUser = false);
     }
   }
 
-  Future<void> _loadAllData() async {
-    if (_user == null) return;
-
-    await Future.wait([
-      _loadSkillRequests(),
-      _loadRecentSessions(),
-      _loadRecentNotifications(),
-      _loadStats(),
-    ]);
+  void _startAllLoads() {
+    _loadSkillRequests();
+    _loadRecentSessions();
+    _loadRecentNotifications();
+    _loadStats();
   }
 
   Future<void> _loadSkillRequests() async {
+    setState(() => _loadingSkills = true);
     if (_userData == null) return;
-
     try {
       final userSkills = List<String>.from(_userData!['skillsOffered'] ?? []);
-      if (userSkills.isEmpty) return;
-
-      // Get users who are looking for skills that the current user can teach
+      if (userSkills.isEmpty) {
+        setState(() {
+          _skillRequests = [];
+          _loadingSkills = false;
+        });
+        return;
+      }
       final querySnapshot = await _firestore
           .collection('users')
           .where('skillsToLearn', arrayContainsAny: userSkills)
@@ -106,7 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
           .where('isOnline', isEqualTo: true)
           .limit(5)
           .get();
-
       final requests = <Skill>[];
       for (final doc in querySnapshot.docs) {
         final userData = doc.data();
@@ -114,9 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .where((skill) =>
                 (userData['skillsToLearn'] as List<dynamic>).contains(skill))
             .toList();
-
         if (matchingSkills.isNotEmpty) {
-          // Create a skill object for the request
           final skill = Skill(
             id: doc.id,
             name: matchingSkills.first,
@@ -137,55 +137,65 @@ class _HomeScreenState extends State<HomeScreen> {
           requests.add(skill);
         }
       }
-
+      if (!mounted) return;
       setState(() {
         _skillRequests = requests;
+        _loadingSkills = false;
       });
     } catch (e) {
       debugPrint('Error loading skill requests: $e');
+      setState(() => _loadingSkills = false);
     }
   }
 
   Future<void> _loadRecentSessions() async {
+    setState(() => _loadingSessions = true);
     if (_user == null) return;
-
     try {
       final sessions = await AppService.getUserSessions(_user!.uid);
+      if (!mounted) return;
       setState(() {
         _recentSessions = sessions.take(3).toList();
+        _loadingSessions = false;
       });
     } catch (e) {
       debugPrint('Error loading recent sessions: $e');
+      setState(() => _loadingSessions = false);
     }
   }
 
   Future<void> _loadRecentNotifications() async {
+    setState(() => _loadingNotifications = true);
     if (_user == null) return;
-
     try {
       final notifications =
           await AppService.getUserNotifications(_user!.uid, limit: 5);
+      if (!mounted) return;
       setState(() {
         _recentNotifications = notifications;
+        _loadingNotifications = false;
       });
     } catch (e) {
       debugPrint('Error loading recent notifications: $e');
+      setState(() => _loadingNotifications = false);
     }
   }
 
   Future<void> _loadStats() async {
+    setState(() => _loadingStats = true);
     if (_user == null) return;
-
     try {
       final skillStats = await AppService.getSkillStats(_user!.uid);
       final sessionStats = await AppService.getSessionStats(_user!.uid);
-
+      if (!mounted) return;
       setState(() {
         _skillStats = skillStats;
         _sessionStats = sessionStats;
+        _loadingStats = false;
       });
     } catch (e) {
       debugPrint('Error loading stats: $e');
+      setState(() => _loadingStats = false);
     }
   }
 
@@ -205,62 +215,68 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String userName = _userData?['fullName']?.split(' ')[0] ?? 'User';
+    final String userName = _userData?['fullName'] ?? 'User';
     return Scaffold(
       backgroundColor: Colors.white,
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadAllData,
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Welcome Card with Stats
-                      _buildWelcomeCard(userName),
-                      const SizedBox(height: 20),
-
-                      // Stats Cards
-                      if (_skillStats != null || _sessionStats != null) ...[
-                        _buildStatsSection(),
-                        const SizedBox(height: 20),
-                      ],
-
-                      // Feature Grid
-                      _buildFeatureGrid(),
-                      const SizedBox(height: 24),
-
-                      // Skill Requests Section
-                      if (_skillRequests.isNotEmpty) ...[
-                        _buildSkillRequestsSection(),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Recent Sessions Section
-                      if (_recentSessions.isNotEmpty) ...[
-                        _buildRecentSessionsSection(),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Recent Notifications Section
-                      if (_recentNotifications.isNotEmpty) ...[
-                        _buildRecentNotificationsSection(),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Empty State
-                      if (_skillRequests.isEmpty &&
-                          _recentSessions.isEmpty &&
-                          _recentNotifications.isEmpty) ...[
-                        _buildEmptyState(),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _startAllLoads();
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Removed the top welcome message
+                // _buildWelcomeCard(userName) remains below
+                _buildWelcomeCard(userName),
+                const SizedBox(height: 20),
+                // Stats Cards
+                if (_loadingStats)
+                  _buildStatsSkeleton()
+                else if (_skillStats != null || _sessionStats != null) ...[
+                  _buildStatsSection(),
+                  const SizedBox(height: 20),
+                ],
+                // Feature Grid
+                _buildFeatureGrid(),
+                const SizedBox(height: 24),
+                // Skill Requests Section
+                if (_loadingSkills)
+                  _buildSkillRequestsSkeleton()
+                else if (_skillRequests.isNotEmpty) ...[
+                  _buildSkillRequestsSection(),
+                  const SizedBox(height: 24),
+                ],
+                // Recent Sessions Section
+                if (_loadingSessions)
+                  _buildRecentSessionsSkeleton()
+                else if (_recentSessions.isNotEmpty) ...[
+                  _buildRecentSessionsSection(),
+                  const SizedBox(height: 24),
+                ],
+                // Recent Notifications Section
+                if (_loadingNotifications)
+                  _buildRecentNotificationsSkeleton()
+                else if (_recentNotifications.isNotEmpty) ...[
+                  _buildRecentNotificationsSection(),
+                  const SizedBox(height: 24),
+                ],
+                // Empty State
+                if (!_loadingSkills &&
+                    !_loadingSessions &&
+                    !_loadingNotifications &&
+                    _skillRequests.isEmpty &&
+                    _recentSessions.isEmpty &&
+                    _recentNotifications.isEmpty) ...[
+                  _buildEmptyState(),
+                ],
+              ],
             ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -339,27 +355,58 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 15),
           Row(
             children: [
-              _buildStatItem(
-                icon: Icons.school,
-                value: _skillStats?.totalSkills.toString() ?? '0',
-                label: 'Skills',
-                color: Colors.white,
+              // Skills Counter
+              StreamBuilder<List<Skill>>(
+                stream: _user == null
+                    ? null
+                    : AppService.listenToSkills(userId: _user!.uid),
+                builder: (context, snapshot) {
+                  final count = snapshot.hasData ? snapshot.data!.length : 0;
+                  return _buildStatItem(
+                    icon: Icons.school,
+                    value: count.toString(),
+                    label: 'Skills',
+                    color: Colors.white,
+                  );
+                },
               ),
               const SizedBox(width: 20),
-              _buildStatItem(
-                icon: Icons.event,
-                value: _navigationService.sessionBadgeCount > 0
-                    ? '${_sessionStats?['completedSessions']?.toString() ?? '0'}+${_navigationService.sessionBadgeCount}'
-                    : _sessionStats?['completedSessions']?.toString() ?? '0',
-                label: 'Sessions',
-                color: Colors.white,
+              // Sessions Counter
+              StreamBuilder<List<SessionModel>>(
+                stream: _user == null
+                    ? null
+                    : AppService.listenToUserSessions(_user!.uid),
+                builder: (context, snapshot) {
+                  final completed = snapshot.hasData
+                      ? snapshot.data!
+                          .where((s) => s.status == SessionStatus.completed)
+                          .length
+                      : 0;
+                  return _buildStatItem(
+                    icon: Icons.event,
+                    value: completed.toString(),
+                    label: 'Sessions',
+                    color: Colors.white,
+                  );
+                },
               ),
               const SizedBox(width: 20),
-              _buildStatItem(
-                icon: Icons.notifications,
-                value: _navigationService.notificationBadgeCount.toString(),
-                label: 'Alerts',
-                color: Colors.white,
+              // Alerts Counter
+              StreamBuilder<List<NotificationModel>>(
+                stream: _user == null
+                    ? null
+                    : AppService.listenToNotifications(_user!.uid),
+                builder: (context, snapshot) {
+                  final unread = snapshot.hasData
+                      ? snapshot.data!.where((n) => !n.isRead).length
+                      : 0;
+                  return _buildStatItem(
+                    icon: Icons.notifications,
+                    value: unread.toString(),
+                    label: 'Alerts',
+                    color: Colors.white,
+                  );
+                },
               ),
             ],
           ),
@@ -400,27 +447,95 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildStatsSection() {
     return Row(
       children: [
+        // Skills Stat Card
         Expanded(
-          child: _buildStatCard(
-            title: 'Skills',
-            value: _skillStats?.totalSkills.toString() ?? '0',
-            subtitle: 'Active: ${_skillStats?.activeSkills ?? 0}',
-            icon: Icons.school,
-            color: Colors.blue,
+          child: StreamBuilder<List<Skill>>(
+            stream: _user == null
+                ? null
+                : AppService.listenToSkills(userId: _user!.uid),
+            builder: (context, snapshot) {
+              final skills = snapshot.data ?? [];
+              final totalSkills = skills.length;
+              final activeSkills = skills.where((s) => s.isActive).length;
+              return _buildStatCard(
+                title: 'Skills',
+                value: totalSkills.toString(),
+                subtitle: 'Active: $activeSkills',
+                icon: Icons.school,
+                color: Colors.blue,
+              );
+            },
           ),
         ),
         const SizedBox(width: 12),
+        // Sessions Stat Card
         Expanded(
-          child: _buildStatCard(
-            title: 'Sessions',
-            value: _sessionStats?['completedSessions']?.toString() ?? '0',
-            subtitle:
-                '${_sessionStats?['completionRate']?.toStringAsFixed(1) ?? '0'}% completion',
-            icon: Icons.event,
-            color: Colors.green,
+          child: StreamBuilder<List<SessionModel>>(
+            stream: _user == null
+                ? null
+                : AppService.listenToUserSessions(_user!.uid),
+            builder: (context, snapshot) {
+              final sessions = snapshot.data ?? [];
+              final completed = sessions
+                  .where((s) => s.status == SessionStatus.completed)
+                  .length;
+              final total = sessions.length;
+              final completionRate =
+                  total > 0 ? (completed / total) * 100 : 0.0;
+              return _buildStatCard(
+                title: 'Sessions',
+                value: completed.toString(),
+                subtitle: '${completionRate.toStringAsFixed(1)}% completion',
+                icon: Icons.event,
+                color: Colors.green,
+              );
+            },
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSessionStatCard() {
+    if (_user == null) {
+      return _buildStatCard(
+        title: 'Sessions',
+        value: '0',
+        subtitle: '0.0% completion',
+        icon: Icons.event,
+        color: Colors.green,
+      );
+    }
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('sessions')
+          .where('participants', arrayContains: _user!.uid)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return _buildStatCard(
+            title: 'Sessions',
+            value: '0',
+            subtitle: '0.0% completion',
+            icon: Icons.event,
+            color: Colors.green,
+          );
+        }
+        final allSessions = snapshot.data!.docs;
+        final completedSessions = allSessions
+            .where((doc) => (doc['status'] ?? '') == 'completed')
+            .length;
+        final totalSessions = allSessions.length;
+        final completionRate =
+            totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0.0;
+        return _buildStatCard(
+          title: 'Sessions',
+          value: completedSessions.toString(),
+          subtitle: '${completionRate.toStringAsFixed(1)}% completion',
+          icon: Icons.event,
+          color: Colors.green,
+        );
+      },
     );
   }
 
@@ -477,6 +592,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFeatureGrid() {
+    const int unreadCount = 0;
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -509,62 +625,27 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
-        StreamBuilder<int>(
-          stream: _messagingService.getUnreadMessageCount(),
-          builder: (context, snapshot) {
-            final unreadCount = snapshot.data ?? 0;
-            return _featureButton(
-              icon: Icons.chat_bubble_outline,
-              label: 'Messenger',
-              badge: unreadCount > 0 ? unreadCount.toString() : null,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const ChatListScreen(),
-                  ),
-                );
-              },
-            );
+        _featureButton(
+          icon: Icons.chat_bubble_outline,
+          label: 'Messenger',
+          badge: unreadCount > 0 ? unreadCount.toString() : null,
+          onTap: () {
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => const ChatListScreen(),
+            //   ),
+            // );
           },
         ),
         _featureButton(
           icon: Icons.emoji_events,
           label: 'My Badges',
-          onTap: () {},
-        ),
-        _featureButton(
-          icon: Icons.school,
-          label: 'Requested Skills',
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const RequestedSkillsScreen(),
-              ),
-            );
-          },
-        ),
-        _featureButton(
-          icon: Icons.event_note,
-          label: 'Session Requests',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SessionRequestsScreen(),
-              ),
-            );
-          },
-        ),
-        _featureButton(
-          icon: Icons.manage_accounts,
-          label: 'Manage Skills',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const ProfileScreen(),
+                builder: (context) => const BadgesScreen(),
               ),
             );
           },
@@ -592,7 +673,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const FindPartnerScreen(),
+                    builder: (context) =>
+                        RequestedSkillsScreen(requests: _skillRequests),
                   ),
                 );
               },
@@ -692,7 +774,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const FindPartnerScreen(),
+              builder: (context) => RequestedSkillsScreen(
+                  requests: _skillRequests, initialSkill: skill),
             ),
           );
         },
@@ -726,58 +809,99 @@ class _HomeScreenState extends State<HomeScreen> {
       elevation: 2,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(session.typeIcon, size: 32, color: session.statusColor),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    session.title,
-                    style: const TextStyle(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(session.typeIcon, size: 32, color: session.statusColor),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        session.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        session.description,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey[600],
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        session.formattedScheduledTime,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: session.statusColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    session.status.toString().split('.').last,
+                    style: TextStyle(
+                      color: session.statusColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    session.description,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey[600],
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    session.formattedScheduledTime,
-                    style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey[500],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: session.statusColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                session.status.toString().split('.').last,
-                style: TextStyle(
-                  color: session.statusColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+            if (session.status != SessionStatus.completed)
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  icon: const Icon(Icons.check_circle, color: Colors.green),
+                  label: const Text('Mark as Completed'),
+                  onPressed: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirm Completion'),
+                        content: const Text(
+                            'Are you sure you want to mark this session as completed?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Confirm'),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirm == true) {
+                      final updated = session.endSession();
+                      final success = await AppService.updateSession(updated);
+                      if (success && mounted) {
+                        setState(() {}); // Refresh UI
+                      }
+                    }
+                  },
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -1007,6 +1131,68 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // --- Skeleton Widgets ---
+  Widget _buildStatsSkeleton() {
+    return Row(
+      children: [
+        Expanded(child: _skeletonBox(height: 80)),
+        const SizedBox(width: 12),
+        Expanded(child: _skeletonBox(height: 80)),
+      ],
+    );
+  }
+
+  Widget _buildSkillRequestsSkeleton() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _skeletonBox(height: 24, width: 120),
+        const SizedBox(height: 12),
+        _skeletonBox(height: 60),
+        const SizedBox(height: 8),
+        _skeletonBox(height: 60),
+      ],
+    );
+  }
+
+  Widget _buildRecentSessionsSkeleton() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _skeletonBox(height: 24, width: 120),
+        const SizedBox(height: 12),
+        _skeletonBox(height: 60),
+        const SizedBox(height: 8),
+        _skeletonBox(height: 60),
+      ],
+    );
+  }
+
+  Widget _buildRecentNotificationsSkeleton() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _skeletonBox(height: 24, width: 120),
+        const SizedBox(height: 12),
+        _skeletonBox(height: 60),
+        const SizedBox(height: 8),
+        _skeletonBox(height: 60),
+      ],
+    );
+  }
+
+  Widget _skeletonBox({double height = 20, double width = double.infinity}) {
+    return Container(
+      width: width,
+      height: height,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(8),
       ),
     );
   }

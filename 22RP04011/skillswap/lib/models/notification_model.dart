@@ -64,7 +64,7 @@ class NotificationModel {
     return NotificationModel(
       id: doc.id,
       title: data['title'] ?? '',
-      message: data['message'] ?? '',
+      message: data['message'] ?? data['body'] ?? '',
       type: NotificationType.values.firstWhere(
         (e) => e.toString().split('.').last == (data['type'] ?? 'system'),
         orElse: () => NotificationType.system,

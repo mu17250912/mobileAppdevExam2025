@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/chat_conversation_model.dart';
-import '../services/messaging_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../models/chat_model.dart';
+import '../services/chat_service.dart';
 import 'chat_screen.dart';
+import '../models/user_model.dart';
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
@@ -13,362 +14,642 @@ class ChatListScreen extends StatefulWidget {
 }
 
 class _ChatListScreenState extends State<ChatListScreen> {
-  final _auth = FirebaseAuth.instance;
-  final _firestore = FirebaseFirestore.instance;
-  final _messagingService = MessagingService();
-  User? _user;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  final TextEditingController _userSearchController = TextEditingController();
+  List<UserDetails> _userSearchResults = [];
+  List<UserDetails> _allUsers = [];
+  bool _isUserSearching = false;
+  bool _hasSearched = false; // Track if user has performed a search
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
-    _user = _auth.currentUser;
+    _fetchAllUsers();
+  }
+
+  Future<void> _fetchAllUsers() async {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) return;
+    try {
+      final users = await _firestore.collection('users').get();
+      final results = users.docs
+          .where((doc) => doc.id != currentUser.uid)
+          .map((doc) => UserDetails.fromFirestore(doc))
+          .toList();
+      setState(() {
+        _allUsers = results;
+      });
+    } catch (e) {
+      setState(() {
+        _allUsers = [];
+      });
+    }
+  }
+
+  Future<void> _searchUsers(String query) async {
+    if (query.trim().isEmpty) {
+      setState(() {
+        _userSearchResults = [];
+        _isUserSearching = false;
+        _hasSearched = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _isUserSearching = true;
+      _hasSearched = true;
+    });
+
+    try {
+      final users = await _firestore
+          .collection('users')
+          .where('fullName', isGreaterThanOrEqualTo: query)
+          .where('fullName', isLessThan: query + '\uf8ff')
+          .limit(10)
+          .get();
+
+      final results = users.docs
+          .where((doc) => doc.id != _auth.currentUser?.uid)
+          .map((doc) => UserDetails.fromFirestore(doc))
+          .toList();
+
+      setState(() {
+        _userSearchResults = results;
+        _isUserSearching = false;
+      });
+    } catch (e) {
+      setState(() {
+        _userSearchResults = [];
+        _isUserSearching = false;
+      });
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Error searching for users. Please try again.'),
+            backgroundColor: Colors.red[600],
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _userSearchController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_user == null) {
-      return const Scaffold(
-        body: Center(child: Text('Not logged in.')),
-      );
-    }
+    final isTablet = MediaQuery.of(context).size.width > 600;
+
+    // Determine which users to show: search results or all users
+    final List<UserDetails> usersToShow =
+        _userSearchController.text.isNotEmpty ? _userSearchResults : _allUsers;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Messages'),
-        backgroundColor: Colors.blue[800],
-        foregroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => setState(() {}),
+      // Removed AppBar here to avoid duplicate headers
+      // appBar: AppBar(
+      //   title: const Text('Chats'),
+      //   backgroundColor: Colors.blue[800],
+      //   foregroundColor: Colors.white,
+      //   elevation: 0,
+      //   actions: [
+      //     IconButton(
+      //       icon: const Icon(Icons.search),
+      //       onPressed: () {
+      //         showSearch(
+      //           context: context,
+      //           delegate: ChatSearchDelegate(),
+      //         );
+      //       },
+      //     ),
+      //   ],
+      // ),
+      body: Column(
+        children: [
+          // User search bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: TextField(
+              controller: _userSearchController,
+              decoration: InputDecoration(
+                hintText: 'Search users by name...',
+                prefixIcon: const Icon(Icons.person_search),
+                suffixIcon: _userSearchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _userSearchController.clear();
+                          setState(() {
+                            _userSearchResults = [];
+                            _hasSearched = false;
+                          });
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
+              ),
+              onChanged: (value) {
+                if (value.isEmpty) {
+                  setState(() {
+                    _userSearchResults = [];
+                    _hasSearched = false;
+                  });
+                } else {
+                  _searchUsers(value);
+                }
+              },
+            ),
+          ),
+          if (_isUserSearching)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: CircularProgressIndicator(),
+            ),
+          if (usersToShow.isEmpty && !_isUserSearching)
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.person_off,
+                        size: isTablet ? 80 : 60, color: Colors.grey),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No users found',
+                      style: TextStyle(
+                        fontSize: isTablet ? 20 : 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'No users match your search criteria',
+                      style: TextStyle(
+                        fontSize: isTablet ? 16 : 14,
+                        color: Colors.grey[600],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (usersToShow.isNotEmpty)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Text(
+                      _userSearchController.text.isNotEmpty
+                          ? 'Search Results (${usersToShow.length})'
+                          : 'All Users (${usersToShow.length})',
+                      style: TextStyle(
+                        fontSize: isTablet ? 16 : 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: usersToShow.length,
+                      itemBuilder: (context, index) {
+                        final user = usersToShow[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 4),
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(16),
+                            leading: CircleAvatar(
+                              radius: isTablet ? 30 : 25,
+                              backgroundColor: Colors.blue[100],
+                              child: Text(
+                                user.fullName.isNotEmpty
+                                    ? user.fullName[0].toUpperCase()
+                                    : '?',
+                                style: TextStyle(
+                                  fontSize: isTablet ? 18 : 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[800],
+                                ),
+                              ),
+                            ),
+                            title: Text(
+                              user.fullName,
+                              style: TextStyle(
+                                fontSize: isTablet ? 16 : 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              user.email,
+                              style: TextStyle(
+                                fontSize: isTablet ? 14 : 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            trailing: Icon(
+                              Icons.chat_bubble_outline,
+                              color: Colors.blue[600],
+                              size: isTablet ? 24 : 20,
+                            ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen(
+                                    receiverId: user.uid,
+                                    receiverName: user.fullName,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          // Chat threads list
+          Expanded(
+            child: StreamBuilder<List<ChatThread>>(
+              stream: ChatService.getChatThreadsStream(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  // Improved error handling
+                  final user = _auth.currentUser;
+                  if (user == null) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.info_outline,
+                              size: isTablet ? 80 : 60, color: Colors.blue),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Please log in to view your chats.',
+                            style: TextStyle(
+                              fontSize: isTablet ? 20 : 16,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.error_outline,
+                            size: isTablet ? 80 : 60, color: Colors.red),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Could not load chats. Please try again later.',
+                          style: TextStyle(
+                            fontSize: isTablet ? 20 : 16,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                final threads = snapshot.data ?? [];
+                final filteredThreads = threads; // No search filter
+
+                if (filteredThreads.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.chat_bubble_outline,
+                            size: isTablet ? 120 : 80, color: Colors.grey),
+                        SizedBox(height: isTablet ? 24 : 16),
+                        Text(
+                          _searchQuery.isEmpty
+                              ? 'No chats yet'
+                              : 'No chats found',
+                          style: TextStyle(
+                            fontSize: isTablet ? 24 : 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                        SizedBox(height: isTablet ? 12 : 8),
+                        Text(
+                          _searchQuery.isEmpty
+                              ? 'Start a conversation with other users'
+                              : 'Try a different search term',
+                          style: TextStyle(
+                            fontSize: isTablet ? 16 : 14,
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: filteredThreads.length,
+                  itemBuilder: (context, index) {
+                    final thread = filteredThreads[index];
+                    return _buildChatTile(thread, isTablet);
+                  },
+                );
+              },
+            ),
           ),
         ],
-      ),
-      body: StreamBuilder<List<ChatConversation>>(
-        stream: _messagingService.getUserConversations(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Failed to load messages',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
-                    onPressed: () => setState(() {}),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          final conversations = snapshot.data ?? [];
-
-          if (conversations.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.chat_bubble_outline,
-                      size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No conversations yet',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Start a conversation by connecting with other users',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[500],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: conversations.length,
-            itemBuilder: (context, index) {
-              final conversation = conversations[index];
-              return _buildConversationTile(conversation);
-            },
-          );
-        },
       ),
     );
   }
 
-  Widget _buildConversationTile(ChatConversation conversation) {
-    final otherUserId = conversation.getOtherParticipant(_user!.uid);
-    final unreadCount = conversation.participantUnreadCounts[_user!.uid] ?? 0;
-    final isFromMe = conversation.lastMessageSenderId == _user!.uid;
+  Widget _buildChatTile(ChatThread thread, bool isTablet) {
+    final currentUserId = _auth.currentUser?.uid ?? '';
+    final otherUserId = thread.getOtherUserId(currentUserId);
+    final isUnread = thread.unreadCount > 0;
 
     return FutureBuilder<DocumentSnapshot>(
       future: _firestore.collection('users').doc(otherUserId).get(),
-      builder: (context, userSnap) {
-        if (!userSnap.hasData) {
-          return const Card(
-            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: ListTile(
-              leading: CircleAvatar(child: CircularProgressIndicator()),
-              title: Text('Loading...'),
-            ),
-          );
-        }
-
-        final userData = userSnap.data!.data() as Map<String, dynamic>?;
-        final name = userData?['fullName'] ?? 'User';
-        final photoUrl = userData?['photoUrl'] as String?;
-        final isOnline = userData?['isOnline'] ?? false;
+      builder: (context, snapshot) {
+        final userData = snapshot.data?.data() as Map<String, dynamic>?;
+        final userName = userData?['fullName'] ?? 'Unknown User';
+        final userAvatar = userData?['profilePicture'] ?? '';
+        print(
+            '[DEBUG] ChatList: Fetched user for chat thread: otherUserId=$otherUserId, userName=$userName');
 
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          elevation: 1,
+          elevation: isUnread ? 2 : 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: ListTile(
-            leading: Stack(
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.blue[100],
-                  backgroundImage: (photoUrl != null && photoUrl.isNotEmpty)
-                      ? NetworkImage(photoUrl)
-                      : null,
-                  child: (photoUrl == null || photoUrl.isEmpty)
-                      ? Text(
-                          name.isNotEmpty ? name[0].toUpperCase() : 'U',
-                          style: const TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
-                ),
-                if (isOnline)
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+            contentPadding: const EdgeInsets.all(16),
+            leading: CircleAvatar(
+              radius: isTablet ? 30 : 25,
+              backgroundColor: Colors.blue[100],
+              backgroundImage:
+                  userAvatar.isNotEmpty ? NetworkImage(userAvatar) : null,
+              child: userAvatar.isEmpty
+                  ? Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                      style: TextStyle(
+                        fontSize: isTablet ? 18 : 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[800],
                       ),
-                    ),
-                  ),
-                if (unreadCount > 0)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 16,
-                        minHeight: 16,
-                      ),
-                      child: Text(
-                        unreadCount > 99 ? '99+' : unreadCount.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-              ],
+                    )
+                  : null,
             ),
             title: Row(
               children: [
                 Expanded(
                   child: Text(
-                    name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                    userName,
+                    style: TextStyle(
+                      fontSize: isTablet ? 18 : 16,
+                      fontWeight:
+                          isUnread ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ),
-                Text(
-                  _formatTime(conversation.lastMessageTime),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
+                if (thread.isEncrypted)
+                  Icon(Icons.lock,
+                      size: isTablet ? 20 : 16, color: Colors.green),
+                if (thread.mode == ChatMode.detailed)
+                  Icon(Icons.description,
+                      size: isTablet ? 20 : 16, color: Colors.blue),
               ],
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 4),
+                Text(
+                  thread.lastMessageText,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: isTablet ? 14 : 12,
+                    color: isUnread ? Colors.black87 : Colors.grey[600],
+                    fontWeight: isUnread ? FontWeight.w500 : FontWeight.normal,
+                  ),
+                ),
+                const SizedBox(height: 4),
                 Row(
                   children: [
-                    if (isFromMe)
-                      Icon(
-                        unreadCount > 0 ? Icons.done_all : Icons.done,
-                        size: 16,
-                        color: unreadCount > 0 ? Colors.blue : Colors.grey,
-                      ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        conversation.lastMessageContent,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: unreadCount > 0
-                              ? Colors.black87
-                              : Colors.grey[700],
-                          fontSize: 14,
-                          fontWeight: unreadCount > 0
-                              ? FontWeight.w500
-                              : FontWeight.normal,
-                        ),
+                    Text(
+                      _formatTimestamp(thread.lastMessageTime),
+                      style: TextStyle(
+                        fontSize: isTablet ? 12 : 10,
+                        color: Colors.grey[500],
                       ),
                     ),
+                    if (thread.lastMessageSenderId == currentUserId)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Icon(
+                          Icons.done_all,
+                          size: isTablet ? 16 : 14,
+                          color: isUnread ? Colors.blue : Colors.grey,
+                        ),
+                      ),
                   ],
                 ),
               ],
             ),
+            trailing: isUnread
+                ? Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '${thread.unreadCount > 99 ? '99+' : thread.unreadCount}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : null,
             onTap: () {
+              print(
+                  '[DEBUG] Navigating to ChatScreen: receiverId=$otherUserId, receiverName=$userName');
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ChatScreen(
                     receiverId: otherUserId,
-                    receiverName: name,
+                    receiverName: userName,
                   ),
                 ),
               );
             },
-            onLongPress: () => _showConversationOptions(conversation, name),
           ),
         );
       },
     );
   }
 
-  void _showConversationOptions(
-      ChatConversation conversation, String userName) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: const Text('Delete Conversation'),
-              subtitle: Text('Remove conversation with $userName'),
-              onTap: () {
-                Navigator.pop(context);
-                _deleteConversation(conversation);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.mark_email_read),
-              title: const Text('Mark as Read'),
-              onTap: () {
-                Navigator.pop(context);
-                _markConversationAsRead(conversation);
-              },
-            ),
-          ],
-        ),
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
+  }
+}
+
+class ChatSearchDelegate extends SearchDelegate<String> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
       ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
     );
   }
 
-  Future<void> _deleteConversation(ChatConversation conversation) async {
-    try {
-      final otherUserId = conversation.getOtherParticipant(_user!.uid);
-      await _messagingService.deleteConversation(otherUserId);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Conversation deleted'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to delete conversation: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+  @override
+  Widget buildResults(BuildContext context) {
+    return _buildSearchResults();
   }
 
-  Future<void> _markConversationAsRead(ChatConversation conversation) async {
-    try {
-      final otherUserId = conversation.getOtherParticipant(_user!.uid);
-      await _messagingService.markMessagesAsRead(otherUserId);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Marked as read'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to mark as read: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return _buildSearchResults();
   }
 
-  String _formatTime(DateTime time) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final messageDate = DateTime(time.year, time.month, time.day);
-
-    if (messageDate == today) {
-      return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-    } else if (messageDate == today.subtract(const Duration(days: 1))) {
-      return 'Yesterday';
-    } else {
-      return '${time.day}/${time.month}';
+  Widget _buildSearchResults() {
+    if (query.isEmpty) {
+      return const Center(
+        child: Text('Start typing to search chats...'),
+      );
     }
+
+    return StreamBuilder<List<ChatThread>>(
+      stream: ChatService.getChatThreadsStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final threads = snapshot.data ?? [];
+        final filteredThreads = threads.where((thread) {
+          return thread.lastMessageText
+              .toLowerCase()
+              .contains(query.toLowerCase());
+        }).toList();
+
+        if (filteredThreads.isEmpty) {
+          return const Center(
+            child: Text('No chats found matching your search.'),
+          );
+        }
+
+        return ListView.builder(
+          itemCount: filteredThreads.length,
+          itemBuilder: (context, index) {
+            final thread = filteredThreads[index];
+            final otherUserId =
+                thread.getOtherUserId(_auth.currentUser?.uid ?? '');
+
+            return FutureBuilder<DocumentSnapshot>(
+              future: _firestore.collection('users').doc(otherUserId).get(),
+              builder: (context, snapshot) {
+                final userData = snapshot.data?.data() as Map<String, dynamic>?;
+                final userName = userData?['fullName'] ?? 'Unknown User';
+
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.blue[100],
+                    child: Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[800],
+                      ),
+                    ),
+                  ),
+                  title: Text(userName),
+                  subtitle: Text(
+                    thread.lastMessageText,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatScreen(
+                          receiverId: otherUserId,
+                          receiverName: userName,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
+    );
   }
 }

@@ -6,8 +6,6 @@ import '../services/app_service.dart';
 import 'chat_screen.dart';
 import 'schedule_session_screen.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'find_partner_screen.dart';
-import 'requested_skills_screen.dart';
 import 'session_requests_screen.dart';
 
 class AlertsScreen extends StatefulWidget {
@@ -21,11 +19,39 @@ class _AlertsScreenState extends State<AlertsScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   List<NotificationModel> _notifications = [];
   bool _isLoading = true;
+  int _unreadCount = 0;
+
+  static int getUnreadCount(List<NotificationModel> notifications) {
+    return notifications.where((n) => !n.isRead).length;
+  }
+
+  int get unreadCount => _unreadCount;
 
   @override
   void initState() {
     super.initState();
+    _checkSubscription();
     _loadNotifications();
+  }
+
+  Future<void> _checkSubscription() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    final data = doc.data();
+    final subscriptionStatus = data?['subscriptionStatus'] as String?;
+    final subscriptionExpiry = data?['subscriptionExpiry'] as Timestamp?;
+    bool hasActiveSubscription = false;
+    if (subscriptionStatus == 'active' && subscriptionExpiry != null) {
+      final expiryDate = subscriptionExpiry.toDate();
+      hasActiveSubscription = expiryDate.isAfter(DateTime.now());
+    }
+    if (!hasActiveSubscription && mounted) {
+      Navigator.pushReplacementNamed(context, '/subscription');
+    }
   }
 
   Future<void> _loadNotifications() async {
@@ -34,15 +60,24 @@ class _AlertsScreenState extends State<AlertsScreen> {
     try {
       final user = _auth.currentUser;
       if (user != null) {
+        print('[DEBUG] Current user UID: ${user.uid}');
         final notifications =
-            await AppService.getUserNotifications(user.uid, limit: 50);
+            await AppService.getUserNotifications(user.uid, limit: 100);
+        print('[DEBUG] Loaded ${notifications.length} notifications');
+        for (final n in notifications) {
+          print(
+              '[DEBUG] Notification: id=${n.id}, title=${n.title}, userId=${n.userId}, isRead=${n.isRead}, createdAt=${n.createdAt}');
+        }
+        if (!mounted) return;
         setState(() {
           _notifications = notifications;
+          _unreadCount = getUnreadCount(notifications);
           _isLoading = false;
         });
       }
     } catch (e) {
       debugPrint('Error loading notifications: $e');
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
@@ -51,11 +86,13 @@ class _AlertsScreenState extends State<AlertsScreen> {
     try {
       await AppService.markAsRead(notification.id);
       // Update local state
+      if (!mounted) return;
       setState(() {
         final index = _notifications.indexWhere((n) => n.id == notification.id);
         if (index != -1) {
           _notifications[index] = notification.markAsRead();
         }
+        _unreadCount = getUnreadCount(_notifications);
       });
     } catch (e) {
       debugPrint('Error marking notification as read: $e');
@@ -68,8 +105,10 @@ class _AlertsScreenState extends State<AlertsScreen> {
       if (user != null) {
         await AppService.markAllAsRead(user.uid);
         // Update local state
+        if (!mounted) return;
         setState(() {
           _notifications = _notifications.map((n) => n.markAsRead()).toList();
+          _unreadCount = getUnreadCount(_notifications);
         });
       }
     } catch (e) {
@@ -184,8 +223,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
                     builder: (context) => ChatScreen(
                       receiverId: notification.senderId!,
                       receiverName: notification.senderName ?? 'User',
-                      initialMessage:
-                          'Hi! I saw your skill request. I can help you with that!',
                     ),
                   ),
                 );
@@ -365,7 +402,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                                         notification.priority ==
                                             NotificationPriority.urgent) ...[
                                       const SizedBox(width: 8),
-                                      Icon(Icons.priority_high,
+                                      const Icon(Icons.priority_high,
                                           size: 12, color: Colors.orange),
                                     ],
                                   ],

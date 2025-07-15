@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../models/skill_model.dart';
 import '../models/notification_model.dart';
 import '../models/session_model.dart';
 
 class AppService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Skills Service Methods
   static Future<List<Skill>> getUserSkills(String userId) async {
@@ -20,7 +19,17 @@ class AppService {
 
       return querySnapshot.docs.map((doc) => Skill.fromFirestore(doc)).toList();
     } catch (e) {
-      print('Error getting user skills: $e');
+      debugPrint('Error getting user skills: $e');
+      if (e is FirebaseException) {
+        debugPrint('Firebase error code: ${e.code}');
+        debugPrint('Firebase error message: ${e.message}');
+
+        // If it's a permission error, provide helpful message
+        if (e.code == 'permission-denied') {
+          debugPrint(
+              'Permission denied. Please check Firebase security rules deployment.');
+        }
+      }
       return [];
     }
   }
@@ -99,6 +108,11 @@ class AppService {
       return true;
     } catch (e) {
       print('Error updating skill: $e');
+      // Log more detailed error information
+      if (e is FirebaseException) {
+        print('Firebase error code: ${e.code}');
+        print('Firebase error message: ${e.message}');
+      }
       return false;
     }
   }
@@ -109,6 +123,11 @@ class AppService {
       return true;
     } catch (e) {
       print('Error deleting skill: $e');
+      // Log more detailed error information
+      if (e is FirebaseException) {
+        print('Firebase error code: ${e.code}');
+        print('Firebase error message: ${e.message}');
+      }
       return false;
     }
   }
@@ -124,8 +143,9 @@ class AppService {
       }
 
       final totalSessions =
-          skills.fold(0, (sum, skill) => sum + skill.totalSessions);
-      final totalRating = skills.fold(0, (sum, skill) => sum + skill.rating);
+          skills.fold(0, (total, skill) => total + skill.totalSessions);
+      final totalRating =
+          skills.fold(0, (total, skill) => total + skill.rating);
       final averageRating =
           totalSessions > 0 ? totalRating / totalSessions : 0.0;
 
@@ -144,7 +164,7 @@ class AppService {
 
   // Notifications Service Methods
   static Future<List<NotificationModel>> getUserNotifications(String userId,
-      {int limit = 20}) async {
+      {int limit = 100}) async {
     try {
       final querySnapshot = await _firestore
           .collection('notifications')
@@ -304,7 +324,7 @@ class AppService {
       // Send notification to requester
       final responderDoc =
           await _firestore.collection('users').doc(responderId).get();
-      final responderData = responderDoc.data() as Map<String, dynamic>?;
+      final responderData = responderDoc.data();
       final responderName = responderData?['fullName'] ?? 'User';
 
       await _firestore.collection('notifications').add({
@@ -503,7 +523,7 @@ class AppService {
 
       final totalDuration = allSessions
           .where((s) => s.status == SessionStatus.completed)
-          .fold(0, (sum, session) => sum + session.duration);
+          .fold(0, (total, session) => total + session.duration);
 
       return {
         'totalSessions': totalSessions,
@@ -558,19 +578,39 @@ class AppService {
   // --- QUERY HELPERS ---
   static Stream<List<Skill>> listenToSkills({String? userId, String? type}) {
     Query query = _firestore.collection('skills');
-    if (userId != null)
+    if (userId != null) {
       query = query.where('userId',
           isEqualTo: userId); // Changed from 'ownerId' to 'userId'
+    }
     if (type != null) query = query.where('type', isEqualTo: type);
     return query.snapshots().map(
         (snap) => snap.docs.map((doc) => Skill.fromFirestore(doc)).toList());
   }
 
+  // Check if user has permission to manage skills
+  static Future<bool> checkSkillPermissions(String userId) async {
+    try {
+      // Try to read a skill document to check permissions
+      await _firestore
+          .collection('skills')
+          .where('userId', isEqualTo: userId)
+          .limit(1)
+          .get();
+      return true; // If we can read, we likely have permissions
+    } catch (e) {
+      if (e is FirebaseException && e.code == 'permission-denied') {
+        return false;
+      }
+      return true; // Assume permissions for other errors
+    }
+  }
+
   static Stream<List<SessionModel>> listenToSessions(
       {String? userId, String? status}) {
     Query query = _firestore.collection('sessions');
-    if (userId != null)
+    if (userId != null) {
       query = query.where('participants', arrayContains: userId);
+    }
     if (status != null) query = query.where('status', isEqualTo: status);
     return query.snapshots().map((snap) =>
         snap.docs.map((doc) => SessionModel.fromFirestore(doc)).toList());

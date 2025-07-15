@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/skill_model.dart';
 import '../services/app_service.dart';
+import '../main.dart';
 
 class AddSkillScreen extends StatefulWidget {
   final Skill? skillToEdit; // Add parameter for editing
@@ -23,7 +24,7 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
   String _selectedCategory = 'Programming';
   String _selectedDifficulty = 'Beginner';
   final List<String> _selectedTags = [];
-  bool _isLoading = false;
+  final bool _isLoading = false;
   bool _isSubmitting = false;
 
   // Check if we're editing
@@ -32,6 +33,7 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
   @override
   void initState() {
     super.initState();
+    _checkSubscription();
     // Pre-fill fields if editing
     if (isEditing) {
       final skill = widget.skillToEdit!;
@@ -43,6 +45,26 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
       _selectedCategory = skill.category;
       _selectedDifficulty = skill.difficulty;
       _selectedTags.addAll(skill.tags);
+    }
+  }
+
+  Future<void> _checkSubscription() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+    final data = doc.data();
+    final subscriptionStatus = data?['subscriptionStatus'] as String?;
+    final subscriptionExpiry = data?['subscriptionExpiry'] as Timestamp?;
+    bool hasActiveSubscription = false;
+    if (subscriptionStatus == 'active' && subscriptionExpiry != null) {
+      final expiryDate = subscriptionExpiry.toDate();
+      hasActiveSubscription = expiryDate.isAfter(DateTime.now());
+    }
+    if (!hasActiveSubscription && mounted) {
+      Navigator.pushReplacementNamed(context, '/subscription');
     }
   }
 
@@ -96,31 +118,15 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
       final userName = await _getUserName(user);
       if (userName == null || userName.isEmpty) {
         if (mounted) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Profile Incomplete'),
-              content: const Text(
-                  'Your profile is missing a name. Please update your profile before adding a skill.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                    Navigator.pushNamed(context, '/home');
-                    // Optionally, you can trigger the profile tab directly if you have tab navigation
-                  },
-                  child: const Text('Update Profile'),
-                ),
-              ],
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Warning: Your profile is missing a name. Please update your profile for better visibility.'),
+              backgroundColor: Colors.orange,
             ),
           );
         }
-        setState(() => _isSubmitting = false);
-        return;
+        // Continue to allow skill addition
       }
 
       bool success;
@@ -168,7 +174,7 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
           difficulty: _selectedDifficulty,
           tags: _selectedTags,
           userId: user.uid,
-          userName: userName,
+          userName: userName ?? '',
           userPhotoUrl: user.photoURL ?? '',
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
@@ -233,15 +239,23 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
           ),
         );
 
-        // Navigate back with success result
-        Navigator.pop(context, true);
+        // Navigate to main scaffold with profile tab selected
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (_) => const MainScaffold(initialTabIndex: 3)),
+          (route) => route.isFirst,
+        );
       } else {
         throw Exception(
             'Failed to ${isEditing ? 'update' : 'add'} skill. Please check your connection and try again.');
       }
     } on FirebaseException catch (e) {
+      print('Firebase error code: ${e.code}');
+      print('Firebase error message: ${e.message}');
       _handleFirebaseError(e, showActualError: true);
     } catch (e) {
+      print('General error: $e');
       _handleGeneralError(e.toString(), showActualError: true);
     } finally {
       if (mounted) {
@@ -288,42 +302,91 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
     final tagController = TextEditingController();
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add Tag'),
-        content: TextField(
-          controller: tagController,
-          autofocus: true,
-          decoration: const InputDecoration(
-            hintText: 'Enter a tag (e.g., JavaScript, React)',
-            border: OutlineInputBorder(),
+      builder: (context) => Material(
+        type: MaterialType.transparency,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Row(
+                    children: [
+                      Icon(Icons.label, color: Colors.blue),
+                      SizedBox(width: 8),
+                      Text('Add Tag',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18)),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: tagController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'Enter a tag (e.g., JavaScript, React)',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onSubmitted: (value) {
+                      if (value.trim().isNotEmpty) {
+                        setState(() {
+                          _selectedTags.add(value.trim());
+                        });
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[800],
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                        ),
+                        onPressed: () {
+                          final value = tagController.text.trim();
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              _selectedTags.add(value);
+                            });
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: const Text('Add'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-          onSubmitted: (value) {
-            if (value.trim().isNotEmpty) {
-              setState(() {
-                _selectedTags.add(value.trim());
-              });
-              Navigator.pop(context);
-            }
-          },
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              final value = tagController.text.trim();
-              if (value.isNotEmpty) {
-                setState(() {
-                  _selectedTags.add(value);
-                });
-                Navigator.pop(context);
-              }
-            },
-            child: const Text('Add'),
-          ),
-        ],
       ),
     );
   }
@@ -336,61 +399,16 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
+    return Scaffold(
+      body: _isSubmitting
         ? const Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.blue[800]!, Colors.blue[600]!],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      children: [
-                        const Icon(
-                          Icons.add_circle_outline,
-                          size: 48,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          isEditing
-                              ? 'Edit Your Skill'
-                              : 'Share Your Expertise',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          isEditing
-                              ? 'Update your skill information'
-                              : 'Add a skill you can teach to others',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white.withOpacity(0.9),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
                   // Skill Name
                   TextFormField(
                     controller: _nameController,
@@ -621,6 +639,7 @@ class _AddSkillScreenState extends State<AddSkillScreen> {
                     ),
                   ),
                 ],
+                ),
               ),
             ),
           );
