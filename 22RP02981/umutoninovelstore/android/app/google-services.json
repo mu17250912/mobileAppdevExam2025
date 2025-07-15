@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "535460033145",
+    "project_id": "umutoninovelsstore",
+    "storage_bucket": "umutoninovelsstore.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:535460033145:android:78c523919c8f7deb7c1aa8",
+        "android_client_info": {
+          "package_name": "com.example.umutoni_novels_store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "535460033145-2ishc6vmisa2podu2on1mmfp4cfs98j5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.umutoni_novels_store",
+            "certificate_hash": "391b3724e14aa4d742b61cb89b2c65033e0d55db"
+          }
+        },
+        {
+          "client_id": "535460033145-db1u3rrc3t4c3thhc33srml3758628hn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu0tfWOhO53h3XqSiwUIck35OixNmUy44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "535460033145-db1u3rrc3t4c3thhc33srml3758628hn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "535460033145-vo3bvp5abf9ma0nuqvfr81kbt2spn5ps.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.umutoniNovelsStore"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
