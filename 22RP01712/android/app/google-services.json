@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "931462265654",
+    "project_id": "e-recruitment-15780",
+    "storage_bucket": "e-recruitment-15780.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931462265654:android:db1cbc20532f43658fd197",
+        "android_client_info": {
+          "package_name": "com.example.e_recruitment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC67E4iKetTnXLQpkGlmFXDlhGVjYFmSOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
