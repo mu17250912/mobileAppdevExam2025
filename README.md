@@ -1,2 +1,0 @@
-# mobileAppdevExam2025
-
