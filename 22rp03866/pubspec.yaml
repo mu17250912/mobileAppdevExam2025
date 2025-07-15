@@ -1,0 +1,63 @@
+name: safarigo
+description: A new Flutter project for discovering and booking adventures.
+publish_to: 'none' # Prevent accidental publishing to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.8.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase dependencies
+  firebase_core: ^3.15.1
+  firebase_auth: 5.6.2
+  cloud_firestore: ^5.6.11
+  firebase_messaging: ^15.2.9
+
+  # Other dependencies
+  cupertino_icons: ^1.0.8
+  fl_chart: ^0.64.0
+  table_calendar: ^3.0.9
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  google_sign_in: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/splash.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/splash.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/splash.png"
+    icon_size: 48
+  macos:
+    generate: true
+    image_path: "assets/splash.png"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+
+  # fonts:
+  #   - family: Montserrat
+  #     fonts:
+  #       - asset: assets/fonts/Montserrat-Regular.ttf
+  #       - asset: assets/fonts/Montserrat-Bold.ttf
+  #       - asset: assets/fonts/Montserrat-SemiBold.ttf
