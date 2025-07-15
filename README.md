@@ -222,7 +222,6 @@ Our app solves these problems by:
 
 ### Installation Steps:
 
-
 1. **Install dependencies:**
    ```bash
    flutter pub get
@@ -251,8 +250,6 @@ flutter build apk --release
 # Build AAB for Google Play Store
 flutter build appbundle --release
 ```
-
-``
 
 
 
