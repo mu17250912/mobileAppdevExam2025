@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "416201369699",
+    "project_id": "farmerpay-f81b7",
+    "storage_bucket": "farmerpay-f81b7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416201369699:android:c42b2eebab692b93c07056",
+        "android_client_info": {
+          "package_name": "com.example.farmpay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSeLGqGlZrj8_1u6OPTQJXanJmKUNiHho"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
