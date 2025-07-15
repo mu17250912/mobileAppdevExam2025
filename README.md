@@ -104,14 +104,7 @@ Small retail shop owners, especially in rural or semi-urban areas, struggle with
 
 ---
 
-## 📱 Screenshots
 
-<!-- Add your screenshots here -->
-<!-- Example: -->
-<!-- ![Admin Dashboard](screenshots/admin_dashboard.png) -->
-<!-- ![User Booking](screenshots/user_booking.png) -->
-
----
 
 ## 🏁 How to Run This Project
 
@@ -135,14 +128,6 @@ This app uses Firebase for authentication, Firestore, and analytics.
 
 ---
 
-### 3. **Running the App**
-
-```sh
-git clone https://github.com/yourusername/shop_management_app.git
-cd shop_management_app
-flutter pub get
-flutter run
-```
 
 - When prompted, select your device (Windows, Chrome, Edge, Android, etc.).
 
@@ -204,25 +189,8 @@ service cloud.firestore {
 
 ---
 
-## 📦 Submission
 
-- **APK & AAB:** Both files generated and submitted
-- **Pull Request:** Please see the PR for a summary of features and implementation
-- **README:** This file provides all required information
 
----
-
-## 🤝 Contributors
-
-- [Your Name] (your.email@example.com)
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
 
 ## 💡 Future Improvements
 
