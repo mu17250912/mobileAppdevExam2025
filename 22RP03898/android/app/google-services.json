@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "1021910036167",
+    "project_id": "saferide-65c14",
+    "storage_bucket": "saferide-65c14.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021910036167:android:3ca0886886d2f33d7498e2",
+        "android_client_info": {
+          "package_name": "com.example.saferide"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021910036167-obqeian7rlsp2ene4k82bq82mp8hvcau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzQfhCrTzURWAKqvG6sVf5lUejiqQdxJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021910036167-19r0j5bbjj87jpdv72bbmb7k6p85f0ca.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1021910036167-0c8nn98q3u1k2lkbcn5iumnsu4as4klf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.saferides"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1021910036167:android:8d81eed2421411be7498e2",
+        "android_client_info": {
+          "package_name": "com.example.saferides"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1021910036167-obqeian7rlsp2ene4k82bq82mp8hvcau.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzQfhCrTzURWAKqvG6sVf5lUejiqQdxJA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1021910036167-19r0j5bbjj87jpdv72bbmb7k6p85f0ca.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1021910036167-0c8nn98q3u1k2lkbcn5iumnsu4as4klf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.saferides"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
