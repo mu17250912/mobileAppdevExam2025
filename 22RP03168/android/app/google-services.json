@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "66847190836",
+    "project_id": "library-management-7c263",
+    "storage_bucket": "library-management-7c263.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66847190836:android:06ba5b24239879b8003f61",
+        "android_client_info": {
+          "package_name": "tradewear.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_dtNahd2o10LOOQG88u3MUMq1ZgeQu14"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
