@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "320050492235",
+    "project_id": "budgetwise-98ee2",
+    "storage_bucket": "budgetwise-98ee2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320050492235:android:e02e358f4d24d6d7b0eece",
+        "android_client_info": {
+          "package_name": "com.example.budgetwise"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320050492235-3a25afkategpqkgsbmv5rmtmf1o8u95h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.budgetwise",
+            "certificate_hash": "0ccdd166d29c91dcd166e68a66dd7bd7f1f639da"
+          }
+        },
+        {
+          "client_id": "320050492235-vf0807td4ls1c7ac16ueelh8ptn9iuua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5KtoJensACL3Q2gTFJJ-lA0vzpiYSXSw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "320050492235-vf0807td4ls1c7ac16ueelh8ptn9iuua.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "320050492235-ie92gjk53c0u89ii19jrbn9moo7ltjql.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.budgetwise"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

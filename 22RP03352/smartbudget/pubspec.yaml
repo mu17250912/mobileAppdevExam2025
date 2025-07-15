@@ -1,0 +1,86 @@
+name: budgetwise
+description: "A new Flutter project."
+
+# Prevents accidental publishing to pub.dev
+publish_to: 'none' 
+
+# Versioning
+version: 1.0.1+2
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fl_chart: ^0.66.0
+  # flutter_local_notifications: ^16.1.0  # Temporarily commented out due to compilation issues
+  google_mobile_ads: ^4.0.0
+  intl: ^0.18.1
+
+  cupertino_icons: ^1.0.8
+
+  # ✅ Firebase dependencies
+  firebase_core: ^2.32.0
+  firebase_auth: ^4.17.4
+  cloud_firestore: ^4.15.4
+  firebase_analytics: ^10.8.10
+  google_sign_in: ^6.2.1
+  url_launcher: ^6.2.5
+  shared_preferences: ^2.2.2
+  image_picker: ^1.0.7
+  firebase_storage: ^11.6.5
+  
+  # 📊 Enhanced Analytics & Export
+  syncfusion_flutter_charts: ^24.2.9
+  path_provider: ^2.1.2
+  permission_handler: ^11.3.0
+  
+  # 🎮 Gamification & Engagement
+  confetti: ^0.7.0
+  flutter_animate: ^4.5.0
+  
+  # 🔔 Enhanced Notifications
+  firebase_messaging: ^14.9.4
+  
+  # 💳 Payment Integration (Simulated - No real Stripe needed)
+  http: ^1.1.0
+  
+  # 📤 Export & Share
+  share_plus: ^7.2.1
+  
+  # ♿ Accessibility
+  # flutter_semantics: ^1.0.0  # Removed - Flutter has built-in semantic support
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
+  
+  # 🧪 Testing
+  mockito: ^5.4.4
+  build_runner: ^2.4.8
+
+flutter:
+  uses-material-design: true
+
+  # Example to include assets (uncomment and modify if needed)
+  # assets:
+  #   - images/
+  
+  # Example to include custom fonts (uncomment and modify if needed)
+  # fonts:
+  #   - family: CustomFont
+  #     fonts:
+  #       - asset: fonts/CustomFont-Regular.ttf
+
+  assets:
+    - assets/images/icon.png
+    - assets/images/google_logo.png
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png"
