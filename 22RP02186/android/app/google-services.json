@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "267926257288",
+    "project_id": "skillslinks-17b63",
+    "storage_bucket": "skillslinks-17b63.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267926257288:android:018e3f0846fdc2dc56a93d",
+        "android_client_info": {
+          "package_name": "com.example.skillslinks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "267926257288-evutrbllkfn1pqfgg4fkv0nedvf7thg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYMktw1MnZj1rff9n92B4bFe6gJARw4l0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "267926257288-evutrbllkfn1pqfgg4fkv0nedvf7thg7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "267926257288-06ll0q171rt6m76b7vebv9hc3tkkjvju.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.skillslinks"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

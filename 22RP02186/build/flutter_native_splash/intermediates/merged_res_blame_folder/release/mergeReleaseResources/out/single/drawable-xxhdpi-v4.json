@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/drawable-xxhdpi-v4/ic_call_decline_low.png",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/drawable-xxhdpi-v4/ic_call_decline_low.png"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/drawable-xxhdpi-v4/ic_call_decline.png",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/drawable-xxhdpi-v4/ic_call_decline.png"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/drawable-xxhdpi-v4/ic_call_answer.png",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/drawable-xxhdpi-v4/ic_call_answer.png"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/drawable-xxhdpi-v4/ic_call_answer_low.png",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/drawable-xxhdpi-v4/ic_call_answer_low.png"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/drawable-xxhdpi-v4/ic_call_answer_video.png",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/drawable-xxhdpi-v4/ic_call_answer_video.png"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/drawable-xxhdpi-v4/ic_call_answer_video_low.png",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/drawable-xxhdpi-v4/ic_call_answer_video_low.png"
+    }
+]

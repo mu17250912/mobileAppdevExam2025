@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "260532571296",
+    "project_id": "neighborhoodalert",
+    "storage_bucket": "neighborhoodalert.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260532571296:android:227e466ce015ebc50f8dc5",
+        "android_client_info": {
+          "package_name": "com.example.neihborhoodalert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI9CWHzNJJIZxz7C7NuH7zjCdzIfcw8WI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

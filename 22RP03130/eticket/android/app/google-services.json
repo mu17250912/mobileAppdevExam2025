@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "3722144922",
+    "project_id": "eticket-d4568",
+    "storage_bucket": "eticket-d4568.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:3722144922:android:4c5e4dca78cc83d1784323",
+        "android_client_info": {
+          "package_name": "com.example.eticket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "3722144922-l7g3henmtgfnht9rs0865qspajcjurbq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eticket",
+            "certificate_hash": "42ce09bc0b45ee3c8a64444e42203b23372962b9"
+          }
+        },
+        {
+          "client_id": "3722144922-4j9fta59ilitir76lq6rns7kthc1k80e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzZxAVh72nEoEOYJZZc6Z-x4TYfBFoYsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "3722144922-4j9fta59ilitir76lq6rns7kthc1k80e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "3722144922-tii19cng9s2a1l78rvtf1915r2gitruu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.eticket"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
