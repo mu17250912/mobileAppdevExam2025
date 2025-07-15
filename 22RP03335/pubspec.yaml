@@ -1,0 +1,64 @@
+name: exam_mobile
+description: A new Flutter project.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  share_plus: ^7.2.1
+  url_launcher: ^6.2.5
+  image_picker: ^1.0.7
+  shared_preferences: ^2.2.2
+  file_picker: ^6.1.1
+  provider: ^6.1.2
+  firebase_core: ^2.25.4
+  firebase_auth: ^4.17.4
+  cloud_firestore: ^4.15.4
+  google_sign_in: ^6.2.1
+  badges: ^3.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/umushumba.png
+    - assets/umunyamulenge.png
+    - assets/nsabi.png
+    # Images
+    - assets/event.png
+    - assets/splash.png
+    - assets/rusine.png
+    - assets/muhinde.png
+    - assets/advertise.png
+    - assets/alibaba.png
+    - assets/google_logo.png
+
+dependency_overrides:
+  flutter_plugin_android_lifecycle: 2.0.15
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/app_icon_1024.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/app_icon_1024.png"
+  windows:
+    generate: true
+    image_path: "assets/app_icon_1024.png"
+  macos:
+    generate: true
+    image_path: "assets/app_icon_1024.png"
+
+  
