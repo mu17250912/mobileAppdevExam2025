@@ -1,1 +1,0 @@
-// This file is intentionally left blank. Footer has been removed from the app. 
