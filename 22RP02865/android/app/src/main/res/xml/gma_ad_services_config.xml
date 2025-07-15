@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adservicesConfig>
+    <!-- AdMob configuration for Android Ad Services -->
+    <measurement>
+        <event>
+            <name>ad_impression</name>
+            <source>com.google.android.gms.ads</source>
+        </event>
+        <event>
+            <name>ad_click</name>
+            <source>com.google.android.gms.ads</source>
+        </event>
+    </measurement>
+</adservicesConfig> 

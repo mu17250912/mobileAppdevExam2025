@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Tasks collection - users can only access their own tasks
+    match /tasks/{userId} {
+      // Users can only access their own task documents
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // User tasks subcollection
+      match /userTasks/{taskId} {
+        // Users can only access their own tasks
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Study goals collection - users can only access their own goals
+    match /study_goals/{userId} {
+      // Users can only access their own goal documents
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // User goals subcollection
+      match /userGoals/{goalId} {
+        // Users can only access their own goals
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // User profiles - users can only access their own profile
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+} 
