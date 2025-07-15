@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "413956223695",
+    "project_id": "creditrack-c6966",
+    "storage_bucket": "creditrack-c6966.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413956223695:android:ae75f3be6f0e4134713dba",
+        "android_client_info": {
+          "package_name": "com.example.creditrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413956223695-kld03c3copgdk472v38vovgqtbh73tv2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpYhye4etHSk6CBg1Vgg5arUVb-nRgqNo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413956223695-kld03c3copgdk472v38vovgqtbh73tv2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "413956223695-ak24ln0baidb4dp5nrtusfmsv4egrkoi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.creditrack"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
