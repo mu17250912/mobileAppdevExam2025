@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "695648441245",
+    "project_id": "carrentexam",
+    "storage_bucket": "carrentexam.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:695648441245:android:4839fae8adc56923511574",
+        "android_client_info": {
+          "package_name": "com.example.carrent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "695648441245-7js5imk6jfg4djcldkegb61obpqj6aa6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.carrent",
+            "certificate_hash": "5b5c3f855f7ea645ef1b2e0f19aaed34add85260"
+          }
+        },
+        {
+          "client_id": "695648441245-k24rvs1qs4h97ootkf21n6429qhjbbi6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCga7hN7XPjyhiV4iNov9B4ejlEBUxIxLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "695648441245-k24rvs1qs4h97ootkf21n6429qhjbbi6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "695648441245-6d306060nqb4rqq0ppe8jo5oqk4e3ok0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.carrent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
