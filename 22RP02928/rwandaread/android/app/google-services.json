@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "785790233579",
+    "project_id": "rwandaread",
+    "storage_bucket": "rwandaread.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785790233579:android:6b05750632255c232e07ae",
+        "android_client_info": {
+          "package_name": "com.example.rwandaread"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACZvuQSzQa4hp2oV8l1SjlDcub9_75LY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
