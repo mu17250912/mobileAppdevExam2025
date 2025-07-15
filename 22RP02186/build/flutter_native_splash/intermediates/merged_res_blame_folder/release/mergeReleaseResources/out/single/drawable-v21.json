@@ -1,0 +1,6 @@
+[
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/drawable-v21/notification_action_background.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/drawable-v21/notification_action_background.xml"
+    }
+]

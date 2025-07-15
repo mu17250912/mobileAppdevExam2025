@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "752140122484",
+    "project_id": "cookmate-4831f",
+    "storage_bucket": "cookmate-4831f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752140122484:android:72881f9804801066c3d421",
+        "android_client_info": {
+          "package_name": "com.example.cookmate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752140122484-cl2vok2unnadgfd06qekd8p36ubdvlnt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cookmate",
+            "certificate_hash": "ddd35019705ed7b168e65dd52648ca2274ee2b83"
+          }
+        },
+        {
+          "client_id": "752140122484-0pr5l63seelcllmhpn3cl41oisphtfcu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0anupBfTQxUfWKTtY95ProcaMhY-_1KI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752140122484-0pr5l63seelcllmhpn3cl41oisphtfcu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

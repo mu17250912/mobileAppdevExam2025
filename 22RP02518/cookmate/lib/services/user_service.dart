@@ -1,0 +1,1 @@
+// This file is no longer needed. All user authentication and management is handled via Firebase in the UI code. 
