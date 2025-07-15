@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "434593846654",
+    "project_id": "ceremo-car-app",
+    "storage_bucket": "ceremo-car-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434593846654:android:d6b2e42f7b7f5dbf9c0f2f",
+        "android_client_info": {
+          "package_name": "com.example.ceremocar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPZXbKOCM-q0PfbNFhvNHaXqfIVMdpI6g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
