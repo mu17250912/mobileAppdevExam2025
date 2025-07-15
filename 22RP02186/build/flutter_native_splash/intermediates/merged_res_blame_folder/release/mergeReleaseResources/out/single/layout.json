@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/notification_action_tombstone.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/notification_template_icon_group.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/notification_template_part_time.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/notification_action.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/notification_action.xml"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/notification_template_part_chronometer.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/notification_template_part_chronometer.xml"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/custom_dialog.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/custom_dialog.xml"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/notification_template_custom_big.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/ime_secondary_split_test_activity.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/ime_secondary_split_test_activity.xml"
+    },
+    {
+        "merged": "net.jonhanson.flutter_native_splash-release-25:/layout/ime_base_split_test_activity.xml",
+        "source": "net.jonhanson.flutter_native_splash-core-1.13.1-9:/layout/ime_base_split_test_activity.xml"
+    }
+]

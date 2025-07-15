@@ -1,0 +1,5 @@
+color: "#ffffff"
+image: assets/icon.png
+android: true
+ios: true
+web: true 
