@@ -1,0 +1,44 @@
+{
+  "videos": [
+    {
+      "id": "1",
+      "title": "Introduction to Sexual Health",
+      "description": "A comprehensive overview of sexual health basics for teenagers.",
+      "duration": "5:30",
+      "category": "Education",
+      "thumbnail": "assets/images/video1.jpg"
+    },
+    {
+      "id": "2",
+      "title": "Safe Sex Practices",
+      "description": "Learn about safe sex practices and how to protect yourself.",
+      "duration": "7:15",
+      "category": "Safety",
+      "thumbnail": "assets/images/video2.jpg"
+    },
+    {
+      "id": "3",
+      "title": "Understanding Your Body",
+      "description": "Educational video about body awareness and health.",
+      "duration": "6:45",
+      "category": "Education",
+      "thumbnail": "assets/images/video3.jpg"
+    },
+    {
+      "id": "4",
+      "title": "Communication in Relationships",
+      "description": "How to communicate effectively in relationships.",
+      "duration": "8:20",
+      "category": "Relationships",
+      "thumbnail": "assets/images/video4.jpg"
+    },
+    {
+      "id": "5",
+      "title": "Mental Health Awareness",
+      "description": "Understanding the connection between mental health and sexual well-being.",
+      "duration": "9:10",
+      "category": "Mental Health",
+      "thumbnail": "assets/images/video5.jpg"
+    }
+  ]
+} 

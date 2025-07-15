@@ -1,0 +1,44 @@
+{
+  "articles": [
+    {
+      "id": "1",
+      "title": "Understanding Sexual Health Basics",
+      "content": "Sexual health is an important part of overall well-being. It includes understanding your body, safe practices, and making informed decisions about relationships and intimacy.",
+      "category": "Education",
+      "readTime": "5 min read",
+      "image": "assets/images/article1.jpg"
+    },
+    {
+      "id": "2",
+      "title": "Birth Control Methods Explained",
+      "content": "There are many different types of birth control available. Each method has its own benefits and considerations. It's important to talk to a healthcare provider to find what works best for you.",
+      "category": "Contraception",
+      "readTime": "8 min read",
+      "image": "assets/images/article2.jpg"
+    },
+    {
+      "id": "3",
+      "title": "STI Prevention and Testing",
+      "content": "Sexually transmitted infections (STIs) are common but preventable. Regular testing and safe practices can help protect your health and the health of your partners.",
+      "category": "Health",
+      "readTime": "6 min read",
+      "image": "assets/images/article3.jpg"
+    },
+    {
+      "id": "4",
+      "title": "Building Healthy Relationships",
+      "content": "Healthy relationships are built on communication, respect, and mutual understanding. Learn how to establish boundaries and communicate effectively with your partner.",
+      "category": "Relationships",
+      "readTime": "7 min read",
+      "image": "assets/images/article4.jpg"
+    },
+    {
+      "id": "5",
+      "title": "Mental Health and Sexual Well-being",
+      "content": "Your mental health is closely connected to your sexual well-being. Understanding this connection can help you make better decisions and feel more confident.",
+      "category": "Mental Health",
+      "readTime": "6 min read",
+      "image": "assets/images/article5.jpg"
+    }
+  ]
+} 
