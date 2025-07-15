@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1054529176089",
+    "project_id": "smart-bmi-app",
+    "storage_bucket": "smart-bmi-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1054529176089:android:e3e57321fb39d06dd6a088",
+        "android_client_info": {
+          "package_name": "com.example.smartbmi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6VviuEyUirt_n_yMqCwG_f70hMgiFSNM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
