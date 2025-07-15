@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "572180350092",
+    "project_id": "tinderjob-e9eeb",
+    "storage_bucket": "tinderjob-e9eeb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572180350092:android:b7dcb80a994114f28ae7a9",
+        "android_client_info": {
+          "package_name": "com.example.tinderjob"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "572180350092-oec34vnuj6vt0fae8drjt7oferc412rm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl97NrhK2G51psOIK-8PSuWjbq5xUkxzk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572180350092-oec34vnuj6vt0fae8drjt7oferc412rm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "572180350092-53bdlk66k91ludb24a51f1umu5e18jdm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tinderjob"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
