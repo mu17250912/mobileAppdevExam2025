@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "820522109690",
+    "project_id": "isokoconnect-1f836",
+    "storage_bucket": "isokoconnect-1f836.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820522109690:android:34689026103ce3e378d743",
+        "android_client_info": {
+          "package_name": "com.jados.isokoconnect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOf4UK2YSLEuyIf-9tJWvQhMTc-fjWO_w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
