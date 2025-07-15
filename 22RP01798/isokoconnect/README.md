@@ -330,9 +330,7 @@ flutter build appbundle --release
 - **Phone:** +250 784 842 622
 - **WhatsApp:** +250 784 842 622
 
-### Business Inquiries:
-- **Email:** business@isokoconnect.rw
-- **Website:** www.isokoconnect.rw
+
 
 ## 📄 License
 
