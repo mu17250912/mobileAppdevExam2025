@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "804532614679",
+    "project_id": "techbuy-a305f",
+    "storage_bucket": "techbuy-a305f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804532614679:android:5b9a0de77a794cbb37ce52",
+        "android_client_info": {
+          "package_name": "TechBuy.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVIIPvr9dDbiaGGYR17U2SO4J06h2gOQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804532614679:android:563f145436ea15ee37ce52",
+        "android_client_info": {
+          "package_name": "com.example.techbuy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVIIPvr9dDbiaGGYR17U2SO4J06h2gOQw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
