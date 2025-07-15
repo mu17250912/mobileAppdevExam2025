@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "874903627966",
+    "project_id": "bankaccount-2025-30b5c",
+    "storage_bucket": "bankaccount-2025-30b5c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874903627966:android:e2ac0797db518ba762d6ef",
+        "android_client_info": {
+          "package_name": "com.example.bank_acc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "874903627966-okjt8jqjfpp038ntp0eqnt1r7oi1h7m8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bank_acc",
+            "certificate_hash": "39d1b8f092350de687d9ff6f6d4c15fcf8829039"
+          }
+        },
+        {
+          "client_id": "874903627966-l1llhsg7lq62q36cn0icpnfsqgi2h8dn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwitMco_KS1wD4Il3bKQYKtBq0fHVIkLc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "874903627966-l1llhsg7lq62q36cn0icpnfsqgi2h8dn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "874903627966-dtd263l3vpsnv1qnot49hngtgkklg37o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.bankAcc"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
