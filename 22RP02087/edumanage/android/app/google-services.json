@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "67912551300",
+    "project_id": "edumanage-31cd3",
+    "storage_bucket": "edumanage-31cd3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67912551300:android:df7e2986ca50ae463b6bd1",
+        "android_client_info": {
+          "package_name": "com.example.edumanage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "67912551300-h0ftig6kgeblm679rodb70357mdir83o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.edumanage",
+            "certificate_hash": "51096b4c553d7bd6f9ce7aa368290570abaa20a0"
+          }
+        },
+        {
+          "client_id": "67912551300-ba889je5ia16fk5b2aqpkerfpbq7b9s5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmlyBc9Sbws04XR6TQDFQkgg1A8xQqtbs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "67912551300-ba889je5ia16fk5b2aqpkerfpbq7b9s5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "67912551300-qn718s2dft2cms7b7vfq0vrruens8vh7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.edumanage"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:67912551300:android:32799c5b7063a89c3b6bd1",
+        "android_client_info": {
+          "package_name": "com.firebase.Edumanage"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "67912551300-ba889je5ia16fk5b2aqpkerfpbq7b9s5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmlyBc9Sbws04XR6TQDFQkgg1A8xQqtbs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "67912551300-ba889je5ia16fk5b2aqpkerfpbq7b9s5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "67912551300-qn718s2dft2cms7b7vfq0vrruens8vh7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.edumanage"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
