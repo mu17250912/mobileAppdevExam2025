@@ -1,30 +1,29 @@
-<<<<<<< HEAD
 # 📚 RwandaRead
 
 A Flutter-based reading application with subscription monetization, offering access to thousands of books with premium features.
 
-## ✨ Features
+##  Features
 
-### 📖 Core Features
+###  Core Features
 - **Book Library**: Access thousands of books from multiple sources
 - **Advanced Search**: Filter by language, category, and source
 - **Reading Progress**: Track your reading across all books
 - **Bookmarks**: Save and organize reading positions
 - **Offline Reading**: Download books (Premium feature)
 
-### 💎 Premium Features
+###  Premium Features
 - **Unlimited Downloads**: Download unlimited books for offline reading
 - **Advanced Search**: Enhanced search capabilities
 - **Priority Support**: Dedicated customer support
 - **Exclusive Content**: Access to premium-only books
 - **Ad-Free Experience**: Enjoy reading without ads
 
-### 💳 Subscription Plans
+###  Subscription Plans
 - **Basic Monthly**: $4.99/month
 - **Premium Monthly**: $9.99/month
 - **Premium Yearly**: $59.99/year (40% savings)
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Flutter SDK (3.8.1+)
@@ -53,14 +52,14 @@ flutter build apk --release
 flutter build appbundle --release
 ```
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Frontend**: Flutter, Dart, Material Design
 - **Backend**: Firebase (Auth, Firestore)
 - **APIs**: Google Books, Open Library, Project Gutenberg
 - **Storage**: Hive (local), Shared Preferences
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 lib/
@@ -71,7 +70,7 @@ lib/
 └── utils/           # Utility functions
 ```
 
-## 🔧 Configuration
+##  Configuration
 
 ### Firebase Setup
 1. Create Firebase project
@@ -85,7 +84,7 @@ Create `.env` file:
 GOOGLE_BOOKS_API_KEY=your_api_key
 ```
 
-## 📱 Screens
+##  Screens
 
 - **Library**: Home dashboard with statistics
 - **Search**: Advanced book search
@@ -93,7 +92,7 @@ GOOGLE_BOOKS_API_KEY=your_api_key
 - **Reader**: Full-featured book reader
 - **Subscription**: Plan selection and purchase
 
-## 🧪 Testing
+##  Testing
 
 ```bash
 # Unit tests
@@ -107,12 +106,12 @@ flutter test
 - [ ] Premium feature access
 ```
 
-## 📦 Build Outputs
+##  Build Outputs
 
 - **APK**: `build/app/outputs/flutter-apk/app-release.apk` (~51MB)
 - **AAB**: `build/app/outputs/bundle/release/app-release.aab` (~44MB)
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ```bash
 # Clean and rebuild
@@ -121,25 +120,23 @@ flutter pub get
 flutter build apk --release
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create feature branch
 3. Commit changes
 4. Open Pull Request
 
-## 📄 License
+##  License
 
 MIT License - see [LICENSE](LICENSE) file.
 
-## 📞 Support
+## Support
 
 - **Issues**: [GitHub Issues](https://github.com/yourusername/rwandaread/issues)
-- **Email**: support@rwandaread.com
+- **Email**: claudine@gmail.com
+- **password**: coco123
 
 ---
 
 **Made with ❤️ for readers everywhere**
-=======
-# mobileAppdevExam2025
->>>>>>> fdb473796a69b9f688cc2e81ad96fc9c32799a72
