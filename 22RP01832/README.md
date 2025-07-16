@@ -13,7 +13,7 @@
 
 ## 📝 App Overview
 
-**BookSwap** is a modern, cross-platform mobile app for buying, selling, and exchanging books within academic communities. It features real-time listings, live MTN MoMo payment integration, and a robust admin dashboard for platform management.
+**BookSwap** is a modern, cross-platform mobile app for buying, selling, and exchanging books within academic communities. It features real-time listings, live MTN MoMo payment integration.
 
 ---
 
