@@ -9,27 +9,6 @@
 
 ---
 
-## 🗂️ Table of Contents
-
-- [App Overview](#app-overview)
-- [Problem Statement](#problem-statement)
-- [Target Audience](#target-audience)
-- [Unique Selling Proposition](#unique-selling-proposition)
-- [Market Fit](#market-fit)
-- [Core Features](#core-features)
-- [Admin Features](#admin-features)
-- [Monetization](#monetization)
-- [MoMo Payment Testing](#momo-payment-testing)
-- [Analytics & Reporting](#analytics--reporting)
-- [Sustainability](#sustainability)
-- [Security & Reliability](#security--reliability)
-- [Scalability & Performance](#scalability--performance)
-- [Technologies Used](#technologies-used)
-- [Installation & Usage](#installation--usage)
-- [Project Structure](#project-structure)
-- [Submission Details](#submission-details)
-- [Contact](#contact)
-
 ---
 
 ## 📝 App Overview
