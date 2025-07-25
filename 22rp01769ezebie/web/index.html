@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="infofarmer">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>infofarmer</title>
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Add error handling for network issues -->
+  <script>
+    // Add error handling for network issues
+    window.addEventListener('error', function(e) {
+      if (e.target && e.target.src && e.target.src.includes('gstatic.com')) {
+        console.warn('Failed to load external resource:', e.target.src);
+        // Continue without the external resource
+      }
+    });
+  </script>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDN3QpfIonZc5b167ZgOavlQq01bxZTgWo",
+        authDomain: "farmer-5155f.firebaseapp.com",
+        projectId: "farmer-5155f",
+        storageBucket: "farmer-5155f.firebasestorage.app",
+        messagingSenderId: "774037750702",
+        appId: "1:774037750702:web:ca8f234ee0b92cc2707e3f",
+        measurementId: "G-2V80VCZKY6"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+  </script>
+</body>
+</html>
