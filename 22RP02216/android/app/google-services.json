@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "912745304601",
+    "project_id": "booktalent-7c3d6",
+    "storage_bucket": "booktalent-7c3d6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912745304601:android:4a60ed98890fa6f1239088",
+        "android_client_info": {
+          "package_name": "com.example.bookmytalent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912745304601-toha94ne2vmd2q8ggg64leo3o2okg3rs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8MQkbAhS2WULoNJtJVsNM8rhSyMWwlUc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912745304601-toha94ne2vmd2q8ggg64leo3o2okg3rs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "912745304601-inijjib9ahnokcimrtrqsf5m8lmr6ddq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.booktalent"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912745304601:android:e98ef867fcd9107d239088",
+        "android_client_info": {
+          "package_name": "com.example.booktalent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912745304601-2qnbf8c4mu8nsj4qqe53ft0iemihke2l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.booktalent",
+            "certificate_hash": "862181a0214f270675b220c5928fc94f74642309"
+          }
+        },
+        {
+          "client_id": "912745304601-toha94ne2vmd2q8ggg64leo3o2okg3rs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8MQkbAhS2WULoNJtJVsNM8rhSyMWwlUc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912745304601-toha94ne2vmd2q8ggg64leo3o2okg3rs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "912745304601-inijjib9ahnokcimrtrqsf5m8lmr6ddq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.booktalent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
