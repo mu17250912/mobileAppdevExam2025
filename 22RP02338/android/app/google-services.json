@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "874478680782",
+    "project_id": "umukomesiyoneri",
+    "storage_bucket": "umukomesiyoneri.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:874478680782:android:aeb540e98501ab2eca6e9f",
+        "android_client_info": {
+          "package_name": "com.commissioner.realestate.commissioner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8Fna41outH3uQ7CATqoy2r9PNOsVzu6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
