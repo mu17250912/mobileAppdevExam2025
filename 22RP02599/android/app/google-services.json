@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "332522480175",
+    "project_id": "rent-jules-app",
+    "storage_bucket": "rent-jules-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332522480175:android:d2d1d263bc5c47d3f45cda",
+        "android_client_info": {
+          "package_name": "com.example.hometowntours"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALCWZ86zWC6zsYP8MONh8vWhrreCsdLFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332522480175:android:c1233f9caa0b96f9f45cda",
+        "android_client_info": {
+          "package_name": "com.example.multicurrencyconverter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALCWZ86zWC6zsYP8MONh8vWhrreCsdLFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
