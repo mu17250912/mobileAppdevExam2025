@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "931368824138",
+    "project_id": "locallink-b473d",
+    "storage_bucket": "locallink-b473d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931368824138:android:baf8d6e94f20260f8a25b3",
+        "android_client_info": {
+          "package_name": "com.example.local_link"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "931368824138-rv0oousqj9pptds3i00v0inrs1aiusv6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASesFS2czUKIPadYWgB_A344UmiQY8THU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "931368824138-rv0oousqj9pptds3i00v0inrs1aiusv6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "931368824138-vcj20a9q4ctaekkomjeeb0uqitcb8iqa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.localLink"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
